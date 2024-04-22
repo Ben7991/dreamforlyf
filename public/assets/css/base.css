@@ -1,0 +1,274 @@
+:root {
+    --blue-main: #5c2ad5;
+    --blue-secondary: #7d55dd;
+
+    --pink-main: #ff0047;
+    --pink-secondary: #ff336c;
+
+    --other-main: #1caae3;
+    --other-secondary: #49bbe9;
+
+    --orange-main: #e46f1b;
+    --orange-secondary: #ea8c48;
+
+    --green-main: #2ed13e;
+    --green-secondary: #58da65;
+
+    --footer-color: #3f2679;
+
+    --font-light: 300;
+    --font-regular: 400;
+    --font-semibold: 600;
+    --font-bold: 700;
+
+    --main-gradient: linear-gradient(
+        to bottom right,
+        var(--blue-main),
+        var(--blue-secondary)
+    );
+
+    --tertiary-gradient: linear-gradient(
+        to bottom right,
+        var(--pink-main),
+        var(--pink-secondary)
+    );
+
+    --other-gradient: linear-gradient(
+        to bottom right,
+        var(--other-main),
+        var(--other-secondary)
+    );
+
+    --orange-gradient: linear-gradient(
+        to bottom right,
+        var(--orange-main),
+        var(--orange-secondary)
+    );
+
+    --green-gradient: linear-gradient(
+        to bottom right,
+        var(--green-main),
+        var(--green-secondary)
+    );
+}
+
+body {
+    font-family: "Nunito Sans", sans-serif;
+    font-weight: var(--font-regular);
+    line-height: 1.7;
+    color: var(--bs-secondary);
+    background-color: var(--bs-white);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--bs-dark);
+    font-weight: var(--font-bold);
+}
+
+.main-lang-icon {
+    width: 18px;
+    height: 18px;
+    object-fit: cover;
+}
+
+::selection {
+    background: var(--pink-main);
+    color: var(--bs-white);
+}
+
+.text-main {
+    color: var(--blue-main);
+}
+
+.bg-main {
+    background: var(--main-gradient);
+}
+
+.bg-tertiary {
+    background: var(--tertiary-gradient);
+}
+
+.bg-other {
+    background: var(--other-gradient);
+}
+
+.bg-orange {
+    background: var(--orange-gradient);
+}
+
+.bg-green {
+    background: var(--green-gradient);
+}
+
+.btn-main {
+    background-color: var(--blue-secondary);
+    color: var(--bs-white);
+}
+
+.btn-main:hover,
+.btn-main:focus {
+    background: var(--blue-main);
+    color: var(--bs-white);
+}
+
+td {
+    color: var(--bs-secondary) !important;
+}
+
+.action-btn {
+    text-decoration: none;
+    border: none;
+    outline: none;
+    font: inherit;
+    color: var(--bs-white);
+    padding: 2px 5px;
+    background-color: transparent;
+}
+
+.table-img {
+    width: 40px;
+}
+
+.go-back {
+    text-decoration: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: var(--bs-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bs-secondary);
+    padding-top: 2px;
+}
+
+.go-back:hover {
+    background: var(--main-gradient);
+    color: var(--bs-white);
+}
+
+.alert-response {
+    position: fixed;
+    bottom: 5px;
+    left: 5%;
+    z-index: 10;
+    width: 90%;
+}
+
+.img-modal {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: none;
+}
+
+.img-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.img-modal-container {
+    width: 80%;
+    position: relative;
+}
+
+.img-modal-btn {
+    position: absolute;
+    top: -50px;
+    right: 0px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 7px;
+}
+
+.img-modal-btn:hover {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--bs-light);
+}
+
+.img-modal-image {
+    width: 90%;
+    margin: auto;
+    display: block;
+}
+
+.underline {
+    width: 70%;
+    margin: auto;
+}
+
+.underline-top,
+.underline-middle,
+.underline-bottom {
+    height: 2px;
+    background-color: var(--bs-gray-400);
+    margin: auto;
+}
+
+.underline-top {
+    width: 100%;
+}
+
+.underline-middle {
+    width: 70%;
+}
+
+.underline-bottom {
+    width: 50%;
+}
+
+@media (min-width: 768px) {
+    .img-modal-container {
+        width: 60%;
+    }
+}
+
+@media (min-width: 992px) {
+    .go-back {
+        width: 35px;
+        height: 35px;
+    }
+
+    .alert-response {
+        display: inline-block;
+        width: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 40px;
+        max-width: 500px;
+    }
+
+    .img-modal-container {
+        width: 30%;
+    }
+}
+
+@media (min-width: 1200px) {
+    .table-img {
+        width: 60px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .img-modal-container {
+        width: 20%;
+    }
+
+    .table-img {
+        width: 80px;
+    }
+}
