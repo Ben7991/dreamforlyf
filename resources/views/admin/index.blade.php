@@ -96,12 +96,12 @@
             <div class="col-12 col-xxl-3 mb-4 mb-xxl-0">
                 <h5 class="mb-3 mb-xxl-4">{{ __("overall_history") }}</h5>
                 <div class="row">
-                    <div class="col-12 col-md-4">
+                    <div class="col-12">
                         @php $overAllHeadingOne = __("low_quantity_products"); @endphp
                         @php $productCount = session()->get("product_count"); @endphp
                         <x-dashboard-summary :title="$overAllHeadingOne" :value="$productCount" icon="capsule"/>
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-12">
                         @php $overAllHeadingTwo = __("award") @endphp
                         <x-dashboard-summary :title="$overAllHeadingTwo" :value="$awardCount" icon="award"/>
                     </div>

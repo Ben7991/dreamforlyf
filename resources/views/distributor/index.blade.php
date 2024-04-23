@@ -100,7 +100,7 @@
                 </div>
             </div>
 
-            <div class="col-12 col-xxl-9 mb-4 mb-xxl-0">
+            <div class="col-12 col-xxl-3 mb-4 mb-xxl-0">
                 <h5 class="mb-3 mb-xxl-4">{{ __("overall_history") }}</h5>
                 @php
                     $distributor = Auth::user()->distributor;
@@ -109,16 +109,16 @@
                 @endphp
 
                 <div class="row">
-                    <div class="col-12 col-md-4">
+                    <div class="col-12">
                         @php $firstHistoryHeading = __("total_orders"); @endphp
                         <x-dashboard-summary :title="$firstHistoryHeading" :value="$totalOrders" icon="clock-history"/>
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-12">
                         @php $formattedCommission = '$' . $commission @endphp
                         @php $secondHistoryHeading = __("total_commission"); @endphp
                         <x-dashboard-summary :title="$secondHistoryHeading" :value="$formattedCommission" icon="cash"/>
                     </div>
-                    <div class="col-12 col-md-4">
+                    <div class="col-12">
                         @php $formattedCurrentBalance = '$' . $currentBalance @endphp
                         @php $thirdHistoryHeading = __("current_balance"); @endphp
                         <x-dashboard-summary :title="$thirdHistoryHeading" :value="$formattedCurrentBalance" icon="wallet"/>
