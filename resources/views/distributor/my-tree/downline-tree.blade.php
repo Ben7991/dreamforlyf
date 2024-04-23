@@ -30,6 +30,22 @@
 
     <input type="hidden" id="locale" value="{{ App::currentLocale() }}">
 
+    @php
+        function swap($distributors) {
+            $newDistributors = ['1st', '2nd'];
+
+            foreach ($distributors as $distributor) {
+                for($j = 0; $j < 2; $j++) {
+                    if ($newDistributors[$j] === $distributor->leg) {
+                        $newDistributors[$j] = $distributor;
+                    }
+                }
+            }
+
+            return $newDistributors;
+        }
+    @endphp
+
     <div class="card border shadow-sm">
         <div class="card-header bg-white p-3 d-block d-md-flex align-items-center justify-content-between">
             <h5 class="mb-2 mb-md-0">{{ $user->name }}  {{ __("distributors") }}</h5>
@@ -88,61 +104,69 @@
                     <div class="tree-downlines">
                         <div class="d-flex justify-content-between position-relative pt-3">
                             <div class="tree-downline-top-connector"></div>
-                            @foreach($user->upline->distributors as $distributor)
+                            @foreach(swap($user->upline->distributors) as $distributor)
                                 <div class="position-relative w-50">
-                                    <div class="tree-img downline mx-auto d-flex align-items-center justify-content-center {{ $distributor->user->image === null ? '' : 'd-none' }} profile-placeholder"
-                                        data-id="{{ $distributor->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                        <i class="bi bi-person fs-4"></i>
-                                    </div>
-                                    <img src="{{ asset(Str::replaceFirst('public', 'storage', $distributor->user->image)) }}" alt="User Image"
-                                        class="tree-img downline d-block {{ $distributor->user->image === null ? 'd-none' : '' }} profile-image"
-                                        data-id="{{ $distributor->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                    <div class="tree-downline-connector top"></div>
-
-                                    @if($distributor->user->upline !== null && count($distributor->user->upline->distributors))
-                                        <div class="tree-downline-connector bottom"></div>
-                                        <div class="d-flex justify-content-between mt-4">
-                                            @php
-                                                $upline = $distributor->user->upline;
-                                            @endphp
-                                            <div class="d-flex justify-content-between w-100 position-relative pt-3">
-                                                <div class="tree-downline-top-connector w-2nd"></div>
-                                                @foreach($upline->distributors as $dist)
-                                                    <div class="w-50 position-relative">
-                                                        <div class="tree-img downline mx-auto d-flex align-items-center justify-content-center {{ $dist->user->image === null ? '' : 'd-none' }} profile-placeholder"
-                                                            data-id="{{ $dist->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                            <i class="bi bi-person fs-4"></i>
-                                                        </div>
-                                                        <img src="{{ asset(Str::replaceFirst('public', 'storage', $dist->user->image)) }}" alt="User Image"
-                                                            class="tree-img downline d-block {{ $dist->user->image === null ? 'd-none' : '' }} profile-image"
-                                                            data-id="{{ $dist->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                        <div class="tree-downline-connector top"></div>
-
-                                                        @if($dist->user->upline !== null && count($dist->user->upline->distributors))
-                                                            <div class="tree-downline-connector bottom"></div>
-                                                            <div class="d-flex justify-content-between mt-4">
-                                                                @php
-                                                                    $upline = $dist->user->upline;
-                                                                @endphp
-                                                                <div class="d-flex justify-content-between w-100">
-                                                                    @foreach($upline->distributors as $distrib)
-                                                                        <div class="w-50">
-                                                                            <div class="tree-img downline mx-auto d-flex align-items-center justify-content-center {{ $distrib->user->image === null ? '' : 'd-none' }} profile-placeholder"
-                                                                                data-id="{{ $distrib->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                                                <i class="bi bi-person fs-4"></i>
-                                                                            </div>
-                                                                            <img src="{{ asset(Str::replaceFirst('public', 'storage', $distrib->user->image)) }}" alt="User Image"
-                                                                                class="tree-img downline d-block {{ $distrib->user->image === null ? 'd-none' : '' }} profile-image"
-                                                                                data-id="{{ $distrib->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                @endforeach
-                                            </div>
+                                    @if ($distributor !== "1st" && $distributor !== "2nd")
+                                        <div class="tree-img downline mx-auto d-flex align-items-center justify-content-center {{ $distributor->user->image === null ? '' : 'd-none' }} profile-placeholder"
+                                            data-id="{{ $distributor->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            <i class="bi bi-person fs-4"></i>
                                         </div>
+                                        <img src="{{ asset(Str::replaceFirst('public', 'storage', $distributor->user->image)) }}" alt="User Image"
+                                            class="tree-img downline d-block mx-auto {{ $distributor->user->image === null ? 'd-none' : '' }} profile-image"
+                                            data-id="{{ $distributor->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <div class="tree-downline-connector top"></div>
+
+                                        @if($distributor->user->upline !== null && count($distributor->user->upline->distributors))
+                                            <div class="tree-downline-connector bottom"></div>
+                                            <div class="d-flex justify-content-between mt-4">
+                                                @php
+                                                    $upline = $distributor->user->upline;
+                                                @endphp
+                                                <div class="d-flex justify-content-between w-100 position-relative pt-3">
+                                                    <div class="tree-downline-top-connector w-2nd"></div>
+                                                    @foreach(swap($upline->distributors) as $dist)
+                                                        <div class="w-50 position-relative">
+                                                            @if ($dist !== "1st" && $dist !== "2nd")
+                                                                <div class="tree-img downline mx-auto d-flex align-items-center justify-content-center {{ $dist->user->image === null ? '' : 'd-none' }} profile-placeholder"
+                                                                    data-id="{{ $dist->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                                    <i class="bi bi-person fs-4"></i>
+                                                                </div>
+                                                                <img src="{{ asset(Str::replaceFirst('public', 'storage', $dist->user->image)) }}" alt="User Image"
+                                                                    class="tree-img downline d-block mx-auto {{ $dist->user->image === null ? 'd-none' : '' }} profile-image"
+                                                                    data-id="{{ $dist->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                                <div class="tree-downline-connector top"></div>
+
+                                                                @if($dist->user->upline !== null && count($dist->user->upline->distributors))
+                                                                    <div class="tree-downline-connector bottom"></div>
+                                                                    <div class="d-flex justify-content-between mt-4">
+                                                                        @php
+                                                                            $upline = $dist->user->upline;
+                                                                        @endphp
+                                                                        <div class="d-flex justify-content-between w-100 position-relative pt-3">
+                                                                            <div class="tree-downline-top-connector w-3rd"></div>
+                                                                            @foreach(swap($upline->distributors) as $distrib)
+                                                                                <div class="w-50 position-relative">
+                                                                                    @if ($distrib !== "1st" && $distrib !== "2nd")
+                                                                                        <div class="tree-img downline mx-auto d-flex align-items-center justify-content-center {{ $distrib->user->image === null ? '' : 'd-none' }} profile-placeholder"
+                                                                                            data-id="{{ $distrib->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                                                            <i class="bi bi-person fs-4"></i>
+                                                                                        </div>
+                                                                                        <img src="{{ asset(Str::replaceFirst('public', 'storage', $distrib->user->image)) }}" alt="User Image"
+                                                                                            class="tree-img downline d-block mx-auto {{ $distrib->user->image === null ? 'd-none' : '' }} profile-image"
+                                                                                            data-id="{{ $distrib->id }}" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                                                        <div class="tree-downline-connector top"></div>
+                                                                                    @endif
+                                                                                </div>
+                                                                            @endforeach
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
+                                                            @endif
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        @endif
                                     @endif
                                 </div>
                             @endforeach
