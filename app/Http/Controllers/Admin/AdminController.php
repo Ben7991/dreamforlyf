@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Announcement;
 use App\Models\BonusWithdrawal;
 use App\Models\Order;
 use App\Models\PoolBonus;
@@ -12,6 +13,7 @@ use App\Models\UpgradeHistory;
 use App\Models\Upline;
 use App\Models\User;
 use App\Models\UserType;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -32,6 +34,69 @@ class AdminController extends Controller
             "upgrades" => UpgradeHistory::orderBy("id", "desc")->take(5)->get(),
             "awardCount" => $awardCount
         ]);
+    }
+
+    public function announcement() {
+        $currentDate = Carbon::now()->toDateString();
+        Announcement::where("end_date", "<", $currentDate)->delete();
+
+        $createdAnnouncement = Announcement::first();
+        $startDate = $endDate = "";
+
+        if($createdAnnouncement !== null) {
+            $startDate = Carbon::parse($createdAnnouncement->start_date)->toFormattedDayDateString();
+            $endDate = Carbon::parse($createdAnnouncement->end_date)->toFormattedDayDateString();
+        }
+
+        return view("admin.announcement", [
+            "announcement" => $createdAnnouncement,
+            "start_date" => $startDate,
+            "end_date" => $endDate,
+        ]);
+    }
+
+    public function store_announcement(Request $request, $locale) {
+        $validated = $request->validate([
+            "description_en" => "required",
+            "description_fr" => "required",
+            "end_date" => "required|date"
+        ]);
+
+        try {
+            Announcement::create([
+                "start_date" => Carbon::now()->toDateString(),
+                "description_en" => $validated["description_en"],
+                "description_fr" => $validated["description_fr"],
+                "end_date" => $validated["end_date"]
+            ]);
+
+            return redirect()->back()->with([
+                "message" => "Announcement created successfully",
+                "class" => "success"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "message" => "Something went wrong",
+                "class" => "danger"
+            ]);
+        }
+    }
+
+    public function remove_announcement($locale, $id) {
+        try {
+            Announcement::where("id", $id)->delete();
+            return redirect()->back()->with([
+                "message" => "Announcement deleted successfully",
+                "class" => "success"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "message" => "Something went wrong",
+                "class" => "danger"
+            ]);
+        }
     }
 
     public function qualified_ranks() {
