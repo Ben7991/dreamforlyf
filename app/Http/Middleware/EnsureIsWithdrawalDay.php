@@ -16,7 +16,9 @@ class EnsureIsWithdrawalDay
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Carbon::TUESDAY !== Carbon::now()->dayOfWeek) {
+        $isWithdrawalDays = Carbon::TUESDAY === Carbon::now()->dayOfWeek || Carbon::WEDNESDAY === Carbon::now()->dayOfWeek;
+
+        if (!$isWithdrawalDays) {
             return redirect()->back();
         }
 
