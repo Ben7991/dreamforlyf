@@ -2,12 +2,14 @@
 
 namespace App\Http\Middleware;
 
+use App\BusinessLogic\LegCounter;
 use App\Models\BonusWithdrawal;
 use App\Models\Order;
 use App\Models\PoolBonus;
 use App\Models\PoolBonusStatus;
 use App\Models\UserType;
 use App\BusinessLogic\PoolBonus as BusinessPoolBonus;
+use App\Models\Announcement;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
@@ -35,7 +37,8 @@ class EnsureUserIsDistributor
         $withdrawalCount = BonusWithdrawal::where("distributor_id", $loggedInUser->distributor->id)->where("status", "PENDING")->count();
         $request->session()->put("withdrawal_count", $withdrawalCount);
 
-        $request->session()->put("isWithdrawalDay", Carbon::TUESDAY === Carbon::now()->dayOfWeek);
+        $isWithdrawalDays = Carbon::TUESDAY === Carbon::now()->dayOfWeek || Carbon::WEDNESDAY === Carbon::now()->dayOfWeek;
+        $request->session()->put("isWithdrawalDay", $isWithdrawalDays);
 
         $upline = $loggedInUser->upline;
 
@@ -56,6 +59,19 @@ class EnsureUserIsDistributor
             $request->session()->put("qualified_rank_count", 0);
             $request->session()->put("qualified_pool_count", 0);
         }
+
+        $currentAnnouncement = Announcement::first();
+
+        if ($currentAnnouncement !== null) {
+            session()->put("announcement", $currentAnnouncement->description);
+        }
+        else if (session()->get("announcement")) {
+            session()->remove("announcement");
+        }
+
+        $distributor = Auth::user()->distributor;
+        LegCounter::counterDistributorsInEachLeg($distributor);
+
 
         return $next($request);
     }
