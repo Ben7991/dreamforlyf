@@ -34,13 +34,16 @@ class Upline extends Model
     }
 
     public function nextLeg() {
-        $totalDownlines = $this->distributors;
-
-        if (count($totalDownlines) === 0) {
+        if (count($this->distributors) === 0) {
             return "1st";
         }
-        else if (count($totalDownlines) === 1) {
-            return "2nd";
+        else if (count($this->distributors) === 1) {
+            if ($this->distributors[0]->leg === "1st") {
+                return "2nd";
+            }
+            else {
+                return "1st";
+            }
         }
 
         throw new \Exception("Upline's downlines is complete");
