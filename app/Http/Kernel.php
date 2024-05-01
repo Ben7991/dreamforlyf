@@ -73,6 +73,7 @@ class Kernel extends HttpKernel
         "maintenance.selected" => \App\Http\Middleware\EnsureMaintenancePackageIsSelected::class,
         "withdrawal.day" => \App\Http\Middleware\EnsureIsWithdrawalDay::class,
         "upgrade.selected" => \App\Http\Middleware\EnsureUpgradePackageIsSelected::class,
-        "reset.password" => \App\Http\Middleware\EnsureResetTokenIsValid::class
+        "reset.password" => \App\Http\Middleware\EnsureResetTokenIsValid::class,
+        "code.ethics" => \App\Http\Middleware\EnsureCodeOfEthicsIsRead::class
     ];
 }
