@@ -17,13 +17,16 @@
     <div class="container-fluid p-0 mb-3">
         <div class="row">
             <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
-                <x-model-summary title="Membership Package" icon="award" :number="$membershipPackage" class="bg-main" />
+                @php $firstHeading = __("membership_package"); @endphp
+                <x-model-summary :title="$firstHeading" icon="award" :number="$membershipPackage" class="bg-main" />
             </div>
             <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
-                <x-model-summary title="Total Left Leg" icon="filter-left" :number="$totalLeftLeg" class="bg-tertiary" />
+                @php $secondHeading = __("total_left_bv"); @endphp
+                <x-model-summary :title="$secondHeading" icon="filter-left" :number="$totalLeftLeg" class="bg-tertiary" />
             </div>
             <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
-                <x-model-summary title="Total Right Leg" icon="filter-right" :number="$totalRightLeg" class="bg-other" />
+                @php $thirdHeading = __("total_right_bv"); @endphp
+                <x-model-summary :title="$thirdHeading" icon="filter-right" :number="$totalRightLeg" class="bg-other" />
             </div>
         </div>
     </div>
