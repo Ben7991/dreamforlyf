@@ -68,6 +68,9 @@
                     <a href="/{{ App::currentLocale() }}/admin" class="drawer-link rounded {{ $title == "Dashboard" ? 'active' : '' }}">
                         <i class="bi bi-bar-chart"></i> {{  __("dashboard") }}
                     </a>
+                    <a href="/{{ App::currentLocale() }}/admin/announce" class="drawer-link rounded {{ $title == "Announcement" ? 'active' : '' }}">
+                        <i class="bi bi-megaphone"></i> {{  __("announcement") }}
+                    </a>
                     <a href="/{{ App::currentLocale() }}/admin/products" class="drawer-link rounded d-flex align-items-center justify-content-between {{ $title == "Products" ? 'active' : '' }}">
                         <span>
                             <i class="bi bi-capsule"></i> {{  __("products") }}
