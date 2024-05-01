@@ -33,26 +33,30 @@ use Illuminate\Support\Facades\Mail;
 class MyTreeController extends Controller
 {
     public function index() {
-        $totalReferrals = 0;
-        $totalLeftLeg = 0;
-        $totalRightLeg = 0;
-        $downlineCount = 0;
+        $totalReferrals = $totalLeftBv = $totalRightBv = $downlineCount = $paidBv = $leftDistributors = $rightDistirbutors = 0;
 
         $upline = Auth::user()->upline;
 
         if ($upline !== null) {
             $totalReferrals = $upline->referrals->count();
-            $totalLeftLeg = $upline->first_leg_point;
-            $totalRightLeg = $upline->second_leg_point;
+            $totalLeftBv = $upline->first_leg_point;
+            $totalRightBv = $upline->second_leg_point;
             $downlineCount = count($upline->distributors);
+            $max = max($totalLeftBv, $totalRightBv);
+            $paidBv = $max - $upline->last_awarded_point;
+            $leftDistributors = $upline->left_leg_count;
+            $rightDistirbutors = $upline->right_leg_count;
         }
 
         return view("distributor.my-tree.index", [
             "totalReferrals" => $totalReferrals,
-            "totalLeftLeg" => $totalLeftLeg,
-            "totalRightLeg" => $totalRightLeg,
+            "totalLeftBv" => $totalLeftBv,
+            "totalRightBv" => $totalRightBv,
             "distributorCount" => $downlineCount,
-            "token" => GlobalValues::getRegistrationToken()
+            "token" => GlobalValues::getRegistrationToken(),
+            "paid_bv" => $paidBv,
+            "leftDistributors" => $leftDistributors,
+            "rightDistributors" => $rightDistirbutors
         ]);
     }
 
