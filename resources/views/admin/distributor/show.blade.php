@@ -82,6 +82,11 @@
                     <i class="bi bi-save"></i> {{ __("save") }}
                 </button>
             </form>
+
+            <hr>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resetWithdrawalPin">
+                <i class="bi bi-arrow-clockwise"></i> {{ __("reset_withdrawal_pin") }}
+            </button>
         </div>
     </div>
 
@@ -141,6 +146,31 @@
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("close") }}</button>
                         <button type="submit" class="btn btn-success">
                             <i class="bi bi-send"></i> {{ __("transfer_wallet") }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="resetWithdrawalPin" tabindex="-1" aria-labelledby="resetWithdrawalPinLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="resetWithdrawalPinLabel">{{ __("reset_pin") }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/{{ App::currentLocale() }}/admin/distributors/{{ $user->id }}/reset-withdrawal-pin" method="post">
+                    @csrf
+                    @method("PUT")
+
+                    <div class="modal-body">
+                        <p>{{ __("admin_pin_question") }}?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("close") }}</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check2"></i> {{ __("reset_pin") }}
                         </button>
                     </div>
                 </form>
