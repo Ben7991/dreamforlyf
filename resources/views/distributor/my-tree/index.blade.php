@@ -17,17 +17,29 @@
 
     <div class="container-fluid p-0 mb-3">
         <div class="row">
-            <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
+            <div class="col-12 col-md-4 col-xl-3 mb-2">
                 @php $firstSummaryHeading = __("total_referral"); @endphp
                 <x-model-summary :title="$firstSummaryHeading" icon="person-plus" :number="$totalReferrals" class="bg-main" />
             </div>
-            <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
+            <div class="col-12 col-md-4 col-xl-3 mb-2">
                 @php $secondSummaryHeading = __("total_left_bv"); @endphp
-                <x-model-summary :title="$secondSummaryHeading" icon="filter-left" :number="number_format($totalLeftLeg)" class="bg-tertiary" />
+                <x-model-summary :title="$secondSummaryHeading" icon="filter-left" :number="number_format($totalLeftBv)" class="bg-tertiary" />
             </div>
-            <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
+            <div class="col-12 col-md-4 col-xl-3 mb-2">
                 @php $thirdSummaryHeading = __("total_right_bv"); @endphp
-                <x-model-summary :title="$thirdSummaryHeading" icon="filter-right" :number="number_format($totalRightLeg)" class="bg-other" />
+                <x-model-summary :title="$thirdSummaryHeading" icon="filter-right" :number="number_format($totalRightBv)" class="bg-other" />
+            </div>
+            <div class="col-12 col-md-4 col-xl-3 mb-2">
+                @php $thirdSummaryHeading = __("remaining_bv_to_pay"); @endphp
+                <x-model-summary :title="$thirdSummaryHeading" icon="circle-half" :number="number_format($paid_bv)" class="bg-secondary" />
+            </div>
+            <div class="col-12 col-md-4 col-xl-3 mb-2">
+                @php $thirdSummaryHeading = __("left_dist"); @endphp
+                <x-model-summary :title="$thirdSummaryHeading" icon="people" :number="number_format($leftDistributors)" class="bg-orange" />
+            </div>
+            <div class="col-12 col-md-4 col-xl-3 mb-2">
+                @php $thirdSummaryHeading = __("right_dist"); @endphp
+                <x-model-summary :title="$thirdSummaryHeading" icon="people" :number="number_format($rightDistributors)" class="bg-green" />
             </div>
         </div>
     </div>
