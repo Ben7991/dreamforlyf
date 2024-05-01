@@ -12,6 +12,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\DistributorRequest;
 use App\Http\Requests\Admin\EditDistributorRequest;
 use App\Mail\AccountRegistration;
+use App\Mail\ResetWithdrawalPin;
 use App\Models\BonusWithdrawal;
 use App\Models\BonusWithdrawalStatus;
 use App\Models\Distributor;
@@ -30,9 +31,11 @@ use App\Models\Upline;
 use App\Models\User;
 use App\Models\UserType;
 use App\Utility\PasswordGenerator;
+use App\Utility\PinGenerator;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 
 class DistributorController extends Controller
@@ -387,6 +390,33 @@ class DistributorController extends Controller
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
+            ]);
+        }
+    }
+
+    public function reset_withdrawal_pin($locale, $id) {
+        try {
+            $user = User::findOrFail($id);
+            $distributor = $user->distributor;
+
+            $generatedPin = PinGenerator::generate();
+            $distributor->code = Hash::make($generatedPin);
+            $distributor->save();
+
+            Mail::to($user->email)->send(
+                new ResetWithdrawalPin($user->name, $user->email, $generatedPin)
+            );
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Successfully reset pin"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => $e->getMessage()
+                //"message" => "Something went wrong, please contact developer"
             ]);
         }
     }
