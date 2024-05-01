@@ -140,6 +140,11 @@
                     <a href="/{{ App::currentLocale() }}/admin/stockists" class="drawer-link rounded {{ $title == "Stockists" ? 'active' : '' }}">
                         <i class="bi bi-person-gear"></i> {{ __("stockists") }}
                     </a>
+                    <hr>
+
+                    <a href="/{{ App::currentLocale() }}/admin/analytics" class="drawer-link rounded {{ $title == "Analytics" ? 'active' : '' }}">
+                        <i class="bi bi-pie-chart-fill"></i> {{ __("analytics") }}
+                    </a>
                 </div>
             </aside>
             <section class="content-main">
