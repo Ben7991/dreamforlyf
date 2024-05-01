@@ -18,6 +18,12 @@ final class BvCycle
             if (self::isAccountMaintained($distributor)) {
                 self::incrementBvPoint($upline, $leg, $point);
 
+                if ($leg === "1st") {
+                    $upline->left_leg_count++;
+                } else if ($leg === "2nd") {
+                    $upline->right_leg_count++;
+                }
+
                 self::rankAward($upline);
                 BinaryBonus::distributeBonus($upline);
             }
