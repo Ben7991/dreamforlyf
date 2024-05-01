@@ -52,7 +52,7 @@ Route::get("/welcome", function() {
 });
 
 Route::prefix("{locale}")->group(function() {
-    Route::middleware(['internationalize', "user.loggedIn"])->group(function() {
+    Route::middleware(['internationalize'])->group(function() {
         Route::get("", [HomeController::class, "index"]);
         Route::get("about-us", [HomeController::class, "about_us"]);
         Route::get("opportunity", [HomeController::class, "opportunity"]);
@@ -85,6 +85,10 @@ Route::post("/profile/image-change", [AuthController::class, "image_change"])->m
 Route::prefix("{locale}/admin")->group(function() {
     Route::middleware(["internationalize", "auth", "user.admin"])->group(function() {
         Route::get("", [AdminController::class, "index"]);
+        Route::get("announce", [AdminController::class, "announcement"]);
+        Route::post("announce", [AdminController::class, "store_announcement"]);
+        Route::delete("announce/{id}", [AdminController::class, "remove_announcement"]);
+
         Route::get("profile", [AdminController::class, "profile"]);
         Route::post("profile/personal-information", [AuthController::class, "personal_information"]);
         Route::post("profile/password-change", [AuthController::class, "password_change"]);
@@ -134,6 +138,7 @@ Route::prefix("{locale}/admin")->group(function() {
             "destroy", "show",
         ]);
 
+        Route::put("distributors/{id}/reset-withdrawal-pin", [AdminDistributorController::class, "reset_withdrawal_pin"]);
         Route::post("distributors/bv-reset/dollar", [AdminDistributorController::class, "bv_reset"]);
         Route::post("distributors/{id}/wallet", [AdminDistributorController::class, "wallet"]);
         Route::resource("distributors", AdminDistributorController::class)->except([ "destroy" ]);
@@ -156,8 +161,14 @@ Route::prefix("{locale}/admin")->group(function() {
  * all distributors routes
  */
 Route::prefix("{locale}/distributor")->group(function() {
-    Route::middleware(["internationalize", "auth", "user.distributor"])->group(function() {
+    Route::middleware(["internationalize", "auth", "user.distributor", "code.ethics"])->group(function() {
         Route::get("", [DistributorController::class, "index"]);
+        Route::withoutMiddleware("code.ethics")->group(function() {
+            Route::get("code-ethics", [DistributorController::class, "code_ethics"]);
+            Route::post("code-ethics", [DistributorController::class, "read_code_ethics"]);
+        });
+
+        Route::get("ethics", [DistributorController::class, "ethics"]);
         Route::get("referred-distributors", [DistributorController::class, "referred_distributors"]);
 
         Route::prefix("profile")->group(function() {
@@ -214,6 +225,7 @@ Route::prefix("{locale}/distributor")->group(function() {
 Route::prefix("{locale}/stockist")->group(function() {
     Route::middleware(["auth", "user.stockist", "internationalize"])->group(function() {
         Route::get("", [StockistController::class, "index"]);
+
         Route::get("profile", [StockistController::class, "profile"]);
         Route::post("profile/personal-information", [AuthController::class, "personal_information"]);
         Route::post("profile/password-change", [AuthController::class, "password_change"]);
