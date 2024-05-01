@@ -63,7 +63,7 @@
                             </div>
                             <div class="col-12 col-md-4 col-xxl-3">
                                 <label for="email">Email</label>
-                                <input type="email" id="email" class="form-control" value="{{ Auth::user()->email }}" readonly>
+                                <input type="email" id="email" name="email" class="form-control" value="{{ Auth::user()->email }}">
                             </div>
                         </div>
                         <button class="btn btn-success">

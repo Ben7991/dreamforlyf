@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
 use App\Mail\ResetPassword;
+use App\Models\CodeEthics;
 use App\Models\User;
+use App\Models\UserType;
 use App\Utility\PasswordGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,7 +43,13 @@ class AuthController extends Controller
                     ]);
                 }
                 else if (Auth::user()->role === 'DISTRIBUTOR') {
-                    return redirect()->intended("/$locale/distributor")->with([
+                    $path = "/$locale/distributor";
+
+                    if (Auth::user()->distributor->code_ethics === CodeEthics::PENDING->name) {
+                        $path = "/$locale/distributor/code-ethics";
+                    }
+
+                    return redirect()->intended($path)->with([
                         'class' => 'success',
                         'message' => 'You have logged-in successfully'
                     ]);
@@ -211,11 +219,17 @@ class AuthController extends Controller
         $id = Auth::id();
         $currentUser = User::find($id);
         $validated = $request->validate([
-            "name" => "bail|required"
+            "name" => "bail|required",
+            "email" => "nullable|email"
         ]);
 
         try {
             $currentUser->name = $validated["name"];
+
+            if ($currentUser->role === UserType::ADMIN->name || $currentUser->role === UserType::STOCKIST->name) {
+                $currentUser->email = $validated["email"];
+            }
+
             $currentUser->save();
 
             return redirect()->back()->with([
@@ -226,6 +240,7 @@ class AuthController extends Controller
         catch(\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
+                //"message" => $e->getMessage()
                 "message" => "Something went wrong, please contact developer for assistance"
             ]);
         }
