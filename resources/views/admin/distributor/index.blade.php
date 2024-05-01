@@ -29,11 +29,6 @@
         <div class="card-header bg-white d-block d-md-flex align-items-center justify-content-between p-3">
             <h5 class="mb-2 mb-md-0">{{ __("available") }}</h5>
 
-            <form action="/{{ App::currentLocale() }}/admin/distributors/bv-reset/dollar" method="POST">
-                @csrf
-                <button type="submit" class="btn btn-success">Reset BV & Dollar</button>
-            </form>
-
             <a href="/{{ App::currentLocale() }}/admin/distributors/create" class="btn btn-link">
                 {{ __("add_distributor") }} <i class="bi bi-arrow-right-short"></i>
             </a>
