@@ -97,8 +97,8 @@ class HomeController extends Controller
         }
         catch(\Exception $e) {
             return redirect()->back()->with([
-                // "message" => "Something went wrong",
-                "message" => $e->getMessage(),
+                "message" => "Something went wrong",
+                // "message" => $e->getMessage(),
                 "class" => "danger"
             ]);
         }
