@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Distributor;
 
 use App\BusinessLogic\BvCycle;
+use App\BusinessLogic\LegCounter;
 use App\BusinessLogic\PersonalBonus;
 use App\BusinessLogic\UpgradeBonus;
 use App\Http\Controllers\Controller;
@@ -18,6 +19,7 @@ use App\Models\Stockist;
 use App\Models\UpgradeHistory;
 use App\Models\UpgradePackage;
 use App\BusinessLogic\PoolBonus as BusinessPoolBonus;
+use App\Models\CodeEthics;
 use App\Models\PoolBonus;
 use App\Models\PoolBonusStatus;
 use App\Utility\GlobalValues;
@@ -44,6 +46,10 @@ class DistributorController extends Controller
             "totalOrders" => Order::where("distributor_id", $currentUser->distributor->id)->count(),
             "remainingDays" => $status ? $expiringDate->diffInDays($currentDate) : "-" . $expiringDate->diffInDays($currentDate),
         ]);
+    }
+
+    public function code_ethics() {
+        return view("distributor.code-ethics");
     }
 
     public function ranks() {
@@ -454,5 +460,26 @@ class DistributorController extends Controller
         }
 
         return $referredDistributors;
+    }
+
+
+    public function read_code_ethics(Request $request, $locale) {
+        try {
+            $distributor = Auth::user()->distributor;
+            $distributor->code_ethics = CodeEthics::READ->name;
+            $distributor->save();
+
+            return redirect("/$locale/distributor");
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => "Something went wrong"
+            ]);
+        }
+    }
+
+    public function ethics() {
+        return view("distributor.ethics");
     }
 }
