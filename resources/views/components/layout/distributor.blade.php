@@ -136,12 +136,27 @@
                 </div>
             </aside>
             <section class="content-main">
-                @if (session()->get("isWithdrawalDay") === true)
+                @if (session()->get("isWithdrawalDay") === true && session()->get("announcement"))
+                    <div class="alert alert-success">
+                        <p class="mt-1 mb-0 fs-5"><marquee class="m-0">{{ __("withdrawal_notice") }} {{ session()->get("announcement") }}</marquee></p>
+                    </div>
+                @elseif (session()->get("isWithdrawalDay") === true)
                     <div class="alert alert-success">
                         <p class="mt-1 mb-0 fs-5"><marquee class="m-0">{{ __("withdrawal_notice") }}</marquee></p>
                     </div>
+                @elseif (session()->get("announcement"))
+                    <div class="alert alert-success">
+                        <p class="mt-1 mb-0 fs-5"><marquee class="m-0">{{ session()->get("announcement") }}</marquee></p>
+                    </div>
                 @endif
                 {{ $slot }}
+
+                <footer class="p-3 bg-light rounded mt-5">
+                    <div class="container-fluid p-0 text-center d-md-flex justify-content-between">
+                        <p class="m-md-0">&copy; {{ __("footer_copyright") }}</p>
+                        <a href="/{{ App::currentLocale() }}/distributor/ethics">Code of Ethics</a>
+                    </div>
+                </footer>
             </section>
         </section>
     </main>
