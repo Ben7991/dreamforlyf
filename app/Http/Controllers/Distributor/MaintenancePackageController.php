@@ -49,6 +49,12 @@ class MaintenancePackageController extends Controller
             $distributor = Auth::user()->distributor;
             $portfolio = $distributor->portfolio;
 
+            if ($portfolio->current_balance < $existingPackage->total_products) {
+                return response()->json([
+                    "message" => "Insufficient balance to complete the process"
+                ], 400);
+            }
+
             $currentDate = new Carbon();
             $expiringDate = Carbon::parse($distributor->next_maintenance_date);
             $nextDate = null;

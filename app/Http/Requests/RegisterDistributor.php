@@ -33,7 +33,8 @@ class RegisterDistributor extends FormRequest
             "wave" => "bail|required|regex:/^[0-9]+$/",
             "leg" => "required",
             "type" => "required",
-            "stockist_id" => "required"
+            "stockist_id" => "required",
+            "upline_id_email" => "required"
         ];
     }
 }

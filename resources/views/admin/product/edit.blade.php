@@ -33,11 +33,19 @@
                     </div>
                     <img src="{{ asset(str_replace("public", "storage", $product->image)) }}" alt="Uploaded product image" class="uploaded-image">
                     <input type="hidden" value="{{ $product->image }}">
+                    <input type="file" id="image" hidden>
+                    <input type="hidden" id="token" value="{{ csrf_token() }}">
                 </div>
             </div>
             <div class="col-12 col-md-8 col-xxl-9">
                 <div class="border bg-white rounded shadow-sm p-3">
-                    <h5 class="mb-3">{{ __("product_details") }}</h5>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="m-0">{{ __("product_details") }}</h5>
+                        <div class="spinner-border d-none" role="status" id="image-spinner">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <input type="hidden" value="{{ $product->id }}">
+                    </div>
 
                     <ul>
                         @foreach($errors->all() as $message)
@@ -45,7 +53,8 @@
                         @endforeach
                     </ul>
 
-                    <form action="/{{App::getLocale()}}/admin/products/{{$product->id}}" method="POST" enctype="multipart/form-data" id="form">
+                    <form action="/{{App::getLocale()}}/admin/products/{{$product->id}}" method="POST"
+                        enctype="multipart/form-data" id="form">
                         @csrf
                         @method("PUT")
 
@@ -69,7 +78,6 @@
                             <input type="number" name="bv_point" id="bv_point" class="form-control" value="{{ $product->bv_point }}">
                             <small class="text-danger d-none"></small>
                         </div>
-                        <input type="file" name="image" id="image" class="form-control d-none">
                         <div class="form-group mb-3">
                             <label for="editor_en">{{ __("enlish") }} Description</label>
                             <div id="editor_en"></div>
@@ -88,7 +96,7 @@
                                 <option value="out-of-stock" {{ $product->status === "out-of-stock" ? "selected" : "" }}>Out of stock</option>
                             </select>
                         </div>
-                        <button class="btn btn-success">
+                        <button class="btn btn-success" type="submit">
                             <i class="bi bi-save"></i> {{ __("save") }}
                         </button>
                     </form>

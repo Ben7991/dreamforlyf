@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-enum TransactionalStatus {
+enum TransactionPortfolio {
     case CURRENT_BALANCE;
     case PERSONAL_WALLET;
     case LEADERSHIP_WALLET;
@@ -22,6 +22,11 @@ enum TransactionType {
     case DEPOSIT;
 }
 
+enum TransactionStatus {
+    case COMPLETE;
+    case REVERSED;
+}
+
 class Transaction extends Model
 {
     use HasFactory;
@@ -30,6 +35,10 @@ class Transaction extends Model
         "distributor_id",
         "amount",
         "portfolio",
-        "transaction_type"
+        "transaction_type",
     ];
+
+    public function distributor() {
+        return $this->belongsTo(Distributor::class);
+    }
 }

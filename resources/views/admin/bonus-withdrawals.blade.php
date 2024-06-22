@@ -54,6 +54,7 @@
                             <th>{{ __("amount_paid") }}</th>
                             <th>{{ __("distributor") }}</th>
                             <th>{{ __("distributor_id") }}</th>
+                            <th>{{ __("country") }}</th>
                             <th>{{ __("city") }}</th>
                             <th>{{ __("wave_number") }}</th>
                             <th>Action</th>
@@ -69,7 +70,7 @@
                                 <td>{{ $detail->distributor->user->name }}</td>
                                 <td>{{ $detail->distributor->user->id }}</td>
                                 <td>{{ $detail->distributor->country }}</td>
-                                <td>Accra</td>
+                                <td>{{ $detail->distributor->city }}</td>
                                 <td>{{ $detail->distributor->wave }}</td>
                                 <td>
                                     @if($detail->status === "PENDING")

@@ -42,10 +42,23 @@
 
                     <div class="bg-white">
                         <h5 class="mb-3 mt-0">{{ __("product_description") }}</h5>
-                        <p class="text-secondary">{{ $product->description }}</p>
+                        <input type="hidden" value="{{ $product->description }}" id="desc_product">
+                        <div class="d-none">
+                            <div id="editor"></div>
+                        </div>
+                        <p class="text-secondary" id="desc_prod"></p>
                     </div>
                 </div>
             </div>
     </section>
 
+    @push("scripts")
+        <script>
+            let description = new Quill("#editor", { theme: "snow" });
+            let delta = JSON.parse(document.querySelector("#desc_product").value);
+            description.setContents(delta);
+
+            document.querySelector("#desc_prod").textContent = description.getText();
+        </script>
+    @endpush
 </x-layout.home>

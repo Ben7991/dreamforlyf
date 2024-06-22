@@ -4,9 +4,8 @@ namespace App\BusinessLogic;
 
 use App\Models\Distributor;
 use App\Models\Referral;
-use App\Models\RegistrationPackage;
 use App\Models\Transaction;
-use App\Models\TransactionalStatus;
+use App\Models\TransactionPortfolio;
 use App\Models\TransactionType;
 use App\Models\Upline;
 
@@ -63,7 +62,7 @@ final class UpgradeBonus {
         Transaction::create([
             "distributor_id" => $distributor->id,
             "amount" => $amount,
-            "portfolio" => TransactionalStatus::COMMISSION_WALLET->name,
+            "portfolio" => TransactionPortfolio::COMMISSION_WALLET->name,
             "transaction_type" => TransactionType::UPGRADE->name
         ]);
     }

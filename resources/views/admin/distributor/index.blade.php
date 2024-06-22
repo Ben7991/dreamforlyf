@@ -29,9 +29,14 @@
         <div class="card-header bg-white d-block d-md-flex align-items-center justify-content-between p-3">
             <h5 class="mb-2 mb-md-0">{{ __("available") }}</h5>
 
-            <a href="/{{ App::currentLocale() }}/admin/distributors/create" class="btn btn-link">
-                {{ __("add_distributor") }} <i class="bi bi-arrow-right-short"></i>
-            </a>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/{{ App::currentLocale() }}/admin/distributors/wallet-transfer" class="btn btn-link">
+                    {{ __("wallet_transfer") }} <i class="bi bi-arrow-right-short"></i>
+                </a>
+                <a href="/{{ App::currentLocale() }}/admin/distributors/create" class="btn btn-link">
+                    {{ __("add_distributor") }} <i class="bi bi-arrow-right-short"></i>
+                </a>
+            </div>
         </div>
         <div class="card-body p-3">
             <div class="table-responsive">

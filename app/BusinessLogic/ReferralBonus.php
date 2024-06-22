@@ -6,6 +6,7 @@ use App\Models\Referral;
 use App\Models\RegistrationPackage;
 use App\Models\Transaction;
 use App\Models\TransactionalStatus;
+use App\Models\TransactionPortfolio;
 use App\Models\TransactionType;
 use App\Models\Upline;
 
@@ -42,7 +43,7 @@ final class ReferralBonus {
             Transaction::create([
                 "amount" => $amount,
                 "distributor_id" => $distributor->id,
-                "portfolio" => TransactionalStatus::COMMISSION_WALLET->name,
+                "portfolio" => TransactionPortfolio::COMMISSION_WALLET->name,
                 "transaction_type" => TransactionType::REFERRAL->name
             ]);
 

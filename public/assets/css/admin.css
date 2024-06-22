@@ -301,6 +301,14 @@ hr {
     padding: 5px 0;
 }
 
+.nav-pills .nav-link {
+    color: var(--bs-secondary);
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--pink-main);
+}
+
 @media (min-width: 768px) {
     .main-header {
         position: static;

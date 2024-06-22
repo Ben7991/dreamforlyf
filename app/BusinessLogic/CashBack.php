@@ -5,7 +5,7 @@ namespace App\BusinessLogic;
 use App\Models\Distributor;
 use App\Models\RegistrationPackage;
 use App\Models\Transaction;
-use App\Models\TransactionalStatus;
+use App\Models\TransactionPortfolio;
 use App\Models\TransactionType;
 
 final class CashBack
@@ -22,7 +22,7 @@ final class CashBack
         Transaction::create([
             "amount" => $amount,
             "distributor_id" => $distributor->id,
-            "portfolio" => TransactionalStatus::COMMISSION_WALLET->name,
+            "portfolio" => TransactionPortfolio::COMMISSION_WALLET->name,
             "transaction_type" => TransactionType::CASH_BACK->name
         ]);
 

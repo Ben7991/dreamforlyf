@@ -22,8 +22,11 @@ use App\BusinessLogic\PoolBonus as BusinessPoolBonus;
 use App\Models\CodeEthics;
 use App\Models\PoolBonus;
 use App\Models\PoolBonusStatus;
+use App\Models\User;
+use App\Models\UserType;
 use App\Utility\GlobalValues;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -481,5 +484,56 @@ class DistributorController extends Controller
 
     public function ethics() {
         return view("distributor.ethics");
+    }
+
+    public function check_credential(Request $request, $value) {
+        $existingUser = null;
+        try {
+            $existingUser = User::where("role", UserType::DISTRIBUTOR->name)
+                                ->where("id", $value)
+                                ->orWhere("email", $value)
+                                ->firstOrFail();
+
+            $formattedLoggedInUserId = (int)substr(Auth::id(), 3);
+            $formattedExistingUserId = (int)substr($existingUser->id, 3);
+
+            if ($formattedExistingUserId < $formattedLoggedInUserId) {
+                return response()->json([
+                    "message" => "Only downlines allowed"
+                ], 500);
+            }
+
+            $upline = $existingUser->upline;
+
+            if ($upline === null) {
+                return response()->json([
+                    "message" => "$existingUser->name has space on both legs"
+                ]);
+            }
+
+            if (count($upline->distributors) === 2) {
+                return response()->json([
+                    "message" => "$existingUser->name has no space available on both legs"
+                ], 400);
+            }
+
+            $availableSpace = "";
+
+            if ($upline->distributors[0]->leg === "1st") {
+                $availableSpace = "right";
+            } else {
+                $availableSpace = "left";
+            }
+
+            return response()->json([
+                "message" => "$existingUser->name has space available on $availableSpace"
+            ]);
+        }
+        catch(Exception $e) {
+            return response()->json([
+                "message" => "User doesn't exist",
+                "data" => $e->getMessage()
+            ], 400);
+        }
     }
 }

@@ -25,7 +25,8 @@ use App\Models\Referral;
 use App\Models\ReferralLeg;
 use App\Models\Stockist;
 use App\Models\Transaction;
-use App\Models\TransactionalStatus;
+use App\Models\TransactionPortfolio;
+use App\Models\TransactionStatus;
 use App\Models\TransactionType;
 use App\Models\Upline;
 use App\Models\User;
@@ -64,10 +65,10 @@ class DistributorController extends Controller
             $user = User::findOrFail($id);
             $distributor = $user->distributor;
 
-            $personalWallet = Transaction::where("portfolio", TransactionalStatus::PERSONAL_WALLET->name)
+            $personalWallet = Transaction::where("portfolio", TransactionPortfolio::PERSONAL_WALLET->name)
                 ->where("distributor_id", $distributor->id)->sum("amount");
 
-            $leadershipWallet = Transaction::where("portfolio", TransactionalStatus::LEADERSHIP_WALLET->name)
+            $leadershipWallet = Transaction::where("portfolio", TransactionPortfolio::LEADERSHIP_WALLET->name)
                 ->where("distributor_id", $distributor->id)->sum("amount");
 
             $totalWithdrawals = BonusWithdrawal::where("distributor_id", $distributor->id)->sum("amount");
@@ -233,8 +234,8 @@ class DistributorController extends Controller
             Transaction::create([
                 "amount" => $validated["wallet"],
                 "distributor_id" => $user->distributor->id,
-                "portfolio" => TransactionalStatus::CURRENT_BALANCE->name,
-                "transaction_type" => TransactionType::DEPOSIT->name
+                "portfolio" => TransactionPortfolio::CURRENT_BALANCE->name,
+                "transaction_type" => TransactionType::DEPOSIT->name,
             ]);
 
             return redirect()->back()->with([
@@ -417,6 +418,47 @@ class DistributorController extends Controller
                 "class" => "danger",
                 "message" => $e->getMessage()
                 //"message" => "Something went wrong, please contact developer"
+            ]);
+        }
+    }
+
+    public function wallet_transfer() {
+        $transfers = Transaction::where("transaction_type", TransactionType::DEPOSIT->name)
+                        ->orderBy("id", "desc")->get();
+        $totalAmount = 0;
+
+        foreach($transfers as $transfer) {
+            if ($transfer->status === TransactionStatus::COMPLETE->name) {
+                $totalAmount += $transfer->amount;
+            }
+        }
+
+        return view("admin.distributor.wallet-transfer", [
+            "transfers" => $transfers,
+            "totalAmountTransfered" => '$ '. number_format($totalAmount, 2),
+            "totalTransfer" => count($transfers)
+        ]);
+    }
+
+    public function reverse_transfer($locale, $id) {
+        try {
+            $transaction = Transaction::findOrFail($id);
+            $transaction->status = TransactionStatus::REVERSED->name;
+            $transaction->save();
+
+            $portfolio = $transaction->distributor->portfolio;
+            $portfolio->current_balance -= $transaction->amount;
+            $portfolio->save();
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Successfully reversed wallet transfer"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => "Something went wrong"
             ]);
         }
     }

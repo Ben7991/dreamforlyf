@@ -154,7 +154,7 @@
                 <footer class="p-3 bg-light rounded mt-5">
                     <div class="container-fluid p-0 text-center d-md-flex justify-content-between">
                         <p class="m-md-0">&copy; {{ __("footer_copyright") }}</p>
-                        <a href="/{{ App::currentLocale() }}/distributor/ethics">Code of Ethics</a>
+                        <a href="/{{ App::currentLocale() }}/distributor/ethics">Code of Ethics <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </footer>
             </section>

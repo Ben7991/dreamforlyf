@@ -9,6 +9,7 @@ use App\Models\Stockist;
 use App\Models\User;
 use App\Models\UserType;
 use App\Utility\PasswordGenerator;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -142,6 +143,48 @@ class StockistController extends Controller
             return redirect()->back()->with([
                 "message" => "Something went wrong",
                 "class" => "danger"
+            ]);
+        }
+    }
+
+    public function transfer() {
+        $amountTransfered = DB::table("stockist_transfer_history")->where("status", "COMPLETE")->sum("amount");
+        $transfers = DB::table("stockist_transfer_history")
+                ->join("stockists", "stockist_transfer_history.stockist_id", "stockists.id")
+                ->select("stockist_transfer_history.id as id", "stockist_transfer_history.date_added as date_added",
+                "stockist_transfer_history.amount as amount", "stockists.code as code", "stockist_transfer_history.status as status")
+                ->get();
+
+        return view("admin.stockist.wallet-transfer", [
+            "transfers" => $transfers,
+            "totalAmountTransfered" => "$" . number_format($amountTransfered, 2),
+            "totalTransfer" => count($transfers)
+        ]);
+    }
+
+    public function reverse_transfer($locale, $id) {
+        try {
+            $result = DB::table("stockist_transfer_history")->find($id);
+
+            if ($result === null) {
+                throw new Exception("Resource not found");
+            }
+
+            $stockist = Stockist::find($result->stockist_id);
+            $stockist->wallet -= (float)$result->amount;
+            $stockist->save();
+            DB::table("stockist_transfer_history")->where("id", $id)->update(["status" => "REVERSE"]);
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Reversed transfer successfully"
+            ]);
+        }
+        catch(\Exception $e) {
+            dd($e->getMessage());
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => "Something went wrong"
             ]);
         }
     }

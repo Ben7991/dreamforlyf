@@ -79,15 +79,24 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
-                <h5>{{ __("product_description") }}</h5>
-                <p>{{ $product->description }}</p>
+            <h5 class="mb-3 mt-0">{{ __("product_description") }}</h5>
+            <input type="hidden" value="{{ $product->description }}" id="desc_product">
+            <div class="d-none">
+                <div id="editor"></div>
             </div>
+            <p class="text-secondary" id="desc_prod"></p>
         </div>
     </div>
 
     @push("scripts")
         <script src="{{ asset("assets/js/distributor/reset-maintenance-store.js") }}"></script>
         <script src="{{ asset("assets/js/distributor/product.js") }}"></script>
+        <script>
+            let description = new Quill("#editor", { theme: "snow" });
+            let delta = JSON.parse(document.querySelector("#desc_product").value);
+            description.setContents(delta);
+
+            document.querySelector("#desc_prod").textContent = description.getText();
+        </script>
     @endpush
 </x-layout.distributor>

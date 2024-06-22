@@ -9,8 +9,7 @@ use App\Mail\WithdrawalRequest;
 use App\Models\BonusWithdrawal;
 use App\Models\BonusWithdrawalStatus;
 use App\Models\Transaction;
-use App\Models\TransactionalStatus;
-use Carbon\Carbon;
+use App\Models\TransactionPortfolio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +24,7 @@ class PortfolioController extends Controller
         $distributor = $currentUser->distributor;
         $portfolio = $distributor->portfolio;
 
-        $personalWallet = Transaction::where("portfolio", TransactionalStatus::PERSONAL_WALLET->name)
+        $personalWallet = Transaction::where("portfolio", TransactionPortfolio::PERSONAL_WALLET->name)
                 ->where("distributor_id", $distributor->id)->sum("amount");
 
         $upline = $currentUser->upline;

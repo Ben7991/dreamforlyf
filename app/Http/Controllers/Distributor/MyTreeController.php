@@ -62,44 +62,104 @@ class MyTreeController extends Controller
 
     public function create() {
         $packages = RegistrationPackage::all();
+        $email = "";
+        $loggedInUpline = Auth::user()->upline;
+
+        if ($loggedInUpline === null || count($loggedInUpline->distributors) < 2) {
+            $email = Auth::user()->email;
+        }
 
         return view("distributor.my-tree.create", [
             "packages" => $packages,
-            "stockists" => Stockist::all()
+            "stockists" => Stockist::all(),
+            "email" => $email
         ]);
     }
 
     public function register(RegisterDistributor $request, $locale) {
         $validated = $request->validated();
         $generatedPassword = PasswordGenerator::generate();
-        $currentUser = Auth::user();
-        $upline = $currentUser->upline;
-
-        if ($upline === null) {
-            $upline = Upline::create([
-                "user_id" => $currentUser->id
-            ]);
-        }
-
-        $referer = $upline;
+        $upline = $referer = $portfolio = null;
+        $leg = $validated["leg"];
+        $uplineSelectedLeg = "";
 
         try {
-            if ($upline->isLegOccupied($validated["leg"]) && count($upline->distributors) < 2) {
+            $user = User::where("role", UserType::DISTRIBUTOR->name)
+                                ->where("id", $validated["upline_id_email"])
+                                ->orWhere("email", $validated["upline_id_email"])
+                                ->first();
+
+            if ($user === null) {
                 return redirect()->back()->with([
-                    "class" => "danger",
-                    "message" => "Leg already occupied"
+                    "message" => "Choosen upline doesn't exist",
+                    "class" => "danger"
                 ]);
             }
 
-            $leg = $validated["leg"];
-            $uplineSelectedLeg = $leg;
+            $formattedLoggedInUserId = (int)substr(Auth::id(), 3);
+            $formattedExistingUserId = (int)substr($user->id, 3);
 
-            if (count($upline->distributors) === 2) {
-                $upline = $upline->nextUpline($validated["leg"]);
-                $leg = $upline->nextLeg();
+            if ($formattedExistingUserId < $formattedLoggedInUserId) {
+                return redirect()->back()->with([
+                    "message" => "Only downlines allowed",
+                    "class" => "danger"
+                ]);
             }
 
-            $portfolio = $currentUser->distributor->portfolio;
+            if ($user->id === Auth::id()) { // new member becoming an upline for the registering distributor
+                $upline = $user->upline;
+
+                if ($upline === null) {
+                    $upline = Upline::create([
+                        "user_id" => $user->id
+                    ]);
+                }
+
+                if ($upline->isLegOccupied($leg)) {
+                    return redirect()->back()->with([
+                        "class" => "danger",
+                        "message" => "Leg already occupied"
+                    ]);
+                }
+
+                if (count($upline->distributors) === 2) {
+                    return redirect()->back()->with([
+                        "class" => "danger",
+                        "message" => "Both legs are occupied"
+                    ]);
+                }
+
+                $referer = $upline;
+                $portfolio = $user->distributor->portfolio;
+                $uplineSelectedLeg = $leg;
+            } else { // continue with referer choosing who becomes a new upline for the new distributor
+                $referer = Auth::user()->upline;
+                $upline = $user->upline;
+                $portfolio = Auth::user()->distributor->portfolio;
+
+                if ($upline === null) {
+                    $upline = Upline::create([
+                        "user_id" => $user->id
+                    ]);
+                }
+
+                if (count($upline->distributors) === 2) {
+                    return redirect()->back()->with([
+                        "class" => "danger",
+                        "message" => "Both legs are occupied"
+                    ]);
+                }
+
+                if ($upline->isLegOccupied($leg)) {
+                    return redirect()->back()->with([
+                        "class" => "danger",
+                        "message" => "Leg already occupied"
+                    ]);
+                }
+
+                $uplineSelectedLeg = $user->distributor->findDistributorLeg($referer);
+            }
+
             $existingRegistrationPackage = RegistrationPackage::findOrFail($validated["package_id"]);
 
             if ($portfolio->current_balance < $existingRegistrationPackage->price) {
@@ -132,8 +192,7 @@ class MyTreeController extends Controller
         catch(\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
-                "message" => $e->getMessage()
-                //"message" => "Something went wrong, please contact admin for assistance"
+                "message" => "Something went wrong, ensure upline id/email detail is accurate"
             ]);
         }
     }

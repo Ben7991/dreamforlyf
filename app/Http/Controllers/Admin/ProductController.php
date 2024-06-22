@@ -7,9 +7,11 @@ use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Models\PackageType;
 use App\Models\Product;
+use Exception;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Psy\Readline\Hoa\Console;
 
 class ProductController extends Controller
 {
@@ -76,15 +78,6 @@ class ProductController extends Controller
             $product->price = (float)$validated["price"];
             $product->status = $validated["status"];
 
-            if (array_key_exists("image", $validated) && $product->image !== null) {
-                Storage::delete($product->image);
-                $imagePath = $request->file("image")->store("public/products");
-                $product->image = $imagePath;
-            } else {
-                $imagePath = $request->file("image")->store("public/products");
-                $product->image = $imagePath;
-            }
-
             $product->save();
 
             return redirect("/$locale/admin/products")->with([
@@ -136,4 +129,19 @@ class ProductController extends Controller
             ]);
         }
     }
+
+    /**public function change_image(Request $request, $locale, $id) {
+        $validated = $request->validate([
+            "image" => "required|image"
+        ]);
+
+        try {
+
+        }
+        catch(Exception $e) {
+            return response()->json([
+                "message" => "Something went wrong"
+            ], 500);
+        }
+    }*/
 }

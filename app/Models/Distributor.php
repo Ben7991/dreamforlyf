@@ -45,4 +45,22 @@ class Distributor extends Model
         $this->registration_package_id = $package->id;
         $this->save();
     }
+
+    public function findDistributorLeg(Upline $upline) {
+        $leg = "";
+        $nextUpline = $this->upline;
+
+        while($nextUpline !== null) {
+            $currentDistirbutor = $nextUpline->user->distributor;
+
+            if ($nextUpline->id === $upline->id) {
+                $leg = $currentDistirbutor->leg;
+                break;
+            }
+
+            $nextUpline = $currentDistirbutor->upline;
+        }
+
+        return $leg;
+    }
 }

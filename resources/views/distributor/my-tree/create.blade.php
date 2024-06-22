@@ -17,10 +17,15 @@
     <x-go-back path="/{{ App::currentLocale() }}/distributor/my-tree" :title="$goBackHeading"/>
 
     <div class="container-fluid p-3 p-xxl-4 bg-white rounded border shadow-sm mb-4">
-        <h5 class="mb-3">{{ __("provide_distributor_details") }}</h5>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="m-0">{{ __("provide_distributor_details") }}</h5>
+            <small class="border border-success text-success py-1 px-2 rounded">NEW UPDATE</small>
+        </div>
         <ul>
-            <li>If you don't have a wave number, we advice you speak to your upline so that you can use his wave number in-case he/she has. If not we advice you get one since all bonus to be paid will require a wave number</li>
+            <li>{{ __("provide_distributor_details_desc1") }}</li>
+            <li>{{ __("provide_distributor_details_desc2") }}</li>
         </ul>
+        <input type="hidden" value="{{ csrf_token() }}" id="token">
 
         <ul>
             @foreach($errors->all() as $message)
@@ -73,6 +78,11 @@
                     <label for="wave">{{ __("wave_number") }}</label>
                     <input type="tel" name="wave" id="wave" class="form-control">
                     <small class="text-danger d-none"></small>
+                </div>
+                <div class="col-12 col-md-6 col-xl-4 col-xxl-3 mb-3">
+                    <label for="upline_id_email">{{ __("upline_id_email") }}</label>
+                    <input type="tel" name="upline_id_email" id="upline_id_email" class="form-control" value="{{ $email }}">
+                    <small></small>
                 </div>
                 <div class="col-12 col-md-6 col-xl-4 col-xxl-3 mb-3">
                     <label for="leg">{{ __("leg") }}</label>

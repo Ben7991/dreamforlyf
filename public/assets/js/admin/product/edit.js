@@ -135,36 +135,6 @@ btnFileUpload.addEventListener("click", () => {
     imageInput.click();
 });
 
-let isUploadInputValidated = hiddenInput.value === "" ? false : true;
-imageInput.addEventListener("change", function () {
-    const files = this.files;
-    const acceptMime = ["image/jpg", "image/jpeg", "image/png"];
-
-    if (files.length === 0) {
-        showAlert("Image is required");
-        fileInput.value = "";
-        isUploadInputValidated = false;
-    }
-    if (!acceptMime.includes(files[0].type)) {
-        showAlert("Only image is allowed");
-        fileInput.value = "";
-        isUploadInputValidated = false;
-    } else {
-        displayUploadedImage(files[0]);
-        isUploadInputValidated = true;
-    }
-});
-
-function hideImage() {
-    const notice = document.querySelector(".upload-notice");
-
-    if (notice.classList.contains("d-none")) {
-        document.querySelector(".uploaded-image").classList.add("d-none");
-        document.querySelector(".uploaded-image").src = value;
-        notice.classList.remove("d-none");
-    }
-}
-
 function displayUploadedImage(file) {
     if (!file) {
         return;
@@ -173,12 +143,56 @@ function displayUploadedImage(file) {
     document.querySelector(".upload-notice").classList.add("d-none");
 
     const fileReader = new FileReader();
-    fileReader.readAsDataURL(file);
+
     fileReader.addEventListener("load", function () {
         document.querySelector(".uploaded-image").src = this.result;
         document.querySelector(".uploaded-image").classList.remove("d-none");
     });
+
+    fileReader.readAsDataURL(file);
 }
+
+// function sendImage(file) {
+//     const token = document.querySelector("#token").value;
+//     const spinner = document.querySelector("#image-spinner");
+//     spinner.classList.remove('d-none');
+
+//     const productId = spinner.nextElementSibling.value;
+
+//     $.ajax({
+//         url: `/products/${productId}/image`,
+//         method: "PUT",
+//         data: {
+//             "image": file
+//         },
+//         headers: {
+//             "Content Type": "multipart/form-data",
+//             "X-CSRF-TOKEN": token
+//         },
+//         success(data, status, xhr) {
+//             console.log(data);
+//         },
+//         error(xhr, status, errorThrown) {
+//             console.log(xhr);
+//         }
+//     })
+// }
+
+imageInput.addEventListener("change", function () {
+    const files = this.files;
+    const acceptMime = ["image/jpg", "image/jpeg", "image/png"];
+
+    if (files.length === 0) {
+        showAlert("Image is required");
+    }
+
+    if (!acceptMime.includes(files[0].type.toString())) {
+        showAlert("Only image is allowed");
+    } else {
+        displayUploadedImage(files[0]);
+        // sendImage(files[0]);
+    }
+});
 
 const form = document.querySelector("#form");
 
@@ -186,7 +200,6 @@ form.addEventListener("submit", function (event) {
     if (
         !isNameInputValidated ||
         !isQuantityValidated ||
-        !isUploadInputValidated ||
         !isPriceValidated ||
         !isBvPointValidated
     ) {
@@ -196,10 +209,6 @@ form.addEventListener("submit", function (event) {
         checkInput(quantityInput, isQuantityValidated, quantityError);
         checkInput(priceInput, isPriceValidated, priceError);
         checkInput(bvPointInput, isBvPointValidated, bvPointError);
-
-        if (!isUploadInputValidated) {
-            showAlert("Please upload image");
-        }
     }
 
     description_fr.value = JSON.stringify(quill_fr.getContents());

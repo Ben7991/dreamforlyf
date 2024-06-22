@@ -198,6 +198,8 @@
     "suspended_users": "Utilisateurs suspendus",
     "upline": "En amont",
     "provide_distributor_details": "Fournir les détails du distributeur",
+    "provide_distributor_details_desc1": "Si vous n'avez pas de numéro d'onde, nous vous conseillons d'en parler à votre parrain afin que vous puissiez utiliser son numéro d'onde au cas où il l'aurait. Sinon, nous vous conseillons de vous en procurer un car tout bonus à payer nécessitera un numéro de vague.",
+    "provide_distributor_details_desc2": "Si vous voyez votre e-mail dans le champ de saisie Identifiant de ligne ascendante / E-mail, ne le supprimez pas car c'est la première fois que vous complétez votre arborescence de ligne descendante directe. Si ce n'est pas le cas, vous pouvez proposer votre parrain préféré aux nouveaux utilisateurs que vous souhaitez ajouter à votre équipe.",
     "cart_items": "Articles du panier",
     "no_item_description": "Aucun article dans le panier pour le moment",
     "add_to_cart": "Ajouter au panier",
@@ -216,6 +218,7 @@
     "left_leg": "La jambe gauche",
     "right_leg": "Jambe droite",
     "membership_package_type": "Type de forfait d'adhésion",
+    "upline_id_email": "Identifiant/e-mail de la ligne ascendante",
 
     "what_are_these": "Qu'est-ce que c'est",
     "current_balance_description": "Utilisé pour l'enregistrement, la commande et la maintenance",
@@ -291,10 +294,10 @@
     "read_more": "En savoir plus",
 
     "who_are_we": "Qui sommes nous",
-    "home_info_desc_1": "DREAM FOR LIFE est une grande entreprise de santé ayurvédique qui vend des suppléments à base de plantes, de la nutrition sportive, des soins personnels et des produits de bien-être.",
+    "home_info_desc_1": "DREAM FOR LIFE International est une grande entreprise de santé ayurvédique qui vend des complements alimentaires à base de plantes naturelles, de la nutrition sportive, des soins personnels et des produits de bien-être.",
     "home_info_desc_2": "Nous nous concentrons sur le développement, la fabrication, le marketing et la distribution continus pour garantir des produits de haute qualité.",
 
-    "home_about_desc": "DREAM FOR LYF s'efforce d'améliorer la vie de ses clients, partenaires et distributeurs du monde entier en proposant des produits qui favorisent le bien-être et un style de vie très enrichissant.",
+    "home_about_desc": "DREAM FOR LYF International s'efforce d'améliorer la vie de ses clients, partenaires et distributeurs du monde entier en proposant des produits qui favorisent le bien-être et un style de vie très enrichissant.",
     "home_product_desc": "Nos produits offrent les bienfaits suivants pour la santé, aident à la gestion du poids, favorisent une peau sans acné, favorisent une meilleure santé pulmonaire, assurent un passage d'air normal et plus encore.",
     "home_opportunity_desc": "Vous vous demandez en quoi consiste cette opportunité, comment faire partie de la chaîne, comment gagner de l'argent et comment vous préparer pour l'avenir? Utilisez le lien ci-dessous",
 
@@ -308,28 +311,28 @@
     "service_message": "Nous servons pour diriger et dirigeons pour servir. Le service à tous est notre credo.",
 
     "mission": "Mission",
-    "mission_message": "Aider et être à l'écoute de tous nos clients, partenaires et distributeurs à travers le monde en leur offrant des produits et des services de haute qualité et en leur donnant tout le soutien possible pour qu'ils réussissent dans cette industrie de marketing relationnel (vente directe) avec notre entreprise DREAM FOR LYF.",
+    "mission_message": "Aider et être à l'écoute de tous nos clients, partenaires et distributeurs à travers le monde en leur offrant des produits et des services de haute qualité et en leur donnant tout le soutien possible pour qu'ils réussissent dans cette industrie de marketing relationnel (vente directe) avec notre entreprise DREAM FOR LYF International.",
 
     "vision": "Vision",
     "vision_message": "Changer la vie de plus d'un milliard de personnes à travers le monde en leur permettant d'atteindre la liberté financière quitté l'état de pauvreté extrême à la richesse (matérielle, physique, morale, mentale) et rendre totalement leur famille heureuse et surtout être une source de bénédictions pour l'humanité.",
 
     "rytsh": "RYTSH",
-    "rytsh_message": "La vie et les œuvres de ces quatre grandes icônes mondiales Mahatma Gandhi, Nelson Mandela, Martin Luther King et Mère Térésa des leaders humanitaires et activiste ont beaucoup inspiré et motivé les fondateurs de DREAM FOR LYF. Leurs enseignements et leurs bonnes actions ont jeté les bases de RYTSH (Raise Yourself to Save Humanity). L'idée de donner aux autres les moyens, l'espoir et la foi de réussir est au cœur de notre activité, notre pensée et nos actions quotidienne.",
+    "rytsh_message": "La vie et les œuvres de ces quatre grandes icônes mondiales Mahatma Gandhi, Nelson Mandela, Martin Luther King et Mère Térésa des leaders humanitaires et activiste ont beaucoup inspiré et motivé les fondateurs de DREAM FOR LYF International. Leurs enseignements et leurs bonnes actions ont jeté les bases de RYTSH (Raise Yourself to Save Humanity). L'idée de donner aux autres les moyens, l'espoir et la foi de réussir est au cœur de notre activité, notre pensée et nos actions quotidienne.",
 
     "in_service": "In Service",
     "in_service_message": "Nous préconisons le concept de In-Service comme une caractéristique importante du leadership. Nos Fondateurs ont inculqué une très forte culture du service avant soi, tant chez les collaborateurs que dans le réseau. Nous pensons que servir les autres avec humilité est la véritable marque d'un leader et d'un champion.",
 
-    "faqs_question_1": "QU'EST-CE QUE DREAM FOR LYF?",
-    "faqs_answer_sec_1": "DREAM FOR LYF est une société de marketing relationnel (vente directe) qui propose une large gamme de produits dans les domaines: Compléments alimentaires ayurvédiques (à base de plantes), santé, bien-être, soins personnels via une plateforme d'e-commerce. Les produits DREAM FOR LYF sont conçus pour aider les gens à vivre en meilleure santé et à améliorer leur mode de vie et leurs moyens de subsistance. Le conglomérat multinational est basé en Inde et DREAM FOR LYF est le distributeur officiel.",
-    "faqs_answer_sec_2": "Elle a débuté ses opérations en Afrique et dans les années à venir, elle étendra ses activités de marketing relationnel (vente directe). En plus de fournir des produits de qualité, les clients DREAM FOR LYF peuvent également bénéficier de l'activité de marketing relationnel (vente directe) proposée par DREAM FOR LYF en faisant la promotion de ses produits auprès des autres (Familles, Amis et connaissances). Des millions de clients satisfaits dans plusieurs villes et pays sont devenus des distributeurs indépendants des produits DREAM FOR LYF en gagnant des commissions sur les ventes de produits.",
+    "faqs_question_1": "QU'EST-CE QUE DREAM FOR LYF International?",
+    "faqs_answer_sec_1": "DREAM FOR LYF International est une société de marketing relationnel (vente directe) qui propose une large gamme de produits dans les domaines: Compléments alimentaires ayurvédiques (à base de plantes), santé, bien-être, soins personnels via une plateforme d'e-commerce. Les produits DREAM FOR LYF International sont conçus pour aider les gens à vivre en meilleure santé et à améliorer leur mode de vie et leurs moyens de subsistance. Le conglomérat multinational est basé en Inde et DREAM FOR LYF International est le distributeur officiel.",
+    "faqs_answer_sec_2": "Elle a débuté ses opérations en Afrique et dans les années à venir, elle étendra ses activités de marketing relationnel (vente directe). En plus de fournir des produits de qualité, les clients DREAM FOR LYF International peuvent également bénéficier de l'activité de marketing relationnel (vente directe) proposée par DREAM FOR LYF International en faisant la promotion de ses produits auprès des autres (Familles, Amis et connaissances). Des millions de clients satisfaits dans plusieurs villes et pays sont devenus des distributeurs indépendants des produits DREAM FOR LYF International en gagnant des commissions sur les ventes de produits.",
 
-    "faqs_question_2": "DREAM FOR LYF EST-IL UN SITE D'INVESTISSEMENT EN LIGNE (BUSINES EN LIGNE)?",
-    "faqs_answer_2_sec_1": "NON. Nous sommes une entreprise légitime de marketing relationnel (vente directe) dans laquelle vous ne payez que pour acheter des produits. Si vous souhaitez devenir distributeur des produits DREAM FOR LYF, vous pouvez nous envoyer un mail à ",
-    "faqs_answer_2_sec_2": "Si quelqu'un a dénaturé notre entreprise ou l'un de nos produits DREAM FOR LYF, veuillez nous le signaler en envoyant un e-mail à ",
+    "faqs_question_2": "DREAM FOR LYF International EST-IL UN SITE D'INVESTISSEMENT EN LIGNE (BUSINES EN LIGNE)?",
+    "faqs_answer_2_sec_1": "NON. Nous sommes une entreprise légitime de marketing relationnel (vente directe) dans laquelle vous ne payez que pour acheter des produits. Si vous souhaitez devenir distributeur des produits DREAM FOR LYF International, vous pouvez nous envoyer un mail à ",
+    "faqs_answer_2_sec_2": "Si quelqu'un a dénaturé notre entreprise ou l'un de nos produits DREAM FOR LYF International, veuillez nous le signaler en envoyant un e-mail à ",
 
     "faqs_question_3": "DOIS-JE RECRUTER D'AUTRES PERSONNES POUR GAGNER DE L'ARGENT?",
-    "faqs_answer_3_sec_1": "OUI. Vous pouvez recruter autant de personnes que vous voulez mais l'entreprise DREAM FOR LYF vous recommande seulement deux personnes à qui vous pouvez vendre nos produits et commencer à construire votre équipe. Lorsque que votre système devient automatique: tel est l'objectif de tous distributeurs vous pouvez gagner de très grandes commissions chaque jour, semaine et mois sans recruter personne toute votre vie.",
-    "faqs_answer_3_sec_2": "Cependant sachez que l'innovation de notre plan vous permet en tant que distributeur dans vos débuts en tant que nouvelle personne lorsque vous rejoignez notre entreprise DREAM FOR LYF en achetant nos produits de gagner une première commission une seule fois sans avoir tout d'abord recruté personne. Ce bonus s'appelle : ACHETER ET GAGNER (REGISTER AND EARN).",
+    "faqs_answer_3_sec_1": "OUI. Vous pouvez recruter autant de personnes que vous voulez mais l'entreprise DREAM FOR LYF International vous recommande seulement deux personnes à qui vous pouvez vendre nos produits et commencer à construire votre équipe. Lorsque que votre système devient automatique: tel est l'objectif de tous distributeurs vous pouvez gagner de très grandes commissions chaque jour, semaine et mois sans recruter personne toute votre vie.",
+    "faqs_answer_3_sec_2": "Cependant sachez que l'innovation de notre plan vous permet en tant que distributeur dans vos débuts en tant que nouvelle personne lorsque vous rejoignez notre entreprise DREAM FOR LYF International en achetant nos produits de gagner une première commission une seule fois sans avoir tout d'abord recruté personne. Ce bonus s'appelle : ACHETER ET GAGNER (REGISTER AND EARN).",
     "faqs_answer_3_sec_3": "Mais si vous voulez gagner assez d'argent de commissions sur les ventes construisez votre équipe en continuant de recruter et surtout former les membres de votre équipe afin qu'ils deviennent comme vous de sorte que vote système devienne automatique. Le recrutement dans le marketing relationnel (vente directe) n'est pas à vie avec juste deux partenaires d'affaires vous pouvez construire votre système et réussir il vous suffit de les former afin qu'ils deviennent comme vous mieux plus que vous.",
 
     "faqs_question_4": "QU'EST CE QUE LA VENTE DIRECTE?",
@@ -337,19 +340,19 @@
     "faqs_answer_4_sec_2": "Les produits vendus par l'intermédiaire de sociétés de vente directe ont des caractéristiques uniques et sont exclusifs à l'entreprise et ne sont pas disponibles dans les centres commerciaux ou les grands magasins.",
     "faqs_answer_4_sec_3": "Le secteur de la vente directe a prospéré grâce à ce marketing relationnel depuis plus de 150 ans. Environ 100 millions de personnes dans le monde sont impliquées dans cette industrie à temps partiel et à temps plein.",
 
-    "faqs_question_5": "DONC POURQUOI NE PAS REJOINDRE DREAM FOR LYF ET COMMENCER À GAGNER DE L'ARGENT AVEC NOUS?",
+    "faqs_question_5": "DONC POURQUOI NE PAS REJOINDRE DREAM FOR LYF International ET COMMENCER À GAGNER DE L'ARGENT AVEC NOUS?",
     "faqs_answer_5_sec_1": "Supposons que vous vous habillez chez un talentueux couturier de votre quartier qui crée des tenues sur-mesure pour répondre exactement à vos besoins et à ceux de l'ensemble de ses clients. Pour accroître son chiffre d'affaires, il souhaite exploiter votre réseau de contacts (Famille, Amis, Collègues, Connaissances) pour recommander ses services et aider à promouvoir ses produits.",
     "faqs_answer_5_sec_2": "Le principe de votre partenariat est simple et le voici: pour chaque parent, ami(e), collègue et connaissances à qui vous recommanderez ses services et qui viendra coudre ses habits chez lui dans son atelier, vous avez un pourcentage de 10% sur le chiffre d'affaires généré.",
     "faqs_answer_5_sec_3": "Par exemple, si votre meilleur ami, qui apprécie déjà la qualité de couture de vos chemises, pantalons et autres, accepte de venir coudre ses vêtements chez votrecouturier et débourse 50.000 FCFA, vous avez une commission 5.000 FCFA. Ceci est valable pour chaque commande de votre ami.",
     "faqs_answer_5_sec_4": "Vous expliquez le même principe à votre ami qui accepte de faire la même chose avec ses ami(e)s, famille, collègues, connaissances. Et ainsi de suite.",
     "faqs_answer_5_sec_5": "Dans ce partenariat, vous gagnez tout comme votre couturier. Dès lors, vous êtes dans un partenariat gagnant-gagnant. L'utilisation des produits du couturier (Chemises, Pantalons, Costumes etc.) et leur recommandation à vos proches, c'est ce que nous appelons le marketing de bouche-à-oreille ou marketing relationnel (vente directe).",
-    "faqs_answer_5_sec_6": "Aujourd'hui, de nombreuses entreprises exploitent ce système de marketing pour accroître leur chiffre d'affaires et augmenter leur part de marché à l'échelle internationale et mondiale. L'une de ses entreprises et la meilleure actuellement se nomme DREAM FOR LYF.",
+    "faqs_answer_5_sec_6": "Aujourd'hui, de nombreuses entreprises exploitent ce système de marketing pour accroître leur chiffre d'affaires et augmenter leur part de marché à l'échelle internationale et mondiale. L'une de ses entreprises et la meilleure actuellement se nomme DREAM FOR LYF International.",
 
-    "faqs_question_6": "COMMENT PUIS-JE GAGNER DE L'ARGENT AVEC DREAM FOR LYF?",
-    "faqs_answer_6_sec_1": "La seule façon de gagner un revenu avec DREAM FOR LYF est de vendre des produits à deux personnes au minimum et construire votre équipe. Une fois que vous utilisez nos produits, que vous les appréciez et que vous recommandez à d'autres personnes de les acheter, vous pouvez gagner des commissions sur les ventes réelles. DREAM FOR LYF utilise un plan de rémunération qui calcule les commissions qui vous sont payables en fonction du volume de ventes généré par votre équipe sur notre portail de commerce électronique.",
+    "faqs_question_6": "COMMENT PUIS-JE GAGNER DE L'ARGENT AVEC DREAM FOR LYF International?",
+    "faqs_answer_6_sec_1": "La seule façon de gagner un revenu avec DREAM FOR LYF International est de vendre des produits à deux personnes au minimum et construire votre équipe. Une fois que vous utilisez nos produits, que vous les appréciez et que vous recommandez à d'autres personnes de les acheter, vous pouvez gagner des commissions sur les ventes réelles. DREAM FOR LYF International utilise un plan de rémunération qui calcule les commissions qui vous sont payables en fonction du volume de ventes généré par votre équipe sur notre portail de commerce électronique.",
     "faqs_answer_6_sec_2": "De nombreux entrepreneurs ont profité de notre modèle commercial pour constituer de grandes équipes de vente et développer une entreprise prospère.",
 
-    "faqs_question_7": "EN COMBIEN DE TEMPS PUIS JE GAGNER DE L'ARGENT AVEC DREAM FOR LYF?",
+    "faqs_question_7": "EN COMBIEN DE TEMPS PUIS JE GAGNER DE L'ARGENT AVEC DREAM FOR LYF International?",
     "faqs_answer_7_sec_1": "La vente directe est une activité comme une autre. Il ne s'agit pas d'un plan pour devenir riche rapidement. Pour réussir dans ce métier, vous devez travailler dur, sérieusement, être patient, engagé, être concentré et focalisé sur vos objectifs. Cette entreprise vous donne la possibilité de devenir entrepreneur.",
     "faqs_answer_7_sec_2": "La seule différence est que vous n'avez pas à vous soucier d'un coût de démarrage à grande échelle ni de frais généraux opérationnels comme dans une entreprise traditionnelle. Votre réussite dépend entièrement de vous et du travail acharné que vous y consacrez.",
 
@@ -451,5 +454,8 @@
     "ethics_part_2_summary_2.6": "2.6) CONCLUSION ET MISE EN GARDE",
     "ethics_part_2_summary_2.6_description": "Toutes personnes ou distributeurs indépendants ayant connaissance de ce document (code d'éthique) et ne le met pas en pratique, qui pose des actions contraire à ce document afin de de détruire et porter atteinte à l'entreprise DREAM FOR LYF INTERNATIONAL et perturber la vie et le travail des distributeurs indépendants sérieux et engagés pour leur réussite fera face aux strictes et rigoureuses décisions prise par l'entreprise concernant les actes qu'il a posé",
 
-    "analytics": "Analytique"
+    "analytics": "Analytique",
+    "wallet_transfer": "Transfert de portefeuille",
+    "amount_transfered": "Montant transféré",
+    "reverse_transfer": "Transfert inversé"
 }

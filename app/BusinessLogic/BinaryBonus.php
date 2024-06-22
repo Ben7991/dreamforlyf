@@ -3,7 +3,7 @@
 namespace App\BusinessLogic;
 
 use App\Models\Transaction;
-use App\Models\TransactionalStatus;
+use App\Models\TransactionPortfolio;
 use App\Models\TransactionType;
 use App\Models\Upline;
 use Carbon\Carbon;
@@ -62,7 +62,7 @@ final class BinaryBonus
                 Transaction::create([
                     "distributor_id" => $distributor->id,
                     "amount" => $remainingAmount,
-                    "portfolio" => TransactionalStatus::COMMISSION_WALLET->name,
+                    "portfolio" => TransactionPortfolio::COMMISSION_WALLET->name,
                     "transaction_type" => TransactionType::BINARY->name
                 ]);
             }
@@ -70,7 +70,7 @@ final class BinaryBonus
                 Transaction::create([
                     "distributor_id" => $distributor->id,
                     "amount" => $amount,
-                    "portfolio" => TransactionalStatus::COMMISSION_WALLET->name,
+                    "portfolio" => TransactionPortfolio::COMMISSION_WALLET->name,
                     "transaction_type" => TransactionType::BINARY->name
                 ]);
             }
