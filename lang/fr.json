@@ -155,6 +155,11 @@
 
     "purchase_product": "Acheter un produit",
     "select_stockist": "Sélectionnez un revendeur",
+    "select_purchase_type": "Sélectionnez le type d'achat",
+    "direct_purchase_heading": "Achat direct",
+    "direct_purchase_description": "C'est l'achat habituel que vous effectuez sans maintenir votre compte",
+    "maintenance_purchase_heading": "Achat d'entretien",
+    "maintenance_purchase_description": "C'est un achat que vous effectuez qui sécurise votre compte en fonction de la quantité. Par exemple. 1 produit équivaut à 3 mois de maintenance complète",
     "purchase_now": "Achetez maintenant",
     "product_description": "Description du produit",
     "left": "Gauche",

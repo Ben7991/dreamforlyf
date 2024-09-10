@@ -5,7 +5,7 @@ namespace App\BusinessLogic;
 use App\Models\Distributor;
 use App\Models\Product;
 use App\Models\Transaction;
-use App\Models\TransactionalStatus;
+use App\Models\TransactionPortfolio;
 use App\Models\TransactionType;
 
 final class PersonalBonus {
@@ -19,7 +19,7 @@ final class PersonalBonus {
         Transaction::create([
             "amount" => $amount,
             "distributor_id" => $distributor->id,
-            "portfolio" => TransactionalStatus::PERSONAL_WALLET->name,
+            "portfolio" => TransactionPortfolio::PERSONAL_WALLET->name,
             "transaction_type" => TransactionType::PERSONAL->name
         ]);
 

@@ -11,22 +11,107 @@
         </nav>
     </div>
 
-    <ul class="nav nav-pills mb-3 mb-xxl-4">
-        <li class="nav-item">
-            <a class="nav-link" href="/{{ App::getLocale() }}/admin/analytics">Orders</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/{{ App::getLocale() }}/admin/analytics/registration">Registration</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/{{ App::getLocale() }}/admin/analytics/bonus">Bonus</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/{{ App::getLocale() }}/admin/analytics/withdrawal">Withdrawal</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/{{ App::getLocale() }}/admin/analytics/maintenance">Maintenance</a>
-        </li>
-    </ul>
+    <x-analytics-navbar activePage='registration'/>
 
+
+    <div class="d-flex justify-content-end mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <div>
+                <input type="text" id="datePicker" class="form-select">
+                <input type="hidden" id="token" value="{{ csrf_token() }}">
+            </div>
+            <div class="spinner-border d-none" role="status" id="spinner">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border shadow-sm">
+        <div class="card-header bg-white p-3">
+            <h5 class="m-0">Overall History</h5>
+        </div>
+        <div class="card-body p-3">
+            <div class="table-responsive">
+                <table class="table table-hover display" id="product-table">
+                    <thead>
+                        <tr>
+                            <th>{{ __("name") }}</th>
+                            <th>Total Distributors</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($result as $data)
+                            <tr>
+                                <td>{{ $data->name }}</td>
+                                <td>{{ $data->total_number }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    @push("scripts")
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                const spinner = $("#spinner");
+                const datePicker = $("#datePicker");
+                const token = document.querySelector("#token");
+                const table = document.querySelector("#product-table");
+                let startDate = "", endDate = "";
+
+                datePicker.daterangepicker(
+                    null,
+                    function(start, end, label) {
+                        startDate = start.format("YYYY-MM-DD") + " 00:00:00";
+                        endDate = end.format("YYYY-MM-DD") + " 00:00:00";
+                    }
+                );
+                datePicker.on("apply.daterangepicker", function(ev, picker){
+                    spinner.removeClass("d-none");
+
+                    $.ajax({
+                        url: `/admin/analytics-data?q=registration&start=${startDate}&end=${endDate}`,
+                        method: "GET",
+                        headers: {
+                            "X-CSRF-TOKEN": token.value
+                        },
+                        success: function(data, status, xhr) {
+                            for(let row of table.children[1].children) {
+                                row.remove();
+                            }
+
+                            createRow(table.children[1], data.data);
+                        },
+                        error: function(xhr, status, error) {
+                            alert("Something went wrong, please contact developer")
+                        },
+                        complete: function(xhr, status) {
+                            spinner.addClass("d-none");
+                        }
+                    });
+                });
+
+                function createRow(parent, data) {
+                    for (let row of data) {
+                        let tableRow = document.createElement("tr");
+
+                        let firstColumn = document.createElement("td");
+                        firstColumn.textContent = row.name;
+
+                        let secondColumn = document.createElement("td");
+                        secondColumn.textContent = row.total_number;
+
+                        tableRow.appendChild(firstColumn);
+                        tableRow.appendChild(secondColumn);
+                        parent.appendChild(tableRow);
+                    }
+                }
+            });
+        </script>
+    @endpush
 </x-layout.admin>

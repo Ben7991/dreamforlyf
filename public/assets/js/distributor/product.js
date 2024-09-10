@@ -35,13 +35,31 @@ stockist.addEventListener("change", function () {
     checkInput(this, isStockistValidated, stockistError);
 });
 
+const purchase = document.querySelector("#purchase");
+let isPurchaseValidated = false;
+let purchaseError = "Purchase type is required";
+purchase.addEventListener("change", function () {
+    const value = this.value;
+
+    if (value === "") {
+        isPurchaseValidated = false;
+        purchaseError = "Purchase type is required";
+    } else {
+        isPurchaseValidated = true;
+        purchaseError = "";
+    }
+
+    checkInput(this, isPurchaseValidated, purchaseError);
+});
+
 const form = document.querySelector("#form");
 form.addEventListener("submit", function (event) {
-    if (!isQuantityValidated || !isStockistValidated) {
+    if (!isQuantityValidated || !isStockistValidated || !isPurchaseValidated) {
         event.preventDefault();
 
         checkInput(quantity, isQuantityValidated, quantityError);
         checkInput(stockist, isStockistValidated, stockistError);
+        checkInput(purchase, isPurchaseValidated, purchaseError);
     } else {
         deactiveActionButton(); //user experience
     }

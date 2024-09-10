@@ -41,9 +41,9 @@
                             <th>#</th>
                             <th>{{ __("duration_in_months") }}</th>
                             <th>{{ __("total_products") }}</th>
-                            <th>{{ __("price") }}</th>
-                            <th>Point</th>
-                            <th>Actions</th>
+                            {{-- <th>{{ __("price") }}</th>
+                            <th>Point</th> --}}
+                            {{-- <th>Actions</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -52,15 +52,15 @@
                                 <td>{{ $package->id }}</td>
                                 <td>{{ $package->duration_in_months }}</td>
                                 <td>{{ $package->total_products }}</td>
-                                <td>${{ $package->total_price }}</td>
-                                <td>{{ $package->bv_point }}</td>
-                                <td>
+                                {{-- <td>${{ $package->total_price }}</td>
+                                <td>{{ $package->bv_point }}</td> --}}
+                                {{-- <td>
                                     <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Edit">
                                         <a href="/{{ App::currentLocale() }}/admin/maint-packages/{{ $package->id }}/edit" class="action-btn text-secondary rounded">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
                                     </span>
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                     </tbody>

@@ -309,6 +309,14 @@ hr {
     background-color: var(--pink-main);
 }
 
+.product-icon-holder:hover .product-icon-dropdown {
+    display: block;
+}
+
+.product-icon-dropdown {
+    display: none;
+}
+
 @media (min-width: 768px) {
     .main-header {
         position: static;

@@ -48,9 +48,7 @@ Route::prefix("{locale}")->group(function() {
     });
 });
 
-Route::get("/welcome", function() {
-    return "got here";
-});
+Route::get("admin/analytics-data", [AnalyticsController::class, "fetch_data"]);
 
 Route::prefix("{locale}")->group(function() {
     Route::middleware(['internationalize'])->group(function() {
@@ -95,7 +93,6 @@ Route::prefix("{locale}/admin")->group(function() {
         Route::get("analytics/registration", [AnalyticsController::class, "registration"]);
         Route::get("analytics/bonus", [AnalyticsController::class, "bonus"]);
         Route::get("analytics/withdrawal", [AnalyticsController::class, "withdrawal"]);
-        Route::get("analytics/maintenance", [AnalyticsController::class, "maintenance"]);
 
         Route::get("profile", [AdminController::class, "profile"]);
         Route::post("profile/personal-information", [AuthController::class, "personal_information"]);
@@ -114,7 +111,6 @@ Route::prefix("{locale}/admin")->group(function() {
         Route::post("leadership-bonus/pay-all", [AdminDistributorController::class, "pay_all_leadership_bonus"]);
 
         Route::put("products/{id}/stock-status", [ProductController::class, "stock_status"]);
-        // Route::put("products/{id}/image", [ProductController::class, "change_image"]);
         Route::resource("products", ProductController::class)->except([
             "destroy", "show"
         ]);
@@ -144,7 +140,7 @@ Route::prefix("{locale}/admin")->group(function() {
         ]);
 
         Route::resource("maint-packages", MaintenancePackageController::class)->except([
-            "destroy", "show",
+            "show",
         ]);
 
         Route::put("distributors/{id}/reset-withdrawal-pin", [AdminDistributorController::class, "reset_withdrawal_pin"]);
@@ -209,9 +205,9 @@ Route::prefix("{locale}/distributor")->group(function() {
         Route::get("order-history", [OrderHistoryController::class, "index"]);
         Route::get("order-history/{id}/show", [OrderHistoryController::class, "show"]);
 
-        Route::get("maint-packages", [DistributorMainPackController::class, "index"]);
-        Route::post("maint-packages", [DistributorMainPackController::class, "select_package"]);
-        Route::get("maint-packages/{id}", [DistributorMainPackController::class, "account"])->middleware("maintenance.selected");
+        // Route::get("maint-packages", [DistributorMainPackController::class, "index"]);
+        // Route::post("maint-packages", [DistributorMainPackController::class, "select_package"]);
+        // Route::get("maint-packages/{id}", [DistributorMainPackController::class, "account"])->middleware("maintenance.selected");
 
         Route::get("my-tree", [MyTreeController::class, "index"]);
         Route::get("my-tree/create", [MyTreeController::class, "create"]);

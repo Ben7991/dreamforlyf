@@ -20,6 +20,9 @@
             <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
                 <x-model-summary :title="$header" icon="list-ol" :number="$total" class="bg-main" />
             </div>
+            <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
+                <x-model-summary :title="$header" icon="eye-slash" :number="$hidden" class="bg-tertiary" />
+            </div>
         </div>
     </div>
 
@@ -36,27 +39,48 @@
                 <table class="table table-hover display" id="product-table">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>{{ __("duration_in_months") }}</th>
                             <th>{{ __("total_products") }}</th>
-                            <th>{{ __("price") }}</th>
-                            <th>Point</th>
+                            {{-- <th>{{ __("price") }}</th>
+                            <th>Point</th> --}}
+                            <th>{{ __("status") }}</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($packages as $package)
                             <tr>
-                                <td>{{ $package->id }}</td>
                                 <td>{{ $package->duration_in_months }}</td>
                                 <td>{{ $package->total_products }}</td>
-                                <td>${{ $package->total_price }}</td>
-                                <td>{{ $package->bv_point }}</td>
+                                {{-- <td>${{ $package->total_price }}</td>
+                                <td>{{ $package->bv_point }}</td> --}}
+                                <td>
+                                    @if ($package->status === 'ACTIVE')
+                                        <span class="badge text-bg-success">
+                                            {{ $package->status }}
+                                        </span>
+                                    @else
+                                        <span class="badge text-bg-danger">
+                                            {{ $package->status }}
+                                        </span>
+                                    @endif
+                                </td>
                                 <td>
                                     <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ __("edit") }}">
                                         <a href="/{{ App::currentLocale() }}/admin/maint-packages/{{ $package->id }}/edit" class="action-btn text-secondary rounded">
                                             <i class="bi bi-pencil-square"></i>
                                         </a>
+                                    </span>
+                                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ __("mark_status") }}">
+                                        <button onclick="setFormAction('/{{ App::currentLocale() }}/admin/maint-packages/{{ $package->id }}')"
+                                            class="action-btn text-@php echo $package->status === 'ACTIVE' ? 'danger' : 'success'; @endphp rounded"
+                                            data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            @if ($package->status === 'ACTIVE')
+                                                <i class="bi bi-eye-slash"></i>
+                                            @else
+                                                <i class="bi bi-eye"></i>
+                                            @endif
+                                        </button>
                                     </span>
                                 </td>
                             </tr>
@@ -66,6 +90,28 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Change package status</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" id="form">
+                @csrf
+                @method("DELETE")
+                <div class="modal-body">
+                    <p>Are you sure you want to change maintenance package status?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("close") }}</button>
+                    <button type="submit" class="btn btn-main">{{ __("save") }}</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
 
     @push("scripts")
         <script>

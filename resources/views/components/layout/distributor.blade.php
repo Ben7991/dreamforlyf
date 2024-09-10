@@ -79,9 +79,9 @@
                     <a href="/{{ App::currentLocale() }}/distributor/membership-packages" class="drawer-link rounded {{ $title == "Membership Packages" ? 'active' : '' }}">
                         <i class="bi bi-gift"></i> {{ __("membership_package") }}
                     </a>
-                    <a href="/{{ App::currentLocale() }}/distributor/maint-packages" class="drawer-link rounded {{ $title == "Maintenance Packages" ? 'active' : '' }}">
+                    {{-- <a href="/{{ App::currentLocale() }}/distributor/maint-packages" class="drawer-link rounded {{ $title == "Maintenance Packages" ? 'active' : '' }}">
                         <i class="bi bi-gear"></i> {{ __("maintenance_packages") }}
-                    </a>
+                    </a> --}}
                     <hr>
 
                     <a href="/{{ App::currentLocale() }}/distributor/order-history" class="drawer-link rounded d-flex align-items-center justify-content-between {{ $title == "Order History" ? 'active' : '' }}">

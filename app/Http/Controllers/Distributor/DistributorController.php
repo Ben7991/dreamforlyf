@@ -88,7 +88,8 @@ class DistributorController extends Controller
     public function product_purchase(Request $request, $locale, $id) {
         $validated = $request->validate([
             "quantity" => "bail|required|numeric",
-            "stockist" => "bail|required"
+            "stockist" => "required",
+            "purchase" => "required"
         ]);
 
         $distributor = Auth::user()->distributor;
@@ -98,7 +99,8 @@ class DistributorController extends Controller
         try {
             $product = Product::findOrFail($id);
             $stockist = Stockist::findOrFail($validated["stockist"]);
-            $amount = $product->price * $validated["quantity"];
+            $amount = $product->price * (int)$validated["quantity"];
+            $point = $product->bv_point * $validated["quantity"];
 
             if ($portfolio->current_balance < $amount) {
                 return redirect()->back()->with([
@@ -107,18 +109,28 @@ class DistributorController extends Controller
                 ]);
             }
 
-            $portfolio->current_balance -= $amount;
-            $portfolio->save();
+            if (strcmp($validated["purchase"], "direct") === 0) {
+                $portfolio->subtractPurchaseAmount($amount);
+                $this->storeOrder($product, $validated["quantity"], $distributor, $stockist, OrderType::NORMAL->name);
+                PersonalBonus::giveBonus($distributor, $product, $validated["quantity"]);
+            }
+            else if (strcmp($validated["purchase"], "maintenance") === 0) {
+                $this->setNextMaintenanceDate($distributor, (int)$validated["quantity"]);
+                $portfolio->subtractPurchaseAmount($amount);
+                $this->storeOrder($product, $validated["quantity"], $distributor, $stockist, OrderType::MAINTENANCE->name);
+            }
+            else {
+                return redirect()->back()->with([
+                    "class" => "danger",
+                    "message" => "Please select from the provided purchase"
+                ]);
+            }
 
-            $this->storeOrder($product, $validated["quantity"], $distributor, $stockist);
-
-            $point = $product->bv_point * $validated["quantity"];
             BvCycle::initialCycle($upline, $point, $distributor->leg);
-            PersonalBonus::giveBonus($distributor, $product, $validated["quantity"]);
 
             return redirect("/$locale/distributor/order-history")->with([
                 "class" => "success",
-                "message" => "Purchased $product->name successfully"
+                "message" => "Purchased was made successfully"
             ]);
         }
         catch(\Exception $e) {
@@ -129,13 +141,29 @@ class DistributorController extends Controller
         }
     }
 
-    private function storeOrder(Product $product, int $purchasedQuantity, Distributor $distributor, Stockist $stockist) {
+    private function setNextMaintenanceDate($distributor, $quantity) {
+        $currentDate = new Carbon();
+        $expiringDate = Carbon::parse($distributor->next_maintenance_date);
+        $nextDate = null;
+        $durationInMonths = 3 * $quantity;
+
+        if ($expiringDate->greaterThanOrEqualTo($currentDate)) {
+            $nextDate = $expiringDate->addMonths($durationInMonths);
+        } else {
+            $nextDate = (new Carbon())->addMonth($durationInMonths);
+        }
+
+        $distributor->next_maintenance_date = $nextDate;
+        $distributor->save();
+    }
+
+    private function storeOrder($product, $purchasedQuantity, $distributor, $stockist, $orderType) {
         $amount = $product->price * $purchasedQuantity;
 
         $storedOrder = Order::create([
             "amount" => $amount,
             "distributor_id" => $distributor->id,
-            "order_type" => OrderType::NORMAL->name,
+            "order_type" => $orderType,
             "stockist_id" => $stockist->id
         ]);
 

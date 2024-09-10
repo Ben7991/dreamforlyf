@@ -11,22 +11,6 @@
         </nav>
     </div>
 
-    <ul class="nav nav-pills mb-3 mb-xxl-4">
-        <li class="nav-item">
-            <a class="nav-link" href="/{{ App::getLocale() }}/admin/analytics">Orders</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/{{ App::getLocale() }}/admin/analytics/registration">Registration</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/{{ App::getLocale() }}/admin/analytics/bonus">Bonus</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/{{ App::getLocale() }}/admin/analytics/withdrawal">Withdrawal</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" href="/{{ App::getLocale() }}/admin/analytics/maintenance">Maintenance</a>
-        </li>
-    </ul>
+    <x-analytics-navbar activePage='withdrawal'/>
 
 </x-layout.admin>

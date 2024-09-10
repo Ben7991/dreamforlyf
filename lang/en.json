@@ -146,6 +146,11 @@
 
     "purchase_product": "Purchase Product",
     "select_stockist": "Select stockist",
+    "select_purchase_type": "Select purchase type",
+    "direct_purchase_heading": "Direct purchase",
+    "direct_purchase_description": "It's the usual purchase you make without maintaining your account",
+    "maintenance_purchase_heading": "Maintenance purchase",
+    "maintenance_purchase_description": "It's a purchase that you make that secures your account based on the quantity. Eg. 1 product equals 3 months of full maintenance",
     "purchase_now": "Purchase Now",
     "product_description": "Product description",
     "left": "Left",

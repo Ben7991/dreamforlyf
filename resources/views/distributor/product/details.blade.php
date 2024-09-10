@@ -61,6 +61,28 @@
                             </select>
                             <small class="text-danger d-none"></small>
                         </div>
+                        <div class="form-group mb-4">
+                            <label for="stockist">
+                                {{ __("select_purchase_type") }}
+                                <span class="d-inline-block position-relative product-icon-holder">
+                                    <i class="bi bi-exclamation-circle text-danger"></i>
+                                    <div class="position-absolute top-100 left-0 shadow border rounded p-3 bg-white product-icon-dropdown"
+                                        style="width: 250px;">
+                                        <h6 class="mb-1">{{ __("direct_purchase_heading") }}</h6>
+                                        <p class="m-0">{{ __("direct_purchase_description") }}</p>
+                                        <hr>
+                                        <h6 class="mb-1">{{ __("maintenance_purchase_heading") }}</h6>
+                                        <p class="m-0">{{ __("maintenance_purchase_description") }}</p>
+                                    </div>
+                                </span>
+                            </label>
+                            <select name="purchase" id="purchase" class="form-select">
+                                <option value="">{{ __("select_purchase_type") }}</option>
+                                <option value="direct">{{ __("direct_purchase_heading") }}</option>
+                                <option value="maintenance">{{ __("maintenance_purchase_heading") }}</option>
+                            </select>
+                            <small class="text-danger d-none"></small>
+                        </div>
                         <button type="submit" class="btn btn-success btn-submit">
                             <span class="main-btn">
                                 <i class="bi bi-cart4"></i>&nbsp;{{ __("purchase_now") }}
