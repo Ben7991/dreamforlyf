@@ -144,7 +144,8 @@
                         @else
                             {{ __("maintenance_message_3", ["dayCount" => abs($remainingDays) ]) }}
                         @endif
-                        {{ __("maintenance_message_4") }}: <strong class="fw-semibold text-danger">{{ __("pool_bonus") }}</strong>, <strong class="fw-semibold text-danger">{{ __("rank_award") }}</strong>, <strong class="fw-semibold text-danger">{{ __("upgrade_bonus") }}</strong>, <strong class="fw-semibold text-danger">{{ __("leadership_bonus") }}</strong>
+                        {{ __("maintenance_message_4") }}: <strong class="fw-semibold text-danger">{{ __("pool_bonus") }}</strong>, <strong class="fw-semibold text-danger">{{ __("rank_award") }}</strong>, <strong class="fw-semibold text-danger">{{ __("upgrade_bonus") }}</strong>, <strong class="fw-semibold text-danger">{{ __("leadership_bonus") }}</strong>,
+                        <strong class="fw-semibold text-danger">{{ __("binary_bonus") }}</strong>.
                     </p>
                     <hr>
                     <p>{{ __("maintenance_message_5") }}</p>
