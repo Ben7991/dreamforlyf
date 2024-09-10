@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Distributor;
 
 use App\BusinessLogic\BvCycle;
 use App\BusinessLogic\CashBack;
-use App\BusinessLogic\PoolBonus as BusinessPoolBonus;
 use App\BusinessLogic\ReferralBonus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterDistributor;
@@ -260,12 +259,16 @@ class MyTreeController extends Controller
             $rank = "None";
             $leftBv = $user->upline !== null ? $user->upline->first_leg_point : 0;
             $rightBv = $user->upline !== null ? $user->upline->second_leg_point : 0;
+            $totalLeftDistributors = $user->upline !== null ? $user->left_leg_count : 0;
+            $totalRightDistributors = $user->upline !== null ? $user->right_leg_count : 0;
 
             return response()->json([
                 "name" => $distributor->user->name,
                 "imagePath" => $imagePath,
                 "leftBv" => $leftBv,
                 "rightBv" => $rightBv,
+                "totalLeftDist" => $totalLeftDistributors,
+                "totalRightDist" => $totalRightDistributors,
                 "rank" => $rank,
                 "link" => "/$locale/distributor/my-tree/$user->id",
                 "membershipPackage" => $distributor->registrationPackage->name,

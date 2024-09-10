@@ -260,6 +260,8 @@
     "total_referral": "Total Referral",
     "total_left_bv": "Total Left BV",
     "total_right_bv": "Total Right BV",
+    "left_distributor_no": "Distributors on the left",
+    "right_distributor_no": "Distributors on the right",
 
     "search": "Search",
     "see_my_tree": "See my tree",

@@ -73,6 +73,8 @@ function showDetails(data) {
     document.querySelector("#modal-downline-package").textContent = data.membershipPackage;
     document.querySelector("#rightBvPoint").textContent = data.rightBv;
     document.querySelector("#leftBvPoint").textContent = data.leftBv;
+    document.querySelector("#leftBvDist").textContent = data.totalLeftDist,
+    document.querySelector("#rightBvDist").textContent = data.totalRightDist,
     document.querySelector("#modal-link").href = data.link;
 }
 

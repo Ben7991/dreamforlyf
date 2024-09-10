@@ -262,6 +262,8 @@
     "total_referral": "Références totales",
     "total_left_bv": "Total Gauche BV",
     "total_right_bv": "Total Droit BV",
+    "left_distributor_no": "Les distributeurs à gauche",
+    "right_distributor_no": "Les distributeurs à droite",
 
     "search": "Recherche",
     "see_my_tree": "Voir mon arbre",
