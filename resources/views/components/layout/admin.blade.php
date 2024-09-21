@@ -92,9 +92,9 @@
                     <a href="/{{ App::currentLocale() }}/admin/upgrade-packages" class="drawer-link rounded {{ $title == "Upgrade Packages" ? 'active' : '' }}">
                         <i class="bi bi-graph-up-arrow"></i> {{  __("upgrade_packages") }}
                     </a>
-                    <a href="/{{ App::currentLocale() }}/admin/maint-packages" class="drawer-link rounded {{ $title == "Maintenance Packages" ? 'active' : '' }}">
+                    {{-- <a href="/{{ App::currentLocale() }}/admin/maint-packages" class="drawer-link rounded {{ $title == "Maintenance Packages" ? 'active' : '' }}">
                         <i class="bi bi-gear"></i> {{  __("maintenance_packages") }}
-                    </a>
+                    </a> --}}
                     <hr>
 
                     <a href="/{{ App::currentLocale() }}/admin/order-history" class="drawer-link rounded d-flex align-items-center justify-content-between {{ $title == "Order History" ? 'active' : '' }}">

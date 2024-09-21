@@ -25,6 +25,10 @@ class AdminController extends Controller
         $qualifiedPoolCount = 0;
         $qualifiedRankCount = 0;
         $awardCount = DB::table("upline_ranks")->count();
+        $countriesSummary = DB::table("distributors")
+                        ->select(DB::raw("count(id) as total_users, country"))
+                        ->groupBy("country")
+                        ->get();
 
         return view("admin.index", [
             "pendingOrderCount" => $pendingOrderCount,
@@ -32,7 +36,8 @@ class AdminController extends Controller
             "qualifiedRankCount" => $qualifiedRankCount,
             "bonusWithdrawals" => $bonusWithdrawals,
             "upgrades" => UpgradeHistory::orderBy("id", "desc")->take(5)->get(),
-            "awardCount" => $awardCount
+            "awardCount" => $awardCount,
+            "countriesSummary" => $countriesSummary
         ]);
     }
 

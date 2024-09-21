@@ -3,11 +3,17 @@
 namespace App\Http\Controllers\Stockist;
 
 use App\Http\Controllers\Controller;
+use App\Models\Distributor;
 use App\Models\Order;
 use App\Models\OrderStatus;
+use App\Models\OrderType;
+use App\Models\Product;
+use App\Models\RegistrationPackage;
 use App\Models\Transaction;
-use App\Models\TransactionalStatus;
+use App\Models\TransactionPortfolio;
 use App\Models\TransactionType;
+use App\Models\UpgradeHistory;
+use App\Models\UpgradePackage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,6 +83,7 @@ class StockistController extends Controller
             $order = Order::findOrFail($id);
             $order->status = $validated["status"];
             $order->save();
+            $this->calculateBonus($order);
 
             return redirect()->back()->with([
                 "class" => "success",
@@ -89,6 +96,39 @@ class StockistController extends Controller
                 "message" => "Order doesn't exist"
             ]);
         }
+    }
+
+    private function calculateBonus(Order $order) {
+        $bonusRate = 0.05;
+        $stockist = Auth::user()->stockist;
+
+        if ($order->order_type === OrderType::MAINTENANCE->name || $order->order_type === OrderType::NORMAL->name) {
+            $orderItem = DB::table("order_items")->where("order_id", $order->id)->first();
+            $product = Product::find($orderItem->product_id);
+            $bonus = $product->bv_point * $bonusRate;
+            $stockist->bonus += $bonus;
+        }
+        else if ($order->order_type === OrderType::REGISTRATION->name) {
+            $registrationPackage = $order->distributor->registrationPackage;
+            $bonus = $registrationPackage->bv_point * $bonusRate;
+            $stockist->bonus += $bonus;
+        }
+        else {
+            // get distributor using the distributor_id from the order instance
+            // find upgrade history from the upgrade_histories tables (this table contains upgrade_type_id column)
+            $upgradeHistory = UpgradeHistory::where("distributor_id", $order->distributor_id)->orderBy("id", "desc")->first();
+            $upgradeType = UpgradePackage::find($upgradeHistory->upgrade_type_id);
+            // use the upgrade_type_id extracted from the upgrade_histories table to get the upgrade type containing both the previous package and next package
+            $previousPackage = RegistrationPackage::find($upgradeType->current_package_id);
+            $nextPackage = RegistrationPackage::find($upgradeType->next_package_id);
+            // get the bvs of both and subtract the previous package from the old package.
+            $calculatedBvDifference = $nextPackage->bv_point - $previousPackage->bv_point;
+            // calculate the 5% bonus on the calculated bv difference and add to stokist bonus
+            $bonus = $calculatedBvDifference * 0.05;
+            $stockist->bonus += $bonus;
+        }
+
+        $stockist->save();
     }
 
     public function transferWallet() {
@@ -129,7 +169,7 @@ class StockistController extends Controller
             $transaction = Transaction::create([
                 "distributor_id" => $distributor->id,
                 "amount" => $amount,
-                "portfolio" => TransactionalStatus::CURRENT_BALANCE->name,
+                "portfolio" => TransactionPortfolio::CURRENT_BALANCE->name,
                 "transaction_type" => TransactionType::DEPOSIT->name,
             ]);
 

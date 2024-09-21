@@ -46,21 +46,6 @@
                         id="form">
                         @csrf
 
-                        <div class="form-group mb-3">
-                            <label for="quantity">{{ __("quantity") }}</label>
-                            <input type="number" name="quantity" id="quantity" class="form-control">
-                            <small class="text-danger d-none"></small>
-                        </div>
-                        <div class="form-group mb-4">
-                            <label for="stockist">{{ __("select_stockist") }}</label>
-                            <select name="stockist" id="stockist" class="form-select">
-                                <option value="">{{ __("select_stockist") }}</option>
-                                @foreach ($stockists as $stockist)
-                                    <option value="{{ $stockist->id }}">{{ $stockist->code }}</option>
-                                @endforeach
-                            </select>
-                            <small class="text-danger d-none"></small>
-                        </div>
                         <div class="form-group mb-4">
                             <label for="stockist">
                                 {{ __("select_purchase_type") }}
@@ -81,6 +66,21 @@
                                 <option value="direct">{{ __("direct_purchase_heading") }}</option>
                                 <option value="maintenance">{{ __("maintenance_purchase_heading") }}</option>
                             </select>
+                            <small class="text-danger d-none"></small>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="stockist">{{ __("select_stockist") }}</label>
+                            <select name="stockist" id="stockist" class="form-select">
+                                <option value="">{{ __("select_stockist") }}</option>
+                                @foreach ($stockists as $stockist)
+                                    <option value="{{ $stockist->id }}">{{ $stockist->code }}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-danger d-none"></small>
+                        </div>
+                        <div class="form-group mb-3 d-none" id="quantity-holder">
+                            <label for="quantity">{{ __("quantity") }}</label>
+                            <input type="number" name="quantity" id="quantity" class="form-control">
                             <small class="text-danger d-none"></small>
                         </div>
                         <button type="submit" class="btn btn-success btn-submit">
@@ -117,7 +117,6 @@
             let description = new Quill("#editor", { theme: "snow" });
             let delta = JSON.parse(document.querySelector("#desc_product").value);
             description.setContents(delta);
-
             document.querySelector("#desc_prod").textContent = description.getText();
         </script>
     @endpush

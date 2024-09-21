@@ -109,19 +109,19 @@
                 @endphp
 
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 col-md-6 col-xl-4 col-xxl-12 mb-3">
                         @php $firstHistoryHeading = __("total_orders"); @endphp
-                        <x-dashboard-summary :title="$firstHistoryHeading" :value="$totalOrders" icon="clock-history"/>
+                        <x-model-summary :title="$firstHistoryHeading" icon="clock-history" :number="$totalOrders" class="bg-green" />
                     </div>
-                    <div class="col-12">
+                    <div class="col-12 col-md-6 col-xl-4 col-xxl-12 mb-3">
                         @php $formattedCommission = '$' . $commission @endphp
                         @php $secondHistoryHeading = __("total_commission"); @endphp
-                        <x-dashboard-summary :title="$secondHistoryHeading" :value="$formattedCommission" icon="cash"/>
+                        <x-model-summary :title="$secondHistoryHeading" icon="cash" :number="$formattedCommission" class="bg-orange" />
                     </div>
-                    <div class="col-12">
+                    <div class="col-12 col-md-6 col-xl-4 col-xxl-12">
                         @php $formattedCurrentBalance = '$' . $currentBalance @endphp
                         @php $thirdHistoryHeading = __("current_balance"); @endphp
-                        <x-dashboard-summary :title="$thirdHistoryHeading" :value="$formattedCurrentBalance" icon="wallet"/>
+                        <x-model-summary :title="$thirdHistoryHeading" icon="wallet" :number="$formattedCurrentBalance" class="bg-secondary" />
                     </div>
                 </div>
             </div>

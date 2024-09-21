@@ -86,11 +86,21 @@ class DistributorController extends Controller
     }
 
     public function product_purchase(Request $request, $locale, $id) {
-        $validated = $request->validate([
-            "quantity" => "bail|required|numeric",
-            "stockist" => "required",
-            "purchase" => "required"
-        ]);
+        $validated = [];
+
+        if ($request->input("purchase") === "direct") {
+            $validated = $request->validate([
+                "quantity" => "bail|required|numeric",
+                "stockist" => "required",
+                "purchase" => "required"
+            ]);
+        }
+        else {
+            $validated = $request->validate([
+                "stockist" => "required",
+                "purchase" => "required"
+            ]);
+        }
 
         $distributor = Auth::user()->distributor;
         $portfolio = $distributor->portfolio;
@@ -99,8 +109,16 @@ class DistributorController extends Controller
         try {
             $product = Product::findOrFail($id);
             $stockist = Stockist::findOrFail($validated["stockist"]);
-            $amount = $product->price * (int)$validated["quantity"];
-            $point = $product->bv_point * $validated["quantity"];
+            $amount = $point = 0;
+
+            if (strcmp($validated["purchase"], "direct") === 0) {
+                $point = $product->bv_point * $validated["quantity"];
+                $amount = $product->price * (int)$validated["quantity"];
+            }
+            else if (strcmp($validated["purchase"], "maintenance") === 0) {
+                $point = $product->bv_point;
+                $amount = $product->price;
+            }
 
             if ($portfolio->current_balance < $amount) {
                 return redirect()->back()->with([
@@ -115,9 +133,10 @@ class DistributorController extends Controller
                 PersonalBonus::giveBonus($distributor, $product, $validated["quantity"]);
             }
             else if (strcmp($validated["purchase"], "maintenance") === 0) {
-                $this->setNextMaintenanceDate($distributor, (int)$validated["quantity"]);
+                $this->setNextMaintenanceDate($distributor);
                 $portfolio->subtractPurchaseAmount($amount);
-                $this->storeOrder($product, $validated["quantity"], $distributor, $stockist, OrderType::MAINTENANCE->name);
+                $quantity = 1;
+                $this->storeOrder($product, $quantity, $distributor, $stockist, OrderType::MAINTENANCE->name);
             }
             else {
                 return redirect()->back()->with([
@@ -141,11 +160,11 @@ class DistributorController extends Controller
         }
     }
 
-    private function setNextMaintenanceDate($distributor, $quantity) {
+    private function setNextMaintenanceDate($distributor) {
         $currentDate = new Carbon();
         $expiringDate = Carbon::parse($distributor->next_maintenance_date);
         $nextDate = null;
-        $durationInMonths = 3 * $quantity;
+        $durationInMonths = 3;
 
         if ($expiringDate->greaterThanOrEqualTo($currentDate)) {
             $nextDate = $expiringDate->addMonths($durationInMonths);

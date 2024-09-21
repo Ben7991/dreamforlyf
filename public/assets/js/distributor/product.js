@@ -47,6 +47,15 @@ purchase.addEventListener("change", function () {
     } else {
         isPurchaseValidated = true;
         purchaseError = "";
+
+        let quantityHolder = document.querySelector("#quantity-holder");
+
+        if (value === "direct") {
+            quantityHolder.classList.remove("d-none");
+        }
+        else {
+            quantityHolder.classList.add("d-none");
+        }
     }
 
     checkInput(this, isPurchaseValidated, purchaseError);
@@ -54,13 +63,25 @@ purchase.addEventListener("change", function () {
 
 const form = document.querySelector("#form");
 form.addEventListener("submit", function (event) {
-    if (!isQuantityValidated || !isStockistValidated || !isPurchaseValidated) {
-        event.preventDefault();
+    if (purchase.value === "direct") {
+        if (!isQuantityValidated || !isStockistValidated || !isPurchaseValidated) {
+            event.preventDefault();
 
-        checkInput(quantity, isQuantityValidated, quantityError);
-        checkInput(stockist, isStockistValidated, stockistError);
-        checkInput(purchase, isPurchaseValidated, purchaseError);
-    } else {
-        deactiveActionButton(); //user experience
+            checkInput(stockist, isStockistValidated, stockistError);
+            checkInput(purchase, isPurchaseValidated, purchaseError);
+            checkInput(quantity, isQuantityValidated, quantityError);
+        } else {
+            deactiveActionButton(); //user experience
+        }
+    }
+    else if (purchase.value === "maintenance") {
+        if (!isStockistValidated || !isPurchaseValidated) {
+            event.preventDefault();
+
+            checkInput(stockist, isStockistValidated, stockistError);
+            checkInput(purchase, isPurchaseValidated, purchaseError);
+        } else {
+            deactiveActionButton(); //user experience
+        }
     }
 });

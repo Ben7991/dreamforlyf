@@ -14,17 +14,21 @@
         <div class="row mb-4">
             <div class="col-12 mb-4 mb-xxl-0">
                 <div class="row mb-3 mb-xxl-4">
-                    <div class="col-12 col-md-4 col-xl-4 col-xxl-3 mb-3 mb-xl-0">
+                    <div class="col-12 col-md-4 col-xl-4 col-xxl-3 mb-3">
                         @php $firstSummaryHeading = __("pending_orders"); @endphp
                         <x-model-summary :title="$firstSummaryHeading" icon="clock-history" :number="$pendingOrderCount" class="bg-main" />
                     </div>
-                    <div class="col-12 col-md-4 col-xl-4 col-xxl-3 mb-3 mb-xl-0">
+                    <div class="col-12 col-md-4 col-xl-4 col-xxl-3 mb-3">
                         @php $secondSummaryHeading = __("transfer_wallet"); @endphp
                         <x-model-summary :title="$secondSummaryHeading" icon="wallet" :number="$transferCount" class="bg-tertiary" />
                     </div>
-                    <div class="col-12 col-md-4 col-xl-4 col-xxl-3 mb-3 mb-xl-0">
+                    <div class="col-12 col-md-4 col-xl-4 col-xxl-3 mb-3">
                         @php $secondSummaryHeading = __("personal_wallet"); $wallet = "$ ". number_format(Auth::user()->stockist->wallet, 2); @endphp
                         <x-model-summary :title="$secondSummaryHeading" icon="cash-stack" :number="$wallet" class="bg-other" />
+                    </div>
+                    <div class="col-12 col-md-4 col-xl-4 col-xxl-3">
+                        @php $secondSummaryHeading = __("bonus"); $wallet = "$ ". number_format(Auth::user()->stockist->bonus, 2); @endphp
+                        <x-model-summary :title="$secondSummaryHeading" icon="cash-coin" :number="$wallet" class="bg-secondary" />
                     </div>
                 </div>
 

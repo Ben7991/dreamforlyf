@@ -29,6 +29,32 @@
                 </div>
 
                 <div class="card mb-3 mb-xxl-4">
+                    <div class="card-header p-3 bg-white">
+                        <h5 class="m-0">Countries</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover display" id="bonus-withdrawal-table">
+                                <thead>
+                                    <tr>
+                                        <th>{{ __("country") }}</th>
+                                        <th>{{ __("total_quantities") }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($countriesSummary as $summary)
+                                        <tr>
+                                            <td>{{ $summary->country }}</td>
+                                            <td>{{ $summary->total_users }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3 mb-xxl-4">
                     <div class="card-header p-3 bg-white d-flex align-items-center justify-content-between">
                         <h5 class="m-0">{{ __("bonus_withdrawal") }}</h5>
                         <a href="/{{ App::currentLocale() }}/admin/bonus-withdrawals" class="btn btn-link">
@@ -96,14 +122,14 @@
             <div class="col-12 col-xxl-3 mb-4 mb-xxl-0">
                 <h5 class="mb-3 mb-xxl-4">{{ __("overall_history") }}</h5>
                 <div class="row">
-                    <div class="col-12">
+                    <div class="col-12 col-md-6 col-xl-4 col-xxl-12 mb-3">
                         @php $overAllHeadingOne = __("low_quantity_products"); @endphp
                         @php $productCount = session()->get("product_count"); @endphp
-                        <x-dashboard-summary :title="$overAllHeadingOne" :value="$productCount" icon="capsule"/>
+                        <x-model-summary :title="$overAllHeadingOne" icon="capsule" :number="$productCount" class="bg-secondary" />
                     </div>
-                    <div class="col-12">
-                        @php $overAllHeadingTwo = __("award") @endphp
-                        <x-dashboard-summary :title="$overAllHeadingTwo" :value="$awardCount" icon="award"/>
+                    <div class="col-12 col-md-6 col-xl-4 col-xxl-12 mb-3">
+                        @php $overAllHeadingTwo = __("award"); @endphp
+                        <x-model-summary :title="$overAllHeadingTwo" icon="award" :number="$awardCount" class="bg-orange" />
                     </div>
                 </div>
             </div>

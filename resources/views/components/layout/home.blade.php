@@ -75,6 +75,15 @@
 
     <main>
         {{ $slot }}
+
+        <div class="chatty">
+            <a href="https://wa.me/+2250100483050?text=Hi" class="chatty-link shadow" target="_blank">
+                <img src="{{ asset("assets/img/whatsapp.png") }}" alt="Whatsapp link">
+                <span class="chatty-tooltip">
+                    Don't hesitate to say Hi! <i class="bi bi-hand-thumbs-up"></i>
+                </span>
+            </a>
+        </div>
     </main>
 
     <footer>

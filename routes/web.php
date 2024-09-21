@@ -139,9 +139,9 @@ Route::prefix("{locale}/admin")->group(function() {
             "index", "show", "update"
         ]);
 
-        Route::resource("maint-packages", MaintenancePackageController::class)->except([
-            "show",
-        ]);
+        // Route::resource("maint-packages", MaintenancePackageController::class)->except([
+        //     "show",
+        // ]);
 
         Route::put("distributors/{id}/reset-withdrawal-pin", [AdminDistributorController::class, "reset_withdrawal_pin"]);
         Route::post("distributors/bv-reset/dollar", [AdminDistributorController::class, "bv_reset"]);
@@ -204,10 +204,6 @@ Route::prefix("{locale}/distributor")->group(function() {
 
         Route::get("order-history", [OrderHistoryController::class, "index"]);
         Route::get("order-history/{id}/show", [OrderHistoryController::class, "show"]);
-
-        // Route::get("maint-packages", [DistributorMainPackController::class, "index"]);
-        // Route::post("maint-packages", [DistributorMainPackController::class, "select_package"]);
-        // Route::get("maint-packages/{id}", [DistributorMainPackController::class, "account"])->middleware("maintenance.selected");
 
         Route::get("my-tree", [MyTreeController::class, "index"]);
         Route::get("my-tree/create", [MyTreeController::class, "create"]);
