@@ -29,7 +29,7 @@
             <div class="form-group mb-4">
                 <div class="d-flex align-items-center justify-content-between">
                     <label for="password">{{ __("password") }}</label>
-                    <a href="/{{ App::currentLocale() }}/forgot-password" class="main-forgot">{{ __("forgot_password") }}?</a>
+                    <a href="/{{ App::currentLocale() }}/forgot-password">{{ __("forgot_password") }}?</a>
                 </div>
                 <input type="password" id="password" name="password" class="form-control">
                 <small class="text-danger d-none"></small>

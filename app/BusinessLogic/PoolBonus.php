@@ -57,7 +57,7 @@ final class PoolBonus
     private static function hasHighestPackage(Upline $upline) {
         $distributor = $upline->user->distributor;
         $currentPackage = $distributor->registrationPackage;
-        return $currentPackage->id === 5;
+        return $currentPackage->id === 6;
     }
 
     private static function getDistributor($leg, $referredDistributors) {

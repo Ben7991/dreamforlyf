@@ -41,6 +41,11 @@ class EnsureUserIsAdmin
         $bonusWithdrawal = BonusWithdrawal::where("status", BonusWithdrawalStatus::PENDING->name)->count();
         $request->session()->put("withdrawal_count", $bonusWithdrawal);
 
+        $stockistWithdrawal = DB::table("stockist_withdrawal")
+            ->where("status", "PENDING")
+            ->count();
+        $request->session()->put("stockist_withdrawal_count", $stockistWithdrawal);
+
         $qualifiedUplines = Upline::qualifiedForLeadershipBonus();
         $request->session()->put("leadership_count", count($qualifiedUplines));
 

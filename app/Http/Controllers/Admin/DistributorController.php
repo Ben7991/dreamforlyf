@@ -462,4 +462,20 @@ class DistributorController extends Controller
             ]);
         }
     }
+
+
+    public function withdrawal_details($locale, $id) {
+        try {
+            $bonusWithdrawal = BonusWithdrawal::findOrFail($id);
+            return view("admin.bonus-withdrawal-details", [
+                "withdrawalDetails" => $bonusWithdrawal
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => "Withdrawal doesn't exist"
+            ]);
+        }
+    }
 }

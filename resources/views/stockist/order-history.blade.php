@@ -56,7 +56,7 @@
                                 <td>{{ $order->distributor->user->id }}</td>
                                 <td>{{ $order->distributor->user->name }}</td>
                                 <td>${{ $order->amount }}</td>
-                                <td>{{ $order->order_type }}</td>
+                                <td>{{ $order->order_type !== "NORMAL" ? $order->order_type : "PERSONAL" }}</td>
                                 <td>
                                     @if($order->status === "PENDING")
                                         <span class="badge text-bg-danger">{{ $order->status }}</span>

@@ -9,6 +9,7 @@ use App\Models\Stockist;
 use App\Models\User;
 use App\Models\UserType;
 use App\Utility\PasswordGenerator;
+use App\View\Components\Layout\Auth;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -185,6 +186,130 @@ class StockistController extends Controller
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
+            ]);
+        }
+    }
+
+
+    public function stockist_withdrawals() {
+        $total = DB::table("stockist_withdrawal")->count();
+        $pending = DB::table("stockist_withdrawal")->where("status", "PENDING")->count();
+        $approved = DB::table("stockist_withdrawal")->where("status", "APPROVED")->count();
+        $withdrawals = DB::table("stockist_withdrawal")
+            ->join("stockists", "stockist_withdrawal.stockist_id", "=", "stockists.id")
+            ->select(DB::raw("stockist_withdrawal.created_at, stockist_withdrawal.amount, stockist_withdrawal.deduction, stockist_withdrawal.status, stockists.code, stockist_withdrawal.id"))
+            ->get();
+
+        return view("admin.stockist.withdrawal", [
+            "total" => $total,
+            "pending" => $pending,
+            "approved" => $approved,
+            "withdrawals" => $withdrawals
+        ]);
+    }
+
+    public function stockist_withdrawal_requests() {
+        $total = DB::table("stockist_withdrawal_request")
+            ->where("stockist_request", "REQUESTED")
+            ->count();
+        $requests = DB::table("stockist_withdrawal_request")->where("stockist_request", "REQUESTED")
+            ->join("stockists", "stockist_withdrawal_request.stockist_id", "=", "stockists.id")
+            ->select(DB::raw("stockists.code, stockist_withdrawal_request.id"))
+            ->get();
+
+        return view("admin.stockist.withdrawal-request", [
+            "total" => $total,
+            "requests" => $requests
+        ]);
+    }
+
+
+    public function approve_request($locale, $id) {
+        try {
+            $request = DB::table("stockist_withdrawal_request")->find($id);
+
+            if ($request === null) {
+                throw new Exception("Please check and try approving the request again");
+            }
+
+            DB::table("stockist_withdrawal_request")
+                ->where("id", $id)
+                ->update([
+                    "approval_status" => "APPROVED",
+                    "stockist_request" => "PENDING"
+                ]);
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Request approved"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function withdrawal_details($locale, $id) {
+        try {
+            $withdrawal = DB::table("stockist_withdrawal")
+                ->join("stockists", "stockist_withdrawal.stockist_id", "=", "stockists.id")
+                ->select(DB::raw("stockist_withdrawal.created_at, stockist_withdrawal.amount, stockist_withdrawal.deduction, stockist_withdrawal.status, stockists.code, stockist_withdrawal.id, stockist_withdrawal.stockist_id, stockist_withdrawal.mode"))
+                ->where("stockist_withdrawal.id", $id)
+                ->first();
+
+            if ($withdrawal === null) {
+                throw new Exception("Please select the right details");
+            }
+
+            $bankDetails = DB::table("stockist_bank_details")
+                ->where("stockist_id", $withdrawal->stockist_id)
+                ->first();
+
+            return view("admin.stockist.withdrawal-details", [
+                "withdrawalDetails" => $withdrawal,
+                "bankDetails" => $bankDetails
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function withdrawal_approve($locale, $id) {
+        try {
+            $withdrawalDetails = DB::table("stockist_withdrawal")->find($id);
+
+            if ($withdrawalDetails === null) {
+                throw new Exception("Ensure you are making the right selection");
+            }
+
+            DB::table("stockist_withdrawal")
+                ->where("id", $id)
+                ->update([
+                    "status" => "APPROVED"
+                ]);
+
+            $stockist = Stockist::find($withdrawalDetails->stockist_id);
+            $stockist->bonus -= $withdrawalDetails->amount;
+            $stockist->save();
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Successfully approved withdrawal"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => $e->getMessage()
             ]);
         }
     }

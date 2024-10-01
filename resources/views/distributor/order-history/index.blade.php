@@ -53,7 +53,7 @@
                                 <td>{{ $order->id }}</td>
                                 <td>{{ $order->date_added }}</td>
                                 <td>${{ $order->amount }}</td>
-                                <td>{{ $order->order_type }}</td>
+                                <td>{{ $order->order_type !== "NORMAL" ? $order->order_type : "PERSONAL" }}</td>
                                 <td>{{ $order->status }}</td>
                                 <td>
                                     <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Edit">

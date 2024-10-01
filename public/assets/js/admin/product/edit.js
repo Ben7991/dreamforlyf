@@ -152,33 +152,7 @@ function displayUploadedImage(file) {
     fileReader.readAsDataURL(file);
 }
 
-// function sendImage(file) {
-//     const token = document.querySelector("#token").value;
-//     const spinner = document.querySelector("#image-spinner");
-//     spinner.classList.remove('d-none');
-
-//     const productId = spinner.nextElementSibling.value;
-
-//     $.ajax({
-//         url: `/products/${productId}/image`,
-//         method: "PUT",
-//         data: {
-//             "image": file
-//         },
-//         headers: {
-//             "Content Type": "multipart/form-data",
-//             "X-CSRF-TOKEN": token
-//         },
-//         success(data, status, xhr) {
-//             console.log(data);
-//         },
-//         error(xhr, status, errorThrown) {
-//             console.log(xhr);
-//         }
-//     })
-// }
-
-imageInput.addEventListener("change", function () {
+imageInput.addEventListener("change", async function () {
     const files = this.files;
     const acceptMime = ["image/jpg", "image/jpeg", "image/png"];
 
@@ -190,7 +164,6 @@ imageInput.addEventListener("change", function () {
         showAlert("Only image is allowed");
     } else {
         displayUploadedImage(files[0]);
-        // sendImage(files[0]);
     }
 });
 

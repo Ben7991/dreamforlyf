@@ -92,9 +92,15 @@
                             <input type="text" name="amount" id="amount" class="form-control">
                             <small class="text-danger d-none"></small>
                         </div>
-                        <p>
-                            <i class="bi bi-info-circle"></i> {{ __("withdrawal_request_info") }}
-                        </p>
+                        <div class="form-group mb-2">
+                            <label for="mode">{{ __("payment_mode") }}</label>
+                            <select name="mode" id="mode" class="form-select">
+                                <option value="">Select mode of payment</option>
+                                <option value="MOMO">Mobile Money</option>
+                                <option value="BANK">Bank Transfer</option>
+                            </select>
+                            <small class="text-danger d-none"></small>
+                        </div>
                         <div class="form-group mt-3 mb-2">
                             <label for="code">{{ __("withdrawal_code") }}</label>
                             <input type="password" name="code" id="code" class="form-control">
@@ -102,6 +108,10 @@
                         </div>
                         <p>
                             <i class="bi bi-info-circle"></i> Don't have a withdrawal code? <a href="/{{ App::currentLocale() }}/distributor/profile">Click here</a> to create one now
+                        </p>
+                        <hr>
+                        <p>
+                            <i class="bi bi-info-circle"></i> {{ __("withdrawal_request_info") }}
                         </p>
                     </div>
                     <div class="modal-footer">

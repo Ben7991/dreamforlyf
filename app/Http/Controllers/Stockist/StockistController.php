@@ -3,18 +3,20 @@
 namespace App\Http\Controllers\Stockist;
 
 use App\Http\Controllers\Controller;
-use App\Models\Distributor;
 use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\OrderType;
 use App\Models\Product;
 use App\Models\RegistrationPackage;
+use App\Models\StockistBankDetails;
 use App\Models\Transaction;
 use App\Models\TransactionPortfolio;
 use App\Models\TransactionType;
 use App\Models\UpgradeHistory;
 use App\Models\UpgradePackage;
 use App\Models\User;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -195,5 +197,198 @@ class StockistController extends Controller
 
     public function profile() {
         return view("stockist.profile");
+    }
+
+
+    public function bonus_withdrawal() {
+        $stockist = Auth::user()->stockist;
+        $withdrawals = DB::table("stockist_withdrawal")->where("stockist_id", $stockist->id)->get();
+        $pending = DB::table("stockist_withdrawal")->where("stockist_id", $stockist->id)->where("status", "PENDING")->count();
+        $approved = DB::table("stockist_withdrawal")->where("stockist_id", $stockist->id)->where("status", "APPROVED")->count();
+        $request = DB::table("stockist_withdrawal_request")->where("stockist_id", $stockist->id)->first();
+
+        return view("stockist.bonus-withdrawal", [
+            "withdrawals" => $withdrawals,
+            "totalRequest" => count($withdrawals),
+            "pending" => $pending,
+            "approved" => $approved,
+            "request" => $request
+        ]);
+    }
+
+
+    public function request_withdrawal() {
+        $stockist = Auth::user()->stockist;
+
+        try {
+            $existingRequest = DB::table("stockist_withdrawal_request")->where("stockist_id", $stockist->id)->first();
+
+            if ($existingRequest === null) {
+                DB::table("stockist_withdrawal_request")->insert([
+                    "stockist_request" => "REQUESTED",
+                    "approval_status" => "PENDING",
+                    "stockist_id" => $stockist->id
+                ]);
+            }
+            else {
+                DB::table("stockist_withdrawal_request")->where("stockist_id", $stockist->id)->update([
+                    "stockist_request" => "REQUESTED",
+                    "approval_status" => "PENDING",
+                ]);
+            }
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Ask admin to open the withdrawal portal"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function make_withdrawal(Request $request, $locale) {
+        $validated = $request->validate([
+            "amount" => "bail|required|regex:/^[0-9]*(\.[0-9]{2})*$/",
+            "mode" => "required"
+        ]);
+
+        $amount = (float)$validated["amount"];
+        $stockist = Auth::user()->stockist;
+
+        try {
+            $existingRequest = DB::table("stockist_withdrawal")
+                ->where("stockist_id", $stockist->id)
+                ->where("status", "PENDING")
+                ->first();
+
+            if ($existingRequest !== null) {
+                throw new Exception("You have a pending request");
+            }
+
+            if ($amount > $stockist->bonus) {
+                throw new Exception("Insufficient bonus to request withdrawal");
+            }
+
+            DB::table("stockist_withdrawal")->insert([
+                "created_at" => Carbon::now(),
+                "amount" => $amount,
+                "deduction" => $amount * 0.05,
+                "stockist_id" => $stockist->id,
+                "mode" => $validated["mode"]
+            ]);
+
+            DB::table("stockist_withdrawal_request")
+                ->where("stockist_id", $stockist->id)
+                ->update([
+                    "approval_status" => "PENDING"
+                ]);
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Successfully request, awaiting admin approval and payout"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
+
+
+    public function personal_information(Request $request) {
+        $id = Auth::id();
+        $currentUser = User::find($id);
+        $validated = $request->validate([
+            "name" => "bail|required",
+            "email" => "nullable|email",
+            "momo" => "bail|required"
+        ]);
+
+        try {
+            $currentUser->name = $validated["name"];
+            $currentUser->email = $validated["email"];
+            $currentUser->save();
+
+            $stockist = Auth::user()->stockist;
+            $stockist->phone_number = $validated["momo"];
+            $stockist->save();
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Updated personal information successfully"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => "Something went wrong, please contact developer for assistance"
+            ]);
+        }
+    }
+
+
+    public function set_bank_details(Request $request) {
+        $validated = $request->validate([
+            "full_name" => "required|regex:/^[a-zA-Z ]*$/",
+            "bank_name" => "required",
+            "bank_branch" => "required",
+            "beneficiary_name" => "required",
+            "account_number" => "required|regex:/^[0-9]*$/",
+            "iban" => "required|regex:/^[0-9]*$/",
+            "swift_number" => "required||regex:/^[0-9]*$/",
+            "phone_number" => "required|regex:/^\+[0-9]*$/",
+        ]);
+
+        try {
+            $stockist = Auth::user()->stockist;
+            $message = "";
+            $existingBankDetails = StockistBankDetails::where("stockist_id", $stockist->id)
+                ->first();
+
+            if ($existingBankDetails === null) {
+                StockistBankDetails::create([
+                    "full_name" => $validated["full_name"],
+                    "bank_name" => $validated["bank_name"],
+                    "bank_branch" => $validated["bank_branch"],
+                    "beneficiary_name" => $validated["beneficiary_name"],
+                    "account_number" => $validated["account_number"],
+                    "iban_number" => $validated["iban"],
+                    "swift_number" => $validated["swift_number"],
+                    "phone_number" => $validated["phone_number"],
+                    "stockist_id" => $stockist->id
+                ]);
+                $message = "Successfully added bank details successfully";
+            }
+            else {
+                $existingBankDetails->full_name = $validated["full_name"];
+                $existingBankDetails->bank_name = $validated["bank_name"];
+                $existingBankDetails->bank_branch = $validated["bank_branch"];
+                $existingBankDetails->beneficiary_name = $validated["beneficiary_name"];
+                $existingBankDetails->account_number = $validated["account_number"];
+                $existingBankDetails->iban_number = $validated["iban_number"];
+                $existingBankDetails->swift_number = $validated["swift_number"];
+                $existingBankDetails->phone_number = $validated["phone_number"];
+                $existingBankDetails->save();
+                $message = "Successfully updated bank details successfully";
+            }
+
+            return redirect()->back()->with([
+                "message" => $message,
+                "class" => "success"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "message" => "Something went wrong, please check and try again",
+                "class" => "danger"
+            ]);
+        }
     }
 }

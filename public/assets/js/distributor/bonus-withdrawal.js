@@ -43,12 +43,32 @@ code.addEventListener("change", function() {
     checkInput(this, isCodeValidated, codeError);
 });
 
+
+const mode = document.querySelector("#mode");
+let isModeValidated = false;
+let modeError = "Payment mode is required";
+mode.addEventListener("change", function() {
+    const value = this.value;
+
+    if (value === "") {
+        modeError = "Payment mode is required";
+        isModeValidated = false;
+    } else {
+        modeError = "";
+        isModeValidated = true;
+    }
+
+    checkInput(this, isModeValidated, modeError);
+});
+
+
 const form = document.querySelector("#form");
 form.addEventListener("submit", function(event) {
-    if (!isAmountValidated || !isCodeValidated) {
+    if (!isAmountValidated || !isCodeValidated || !isModeValidated) {
         event.preventDefault();
 
         checkInput(amount, isAmountValidated, amountError);
         checkInput(code, isCodeValidated, codeError);
+        checkInput(mode, isModeValidated, modeError);
     }
 });

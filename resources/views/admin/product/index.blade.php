@@ -49,6 +49,7 @@
                             <th>{{ __("name") }}</th>
                             <th>{{ __("quantity") }}</th>
                             <th>{{ __("price") }}</th>
+                            <th>BV Point</th>
                             <th>{{ __("status") }}</th>
                             <th>Actions</th>
                         </tr>
@@ -63,6 +64,7 @@
                                 <td>{{ $product->name }}</td>
                                 <td>{{ $product->quantity }}</td>
                                 <td>${{ $product->price }}</td>
+                                <td>{{ $product->bv_point }}</td>
                                 <td>
                                     {{ $product->status === "in-stock" ? __("in_stock") : __("out_of_stock") }}
                                 </td>

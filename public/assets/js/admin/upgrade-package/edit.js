@@ -142,7 +142,7 @@ productInput.addEventListener("change", function() {
     checkInput(this, isProductInputValidated, productError);
 });
 
-const actionBtns = document.querySelectorAll(".action-btn");
+const actionBtns = document.querySelectorAll(".edit-btn");
 actionBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
         productId = +btn.previousElementSibling.value;

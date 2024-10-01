@@ -75,6 +75,13 @@ class PortfolioController extends Controller
             ]);
         }
 
+        if (!in_array($request->mode, ["MOMO", "BANK"])) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => "Please select mode of payment"
+            ]);
+        }
+
         if ($amount === "" || !preg_match("/^[0-9]+(\.[0-9]{2})*$/", $amount)) {
             return redirect()->back()->with([
                 "class" => "danger",
@@ -101,7 +108,8 @@ class PortfolioController extends Controller
             $result = BonusWithdrawal::create([
                 "amount" => $preparedAmount,
                 "deduction" => $deduction,
-                "distributor_id" => $distributor->id
+                "distributor_id" => $distributor->id,
+                "mode" => $request->mode
             ]);
 
             $user = Auth::user();
@@ -118,7 +126,7 @@ class PortfolioController extends Controller
         catch(\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
-                "message" => "Something went wrong"
+                "message" => "Email couldn't send"
             ]);
         }
     }

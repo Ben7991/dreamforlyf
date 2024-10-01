@@ -107,7 +107,7 @@ let productId, quantity;
 let quantityInput = document.querySelector("#quantity");
 let productInput = document.querySelector("#product_id");
 
-const actionBtns = document.querySelectorAll(".action-btn");
+const actionBtns = document.querySelectorAll(".edit-btn");
 actionBtns.forEach((btn) => {
     btn.addEventListener("click", () => {
         productId = +btn.previousElementSibling.value;

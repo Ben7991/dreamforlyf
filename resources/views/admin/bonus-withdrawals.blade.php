@@ -54,9 +54,9 @@
                             <th>{{ __("amount_paid") }}</th>
                             <th>{{ __("distributor") }}</th>
                             <th>{{ __("distributor_id") }}</th>
-                            <th>{{ __("country") }}</th>
-                            <th>{{ __("city") }}</th>
-                            <th>{{ __("wave_number") }}</th>
+                            <th>{{ __("status") }}</th>
+                            {{-- <th>{{ __("city") }}</th>
+                            <th>{{ __("wave_number") }}</th> --}}
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -69,18 +69,21 @@
                                 <td>${{ $detail->amount - $detail->deduction }}</td>
                                 <td>{{ $detail->distributor->user->name }}</td>
                                 <td>{{ $detail->distributor->user->id }}</td>
-                                <td>{{ $detail->distributor->country }}</td>
-                                <td>{{ $detail->distributor->city }}</td>
-                                <td>{{ $detail->distributor->wave }}</td>
                                 <td>
                                     @if($detail->status === "PENDING")
-                                        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Give award">
-                                            <button class="action-btn text-success rounded" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                                                onclick="setFormAction('/{{ App::currentLocale() }}/admin/bonus-withdrawals/{{ $detail->id }}/approve')">
-                                                <i class="bi bi-check2"></i>
-                                            </button>
-                                        </span>
+                                        <span class="badge text-bg-danger">{{ $detail->status }}</span>
+                                    @else
+                                        <span class="badge text-bg-success">{{ $detail->status }}</span>
                                     @endif
+                                </td>
+                                {{-- <td>{{ $detail->distributor->city }}</td>
+                                <td>{{ $detail->distributor->wave }}</td> --}}
+                                <td>
+                                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="View">
+                                        <a class="action-btn text-success rounded" href="/{{ App::currentLocale() }}/admin/bonus-withdrawals/{{ $detail->id }}">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </span>
                                 </td>
                             </tr>
                         @endforeach
@@ -90,7 +93,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    {{-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -113,7 +116,7 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     @push("scripts")
         <script>

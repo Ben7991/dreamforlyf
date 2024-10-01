@@ -34,7 +34,7 @@
 
                 <div class="card mb-3 mb-xxl-4">
                     <div class="card-header p-3 bg-white d-flex align-items-center justify-content-between">
-                        <h5 class="m-0">{{ __("bonus_withdrawal") }}</h5>
+                        <h5 class="m-0">{{ __("wallet_transfer") }}</h5>
                         <a href="/{{ App::currentLocale() }}/stockist/transfer-wallet" class="btn btn-link">
                             {{ __("see_more") }} <i class="bi bi-arrow-right-short"></i>
                         </a>

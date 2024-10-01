@@ -28,6 +28,7 @@ class UpdateProductRequest extends FormRequest
             "image" => "nullable|image",
             "price" => "bail|required|regex:/^[0-9]+(\.[0-9]{2})*$/",
             "status" => "bail|required|in:in-stock,out-of-stock",
+            "bv_point" => "bail|required|integer"
         ];
     }
 }

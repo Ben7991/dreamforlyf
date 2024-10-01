@@ -17,7 +17,8 @@ class BonusWithdrawal extends Model
     protected $fillable = [
         "amount",
         "deduction",
-        "distributor_id"
+        "distributor_id",
+        "mode"
     ];
 
     public function distributor() {

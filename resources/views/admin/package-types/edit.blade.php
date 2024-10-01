@@ -103,11 +103,17 @@
                                 <td>
                                     <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ __("view") }}">
                                         <input type="hidden" value="{{ $product->pivot->product_id }}">
-                                        <button class="action-btn text-secondary" onclick="setFormAction('/{{ App::getLocale() }}/admin/package-types/{{ $product->pivot->id }}/product')"
+                                        <button class="action-btn text-secondary edit-btn" onclick="setFormAction('/{{ App::getLocale() }}/admin/package-types/{{ $product->pivot->id }}/product')"
                                             data-bs-toggle="modal" data-bs-target="#exampleModal">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
                                         <input type="hidden" value="{{ $product->pivot->quantity }}">
+                                    </span>
+                                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Remove">
+                                        <button class="action-btn text-danger" onclick="setDeleteFormAction('/{{ App::getLocale() }}/admin/package-types/{{ $product->pivot->id }}/product')"
+                                            data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
                                     </span>
                                 </td>
                             </tr>
@@ -158,7 +164,37 @@
         </div>
     </div>
 
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="deleteModalLabel">Remove Product</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" id="delete-form">
+                    @csrf
+                    @method("DELETE")
+
+                    <div class="modal-body">
+                        <p>Are you sure you want to remove the product from this package?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("close") }}</button>
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     @push("scripts")
         <script src="{{ asset("assets/js/admin/package-type/edit.js") }}"></script>
+        <script>
+            function setDeleteFormAction(action) {
+                let form = document.querySelector("#delete-form");
+                form.action = action;
+            }
+        </script>
     @endpush
 </x-layout.admin>

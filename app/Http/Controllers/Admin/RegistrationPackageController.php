@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\EntityStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreRegistrationPackageRequest;
 use App\Http\Requests\UpdateRegistrationPackageRequest;
@@ -75,13 +76,13 @@ class RegistrationPackageController extends Controller
             ]);
         }
         catch(UniqueConstraintViolationException $e) {
-            return redirect("/$this->activeLocale/admin/registration-packages")->with([
+            return redirect("/$locale/admin/registration-packages")->with([
                 "message" => "No duplicate registration package names",
                 "class" => "danger"
             ]);
         }
         catch(\Exception $e) {
-            return redirect("/$this->activeLocale/admin/registration-packages")->with([
+            return redirect("/$locale/admin/registration-packages")->with([
                 "message" => "Resource doesn't exist",
                 "class" => "danger"
             ]);
@@ -90,7 +91,9 @@ class RegistrationPackageController extends Controller
 
     public function detail($id) {
         try {
-            $packageTypes = PackageType::where("package_id", $id)->get();
+            $packageTypes = PackageType::where("package_id", $id)
+                ->where("status", EntityStatus::ACTIVE->name)
+                ->get();
             $preparedResponse = [];
 
             foreach ($packageTypes as $packageType) {

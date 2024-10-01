@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\EntityStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductPackageRequest;
 use App\Models\PackageType;
@@ -17,9 +18,9 @@ class PackageTypeController extends Controller
 {
     public function index() {
         return view("admin.package-types.index", [
-            "package_types" => PackageType::all(),
+            "package_types" => PackageType::where("status", EntityStatus::ACTIVE->name)->get(),
             "products" => Product::all(),
-            "totalTypes" => PackageType::count()
+            "totalTypes" => PackageType::where("status", EntityStatus::ACTIVE->name)->count()
         ]);
     }
 
@@ -161,6 +162,43 @@ class PackageTypeController extends Controller
         catch(\Exception $e) {
             return redirect()->back()->with([
                 "message" => "Resource doesn't exist",
+                "class" => "danger"
+            ]);
+        }
+    }
+
+
+    public function destroy($locale, $id) {
+        try {
+            $packageToDelete = PackageType::findOrFail($id);
+            $packageToDelete->status = EntityStatus::REMOVED->name;
+            $packageToDelete->save();
+
+            return redirect()->back()->with([
+                "message" => "Package deleted successfully",
+                "class" => "success"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "message" => "Resource doesn't exist",
+                "class" => "danger"
+            ]);
+        }
+    }
+
+
+    public function remove_product($locale, $id) {
+        try {
+            DB::table("product_package_type")->delete($id);;
+            return redirect()->back()->with([
+                "message" => "Product removed successfully",
+                "class" => "success"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "message" => "Something went wrong, please contact developer",
                 "class" => "danger"
             ]);
         }

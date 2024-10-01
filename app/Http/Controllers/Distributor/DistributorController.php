@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Distributor;
 
 use App\BusinessLogic\BvCycle;
-use App\BusinessLogic\LegCounter;
 use App\BusinessLogic\PersonalBonus;
 use App\BusinessLogic\UpgradeBonus;
 use App\Http\Controllers\Controller;
-use App\Models\Distributor;
 use App\Models\Order;
 use App\Models\OrderType;
 use App\Models\PackageType;
@@ -18,7 +16,8 @@ use App\Models\RegistrationPackage;
 use App\Models\Stockist;
 use App\Models\UpgradeHistory;
 use App\Models\UpgradePackage;
-use App\BusinessLogic\PoolBonus as BusinessPoolBonus;
+use App\Enums\EntityStatus;
+use App\Models\BankDetail;
 use App\Models\CodeEthics;
 use App\Models\PoolBonus;
 use App\Models\PoolBonusStatus;
@@ -40,7 +39,7 @@ class DistributorController extends Controller
         $referredDistributors = $this->getReferredDistributors();
 
         $currentDate = new Carbon();
-        $expiringDate = Carbon::parse($distributor->next_maintenance_date);
+        $expiringDate = Carbon::parse($distributor->next_maintenanc);
         $status = $expiringDate->greaterThanOrEqualTo($currentDate);
 
         return view("distributor.index", [
@@ -245,7 +244,9 @@ class DistributorController extends Controller
             }
 
             $upgradeTypes = UpgradePackage::where("next_package_id", $nextPackage->id)
-                ->where("current_package_id", $currentPackage->id)->get();
+                ->where("current_package_id", $currentPackage->id)
+                ->where("status", EntityStatus::ACTIVE->name)
+                ->get();
 
             return view("distributor.upgrade-product-selection", [
                 "nextPackage" => $nextPackage,
@@ -581,6 +582,65 @@ class DistributorController extends Controller
                 "message" => "User doesn't exist",
                 "data" => $e->getMessage()
             ], 400);
+        }
+    }
+
+
+    public function store_bank_details(Request $request) {
+        $validated = $request->validate([
+            "full_name" => "required|regex:/^[a-zA-Z ]*$/",
+            "bank_name" => "required",
+            "bank_branch" => "required",
+            "beneficiary_name" => "required",
+            "account_number" => "required|regex:/^[0-9]*$/",
+            "iban" => "required|regex:/^[0-9]*$/",
+            "swift_number" => "required||regex:/^[0-9]*$/",
+            "phone_number" => "required|regex:/^\+[0-9]*$/",
+        ]);
+
+        try {
+            $distributor = Auth::user()->distributor;
+            $message = "";
+            $existingBankDetails = BankDetail::where("distributor_id", $distributor->id)
+                ->first();
+
+            if ($existingBankDetails === null) {
+                BankDetail::create([
+                    "full_name" => $validated["full_name"],
+                    "bank_name" => $validated["bank_name"],
+                    "bank_branch" => $validated["bank_branch"],
+                    "beneficiary_name" => $validated["beneficiary_name"],
+                    "account_number" => $validated["account_number"],
+                    "iban_number" => $validated["iban"],
+                    "swift_number" => $validated["swift_number"],
+                    "phone_number" => $validated["phone_number"],
+                    "distributor_id" => $distributor->id
+                ]);
+                $message = "Successfully added bank details successfully";
+            }
+            else {
+                $existingBankDetails->full_name = $validated["full_name"];
+                $existingBankDetails->bank_name = $validated["bank_name"];
+                $existingBankDetails->bank_branch = $validated["bank_branch"];
+                $existingBankDetails->beneficiary_name = $validated["beneficiary_name"];
+                $existingBankDetails->account_number = $validated["account_number"];
+                $existingBankDetails->iban_number = $validated["iban_number"];
+                $existingBankDetails->swift_number = $validated["swift_number"];
+                $existingBankDetails->phone_number = $validated["phone_number"];
+                $existingBankDetails->save();
+                $message = "Successfully updated bank details successfully";
+            }
+
+            return redirect()->back()->with([
+                "message" => $message,
+                "class" => "success"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "message" => "Something went wrong, please check and try again",
+                "class" => "danger"
+            ]);
         }
     }
 }

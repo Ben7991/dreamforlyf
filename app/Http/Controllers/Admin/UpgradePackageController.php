@@ -13,8 +13,9 @@ use Illuminate\Support\Facades\Storage;
 class UpgradePackageController extends Controller
 {
     public function index() {
-        $upgrades = UpgradePackage::all();
+        $upgrades = UpgradePackage::where("status", "ACTIVE")->get();
         $count = count($upgrades);
+
         return view("admin.upgrade-package.index", [
             "upgradePackages" => $upgrades,
             "packageCount" => $count,
@@ -222,6 +223,53 @@ class UpgradePackageController extends Controller
             return redirect()->back()->with([
                 "class" => "success",
                 "message" => "Update package product successfully"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => "Something went wrong"
+            ]);
+        }
+    }
+
+
+    public function destroy(Request $request, $locale, $id) {
+        try {
+            $package = UpgradePackage::find($id);
+
+            if ($package === null) {
+                return redirect()->back()->with([
+                    "class" => "danger",
+                    "message" => "Upgrade package doesn't exist"
+                ]);
+            }
+
+            /** this marks a product as deleted */
+            $package->status = "REMOVED";
+            $package->save();
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Upgrade package deleted successfully"
+            ]);
+        }
+        catch(\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => "Something went wrong"
+            ]);
+        }
+    }
+
+
+    public function remove_product($locale, $id) {
+        try {
+            DB::table("upgrade_package_product")->delete($id);
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Product remove successfully from package"
             ]);
         }
         catch(\Exception $e) {

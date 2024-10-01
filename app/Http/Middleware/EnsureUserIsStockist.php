@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Order;
 use App\Models\OrderStatus;
 use App\Models\UserType;
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,9 @@ class EnsureUserIsStockist
 
         $orderCount = Order::where("status", OrderStatus::PENDING->name)->count();
         $request->session()->put("order_count", $orderCount);
+
+        $isWithdrawalDays = Carbon::TUESDAY === Carbon::now()->dayOfWeek || Carbon::WEDNESDAY === Carbon::now()->dayOfWeek;
+        $request->session()->put("isWithdrawalDay", $isWithdrawalDays);
 
         return $next($request);
     }

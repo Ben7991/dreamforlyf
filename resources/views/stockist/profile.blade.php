@@ -48,6 +48,9 @@
             <li class="nav-item">
               <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="true">Change Password</button>
             </li>
+            <li class="nav-item">
+                <button class="nav-link" id="pills-bank-tab" data-bs-toggle="pill" data-bs-target="#pills-bank" type="button" role="tab" aria-controls="pills-bank" aria-selected="true">Bank Details</button>
+            </li>
         </ul>
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
@@ -64,6 +67,11 @@
                             <div class="col-12 col-md-4 col-xxl-3">
                                 <label for="email">Email</label>
                                 <input type="email" name="email" id="email" class="form-control" value="{{ Auth::user()->email }}">
+                            </div>
+                            <div class="col-12 col-md-4 col-xxl-3">
+                                <label for="momo">Momo Number</label>
+                                <input type="text" name="momo" id="momo" class="form-control" value="{{ Auth::user()->stockist->phone_number }}">
+                                <small class="text-danger d-none"></small>
                             </div>
                         </div>
                         <button class="btn btn-success">
@@ -100,10 +108,68 @@
                     </form>
                 </div>
             </div>
+
+            <div class="tab-pane fade" id="pills-bank" role="tabpanel" aria-labelledby="pills-bank-tab" tabindex="0">
+                <div class="py-3 py-xxl-4">
+                    <form action="/{{ App::currentLocale() }}/stockist/profile/bank" method="POST" id="bank-details-form">
+                        @csrf
+                        <div class="row">
+                            <div class="col-12 col-md-6 col-xl-4">
+                                <div class="form-group mb-3">
+                                    <label for="full_name">Full name</label>
+                                    <input type="text" name="full_name" id="full_name" class="form-control">
+                                    <small class="text-danger d-none"></small>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="bank_name">Bank name</label>
+                                    <input type="text" name="bank_name" id="bank_name" class="form-control">
+                                    <small class="text-danger d-none"></small>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="bank_branch">Bank branch</label>
+                                    <input type="text" name="bank_branch" id="bank_branch" class="form-control">
+                                    <small class="text-danger d-none"></small>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="beneficiary_name">Beneficiary / Account name</label>
+                                    <input type="text" name="beneficiary_name" id="beneficiary_name" class="form-control">
+                                    <small class="text-danger d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-xl-4 mb-3 mb-md-0">
+                                <div class="form-group mb-3">
+                                    <label for="account_number">Account number</label>
+                                    <input type="text" name="account_number" id="account_number" class="form-control">
+                                    <small class="text-danger d-none"></small>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="iban">IBAN / RIB number</label>
+                                    <input type="text" name="iban" id="iban" class="form-control">
+                                    <small class="text-danger d-none"></small>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="swift_number">Swift number</label>
+                                    <input type="text" name="swift_number" id="swift_number" class="form-control">
+                                    <small class="text-danger d-none"></small>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="phone_number">Phone Number</label>
+                                    <input type="text" name="phone_number" id="phone_number" class="form-control">
+                                    <small class="text-danger d-none"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-success">
+                            <i class="bi bi-save"></i> {{ __("save") }}
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
     @push("scripts")
         <script src="{{ asset("assets/js/profile.js") }}"></script>
+        <script src="{{ asset("assets/js/bank-details.js") }}"></script>
     @endpush
 </x-layout.stockist>

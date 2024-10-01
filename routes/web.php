@@ -30,7 +30,7 @@ Route::get('/', function () {
     return redirect("$currentLocale");
 });
 
-Route::get("/ad-create-us-dats", [AdminController::class, "set_admin"]);
+// Route::get("/ad-create-us-dats", [AdminController::class, "set_admin"]);
 
 Route::get("/users/{id}", [AuthController::class, "user"]);
 Route::get("/registration-packages/{id}/detail", [RegistrationPackageController::class, "detail"]);
@@ -89,10 +89,14 @@ Route::prefix("{locale}/admin")->group(function() {
         Route::post("announce", [AdminController::class, "store_announcement"]);
         Route::delete("announce/{id}", [AdminController::class, "remove_announcement"]);
 
-        Route::get("analytics", [AnalyticsController::class, "index"]);
-        Route::get("analytics/registration", [AnalyticsController::class, "registration"]);
-        Route::get("analytics/bonus", [AnalyticsController::class, "bonus"]);
-        Route::get("analytics/withdrawal", [AnalyticsController::class, "withdrawal"]);
+
+        Route::prefix("analytics")->group(function() {
+            Route::get("", [AnalyticsController::class, "index"]);
+            Route::get("personal-purchase", [AnalyticsController::class, "personal_purchase"]);
+            Route::get("upgrade-bonus", [AnalyticsController::class, "upgrade_bonus"]);
+            Route::get("maint", [AnalyticsController::class, "maintenance"]);
+            Route::get("general-assessment", [AnalyticsController::class, "general_assessment"]);
+        });
 
         Route::get("profile", [AdminController::class, "profile"]);
         Route::post("profile/personal-information", [AuthController::class, "personal_information"]);
@@ -125,23 +129,17 @@ Route::prefix("{locale}/admin")->group(function() {
 
         Route::post("upgrade-packages/{id}/product", [UpgradePackageController::class, "store_product"]);
         Route::put("upgrade-packages/{id}/product", [UpgradePackageController::class, "update_product"]);
-        Route::resource("upgrade-packages", UpgradePackageController::class)->except([
-            "destroy", "show"
-        ]);
+        Route::delete("upgrade-packages/{id}/product", [UpgradePackageController::class, "remove_product"]);
+        Route::resource("upgrade-packages", UpgradePackageController::class)->except(["show"]);
 
         Route::post("package-types/{id}/product", [PackageTypeController::class, "store_product"]);
         Route::put("package-types/{id}/product", [PackageTypeController::class, "update_product"]);
-        Route::resource("package-types", PackageTypeController::class)->except([
-            "destroy","show"
-        ]);
+        Route::delete("package-types/{id}/product", [PackageTypeController::class, "remove_product"]);
+        Route::resource("package-types", PackageTypeController::class)->except(["show"]);
 
         Route::resource('order-history', OrderController::class)->only([
             "index", "show", "update"
         ]);
-
-        // Route::resource("maint-packages", MaintenancePackageController::class)->except([
-        //     "show",
-        // ]);
 
         Route::put("distributors/{id}/reset-withdrawal-pin", [AdminDistributorController::class, "reset_withdrawal_pin"]);
         Route::post("distributors/bv-reset/dollar", [AdminDistributorController::class, "bv_reset"]);
@@ -153,6 +151,13 @@ Route::prefix("{locale}/admin")->group(function() {
         Route::get("bonus-withdrawals", [AdminDistributorController::class, "bonus_withdrawals"]);
         Route::put("bonus-withdrawals/{id}/approve", [AdminDistributorController::class, "approve_withdrawal"]);
         Route::get("bonus-withdrawals/filter", [AdminDistributorController::class, "filter_withdrawals"]);
+        Route::get("bonus-withdrawals/{id}", [AdminDistributorController::class, "withdrawal_details"]);
+
+        Route::get("stockist-withdrawals", [AdminStockistController::class, "stockist_withdrawals"]);
+        Route::get("stockist-withdrawals/request", [AdminStockistController::class, "stockist_withdrawal_requests"]);
+        Route::put("stockist-withdrawals/request/{id}", [AdminStockistController::class, "approve_request"]);
+        Route::get("stockist-withdrawals/{id}", [AdminStockistController::class, "withdrawal_details"]);
+        Route::put("stockist-withdrawals/{id}/approve", [AdminStockistController::class, "withdrawal_approve"]);
 
         Route::get("upgrade-history", [AdminController::class, "upgrade_history"]);
 
@@ -187,6 +192,7 @@ Route::prefix("{locale}/distributor")->group(function() {
             Route::post("password-change", [AuthController::class, "password_change"]);
             Route::post("set-pin", [DistributorController::class, "set_pin"]);
             Route::post("change-pin", [DistributorController::class, "change_pin"]);
+            Route::post("bank", [DistributorController::class, "store_bank_details"]);
         });
 
         Route::get("products", [DistributorController::class, "products"]);
@@ -212,7 +218,6 @@ Route::prefix("{locale}/distributor")->group(function() {
 
         Route::get("qualified-ranks", [DistributorController::class, "qualified_ranks"]);
         Route::get("qualified-pool", [DistributorController::class, "qualified_pool"]);
-        Route::get("bonus-withdrawals", [DistributorController::class, "bonus_withdrawal"]);
 
         Route::get("portfolios", [PortfolioController::class, "index"]);
         Route::get("transaction-history", [PortfolioController::class, "transaction_history"]);
@@ -232,9 +237,12 @@ Route::prefix("{locale}/stockist")->group(function() {
     Route::middleware(["auth", "user.stockist", "internationalize"])->group(function() {
         Route::get("", [StockistController::class, "index"]);
 
-        Route::get("profile", [StockistController::class, "profile"]);
-        Route::post("profile/personal-information", [AuthController::class, "personal_information"]);
-        Route::post("profile/password-change", [AuthController::class, "password_change"]);
+        Route::prefix("profile")->group(function() {
+            Route::get("", [StockistController::class, "profile"]);
+            Route::post("personal-information", [StockistController::class, "personal_information"]);
+            Route::post("password-change", [AuthController::class, "password_change"]);
+            Route::post("bank", [StockistController::class, "set_bank_details"]);
+        });
 
         Route::get("order-history", [StockistController::class, "orderHistory"]);
         Route::get("order-history/{id}", [StockistController::class, "orderDetails"]);
@@ -242,5 +250,9 @@ Route::prefix("{locale}/stockist")->group(function() {
 
         Route::get("transfer-wallet", [StockistController::class, "transferWallet"]);
         Route::put("transfer-wallet/{id}", [StockistController::class, "sendDistributorWallet"]);
+
+        Route::get("bonus-withdrawal", [StockistController::class, "bonus_withdrawal"]);
+        Route::post("bonus-withdrawal/request", [StockistController::class, "request_withdrawal"]);
+        Route::post("bonus-withdrawal/make-withdrawal", [StockistController::class, "make_withdrawal"]);
     });
 });

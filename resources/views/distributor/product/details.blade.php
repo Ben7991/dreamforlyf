@@ -53,7 +53,7 @@
                                     <i class="bi bi-exclamation-circle text-danger"></i>
                                     <div class="position-absolute top-100 left-0 shadow border rounded p-3 bg-white product-icon-dropdown"
                                         style="width: 250px;">
-                                        <h6 class="mb-1">{{ __("direct_purchase_heading") }}</h6>
+                                        <h6 class="mb-1">{{ __("personal_purchase") }}</h6>
                                         <p class="m-0">{{ __("direct_purchase_description") }}</p>
                                         <hr>
                                         <h6 class="mb-1">{{ __("maintenance_purchase_heading") }}</h6>
@@ -63,7 +63,7 @@
                             </label>
                             <select name="purchase" id="purchase" class="form-select">
                                 <option value="">{{ __("select_purchase_type") }}</option>
-                                <option value="direct">{{ __("direct_purchase_heading") }}</option>
+                                <option value="direct">{{ __("personal_purchase") }}</option>
                                 <option value="maintenance">{{ __("maintenance_purchase_heading") }}</option>
                             </select>
                             <small class="text-danger d-none"></small>

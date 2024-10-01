@@ -78,11 +78,26 @@
                     <a href="/{{ App::currentLocale() }}/stockist/transfer-wallet" class="drawer-link rounded {{ $title == "Wallet" ? 'active' : '' }}">
                         <i class="bi bi-wallet"></i> {{  __("transfer_wallet") }}
                     </a>
-
+                    <a href="/{{ App::currentLocale() }}/stockist/bonus-withdrawal" class="drawer-link rounded {{ $title == "Bonus Withdrawals" ? 'active' : '' }}">
+                        <i class="bi bi-box-arrow-up"></i> {{  __("bonus_withdrawal") }}
+                    </a>
                 </div>
             </aside>
             <section class="content-main">
+                @if (session()->get("isWithdrawalDay") === true)
+                    <div class="alert alert-success">
+                        <p class="mt-1 mb-0 fs-5"><marquee class="m-0">{{ __("withdrawal_notice") }}</marquee></p>
+                    </div>
+                @endif
+
                 {{ $slot }}
+
+                <footer class="p-3 bg-light rounded mt-5">
+                    <div class="container-fluid p-0 text-center d-md-flex justify-content-between">
+                        <p class="m-md-0">&copy; {{ __("footer_copyright") }}</p>
+                        <a href="/{{ App::currentLocale() }}/distributor/ethics">Code of Ethics <i class="bi bi-arrow-right"></i></a>
+                    </div>
+                </footer>
             </section>
         </section>
     </main>

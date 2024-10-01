@@ -33,7 +33,6 @@
                     </div>
                     <img src="{{ asset(str_replace("public", "storage", $product->image)) }}" alt="Uploaded product image" class="uploaded-image">
                     <input type="hidden" value="{{ $product->image }}">
-                    <input type="file" id="image" hidden>
                     <input type="hidden" id="token" value="{{ csrf_token() }}">
                 </div>
             </div>
@@ -58,6 +57,7 @@
                         @csrf
                         @method("PUT")
 
+                        <input type="file" id="image" hidden accept="image/*" name="image">
                         <div class="form-group mb-3">
                             <label for="name">{{ __("name") }}</label>
                             <input type="text" name="name" id="name" class="form-control" value="{{ $product->name }}">

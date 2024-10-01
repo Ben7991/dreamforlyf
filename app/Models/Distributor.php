@@ -41,6 +41,10 @@ class Distributor extends Model
         return $this->hasMany(Order::class);
     }
 
+    public function bankDetails() {
+        return $this->hasOne(BankDetail::class);
+    }
+
     public function changePackage(RegistrationPackage $package) {
         $this->registration_package_id = $package->id;
         $this->save();

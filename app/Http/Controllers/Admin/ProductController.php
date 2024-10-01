@@ -69,14 +69,26 @@ class ProductController extends Controller
     }
 
     public function update(UpdateProductRequest $request, $locale, $id) {
-        try {
-            $validated = $request->validated();
+        $validated = $request->validated();
 
+        try {
             $product = Product::findOrFail($id);
+
+
+            if ($request->hasFile("image")) {
+                if ($product->image) {
+                    Storage::delete($product->image);
+                }
+
+                $product->image = $request->file("image")->store("public/products");
+            }
+
+
             $product->name = $validated["name"];
             $product->quantity = (int)$validated["quantity"];
             $product->price = (float)$validated["price"];
             $product->status = $validated["status"];
+            $product->bv_point = (int)$validated["bv_point"];
 
             $product->save();
 
@@ -129,19 +141,4 @@ class ProductController extends Controller
             ]);
         }
     }
-
-    /**public function change_image(Request $request, $locale, $id) {
-        $validated = $request->validate([
-            "image" => "required|image"
-        ]);
-
-        try {
-
-        }
-        catch(Exception $e) {
-            return response()->json([
-                "message" => "Something went wrong"
-            ], 500);
-        }
-    }*/
 }

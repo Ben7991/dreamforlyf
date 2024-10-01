@@ -92,9 +92,6 @@
                     <a href="/{{ App::currentLocale() }}/admin/upgrade-packages" class="drawer-link rounded {{ $title == "Upgrade Packages" ? 'active' : '' }}">
                         <i class="bi bi-graph-up-arrow"></i> {{  __("upgrade_packages") }}
                     </a>
-                    {{-- <a href="/{{ App::currentLocale() }}/admin/maint-packages" class="drawer-link rounded {{ $title == "Maintenance Packages" ? 'active' : '' }}">
-                        <i class="bi bi-gear"></i> {{  __("maintenance_packages") }}
-                    </a> --}}
                     <hr>
 
                     <a href="/{{ App::currentLocale() }}/admin/order-history" class="drawer-link rounded d-flex align-items-center justify-content-between {{ $title == "Order History" ? 'active' : '' }}">
@@ -111,6 +108,12 @@
                     </a>
                     <a href="/{{ App::currentLocale() }}/admin/upgrade-history" class="drawer-link rounded {{ $title == "Upgrade History" ? 'active' : '' }}">
                         <i class="bi bi-graph-up-arrow"></i> {{  __("upgrade_history") }}
+                    </a>
+                    <a href="/{{ App::currentLocale() }}/admin/stockist-withdrawals" class="drawer-link rounded d-flex align-items-center justify-content-between {{ $title == "Stockist Withdrawals" ? 'active' : '' }}">
+                        <span>
+                            <i class="bi bi-cash-coin"></i> {{ __("stockist_withdrawal") }}
+                        </span>
+                        <span class="drawer-link-number">{{ session()->get("stockist_withdrawal_count") }}</span>
                     </a>
                     <hr>
 
