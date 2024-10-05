@@ -259,8 +259,8 @@ class MyTreeController extends Controller
             $rank = "None";
             $leftBv = $user->upline !== null ? $user->upline->first_leg_point : 0;
             $rightBv = $user->upline !== null ? $user->upline->second_leg_point : 0;
-            $totalLeftDistributors = $user->upline !== null ? $user->left_leg_count : 0;
-            $totalRightDistributors = $user->upline !== null ? $user->right_leg_count : 0;
+            $totalLeftDistributors = $user->upline !== null ? $user->upline->left_leg_count : 0;
+            $totalRightDistributors = $user->upline !== null ? $user->upline->right_leg_count : 0;
 
             return response()->json([
                 "name" => $distributor->user->name,

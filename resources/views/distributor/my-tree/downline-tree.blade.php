@@ -212,6 +212,16 @@
                                 <p id="rightBvPoint" class="m-0"></p>
                             </div>
                         </div>
+                        <div class="d-flex flex-wrap justify-content-between mb-3">
+                            <div class="py-2 px-3 rounded border col-5 mb-3">
+                                <h6>{{ __("left_distributor_no") }}</h6>
+                                <p id="leftBvDist" class="m-0"></p>
+                            </div>
+                            <div class="py-2 px-3 rounded border col-5 mb-3">
+                                <h6>{{ __("right_distributor_no") }}</h6>
+                                <p id="rightBvDist" class="m-0"></p>
+                            </div>
+                        </div>
                         <a class="link-opacity-75-hover" id="modal-link">
                             <i class="bi bi-arrow-right"></i> {{ __("see_my_tree") }}
                         </a>
