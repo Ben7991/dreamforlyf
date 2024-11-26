@@ -44,12 +44,27 @@ class DistributorController extends Controller
 
         $currentPackage = $distributor->getCurrentMembershipPackage();
 
+        $upline = Auth::user()->upline;
+        $currentRank = "None";
+
+        if ($upline !== null) {
+            $rank = DB::table('upline_ranks')
+                ->join('ranks', 'upline_ranks.rank_id', '=', 'ranks.id')
+                ->where('upline_id', $upline->id)
+                ->first();
+
+            if ($rank !== null) {
+                $currentRank = $rank->name;
+            }
+        }
+
         return view("distributor.index", [
             "referredDistibutors" => $referredDistributors,
             "token" => GlobalValues::getRegistrationToken(),
             "totalOrders" => Order::where("distributor_id", $currentUser->distributor->id)->count(),
             "remainingDays" => $status ? $expiringDate->diffInDays($currentDate) : "-" . $expiringDate->diffInDays($currentDate),
-            "currentPackage" => $currentPackage
+            "currentPackage" => $currentPackage,
+            "currentRank" => $currentRank
         ]);
     }
 

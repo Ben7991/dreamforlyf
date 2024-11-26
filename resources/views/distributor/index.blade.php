@@ -23,7 +23,7 @@
                     </div>
                     <div class="col-12 col-md-4 col-xl-4 mb-3 mb-xl-0">
                         @php $secondHeading = __("current_rank"); @endphp
-                        <x-model-summary :title="$secondHeading" icon="ladder" number="None" class="bg-tertiary" />
+                        <x-model-summary :title="$secondHeading" icon="ladder" :number="$currentRank" class="bg-tertiary" />
                     </div>
                     <div class="col-12 col-md-4 col-xl-4">
                         @php $thirdHeading = __("remaining_days"); @endphp
