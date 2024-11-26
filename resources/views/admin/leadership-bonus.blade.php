@@ -49,15 +49,15 @@
                         @foreach($qualifiedUplines as $upline)
                             <tr>
                                 <td>{{ $upline->user->name }}</td>
-                                <td>{{ $upline->user->distributor->registrationPackage->name }}</td>
+                                <td>{{ $upline->user->distributor->getCurrentMembershipPackage()->name }}</td>
                                 <td>{{ number_format($upline->weekly_point) }}</td>
                                 <td>
                                     @php
                                         $rate = 0;
 
-                                        if ($upline->user->distributor->registrationPackage->id === 3) {
+                                        if ($upline->user->distributor->getCurrentMembershipPackage()->id === 4) {
                                             $rate = 0.02;
-                                        } else if ($upline->user->distributor->registrationPackage->id === 2) {
+                                        } else if ($upline->user->distributor->getCurrentMembershipPackage()->id === 5) {
                                             $rate = 0.03;
                                         } else {
                                             $rate = 0.05;

@@ -31,18 +31,32 @@ class StockistController extends Controller
                     ->select("transactions.amount", "users.name", "users.id", "stockist_transfer.date_added")
                     ->get();
 
+        $stockistId = Auth::user()->stockist->id;
+        $pendingorderCount = Order::where("status", OrderStatus::PENDING->name)
+            ->where("stockist_id", $stockistId)
+            ->count();
+
         return view("stockist.index", [
-            "pendingOrderCount" => Order::where("status", OrderStatus::PENDING->name)->count(),
+            "pendingOrderCount" => $pendingorderCount,
             "transferCount" => count($result),
             "transfers" => $result
         ]);
     }
 
     public function orderHistory() {
-        $orders = Order::all();
+        $stockistId = Auth::user()->stockist->id;
+
+        $orders = Order::orderBy("id", "desc")
+            ->where("stockist_id", $stockistId)
+            ->get();
         $total = count($orders);
-        $pending = Order::where("status", "PENDING")->count();
-        $approved = Order::where("status", "APPROVED")->count();
+
+        $pending = Order::where("status", "PENDING")
+            ->where("stockist_id", $stockistId)
+            ->count();
+        $approved = Order::where("status", "APPROVED")
+            ->where("stockist_id", $stockistId)
+            ->count();
 
         return view("stockist.order-history", [
             "orders" => $orders,
@@ -111,7 +125,7 @@ class StockistController extends Controller
             $stockist->bonus += $bonus;
         }
         else if ($order->order_type === OrderType::REGISTRATION->name) {
-            $registrationPackage = $order->distributor->registrationPackage;
+            $registrationPackage = $order->distributor->getCurrentMembershipPackage();
             $bonus = $registrationPackage->bv_point * $bonusRate;
             $stockist->bonus += $bonus;
         }
@@ -154,6 +168,7 @@ class StockistController extends Controller
 
         try {
             $currentStockist = Auth::user()->stockist;
+
             if ($currentStockist->wallet < $amount) {
                 return redirect()->back()->with([
                     "class" => "danger",

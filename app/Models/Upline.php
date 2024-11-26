@@ -120,7 +120,7 @@ class Upline extends Model
     }
 
     public static function qualifiedForLeadershipBonus() {
-        $qualifiedPackageIds = [3, 4, 5];
+        $qualifiedPackageIds = [4, 5, 6];
         $qualifiedUplines = [];
 
         $uplines = Upline::where("weekly_point", ">", 0)
@@ -129,7 +129,7 @@ class Upline extends Model
                                 })->get();
 
         foreach($uplines as $upline) {
-            if (in_array($upline->user->distributor->registrationPackage->id, $qualifiedPackageIds)) {
+            if (in_array($upline->user->distributor->getCurrentMembershipPackage()->id, $qualifiedPackageIds)) {
                 $qualifiedUplines[] = $upline;
             }
         }

@@ -38,7 +38,6 @@
                 <table class="table table-hover display" id="product-table">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>{{ __("date_time") }}</th>
                             <th>{{ __("distributor_id") }}</th>
                             <th>{{ __("distributor") }}</th>
@@ -51,7 +50,6 @@
                     <tbody>
                         @foreach($orders as $order)
                             <tr>
-                                <td>{{ $order->id }}</td>
                                 <td>{{ $order->date_added }}</td>
                                 <td>{{ $order->distributor->user->id }}</td>
                                 <td>{{ $order->distributor->user->name }}</td>

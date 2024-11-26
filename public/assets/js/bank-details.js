@@ -97,8 +97,12 @@ accountNumber.addEventListener("change", function () {
         accountNumberError = "Account number is required";
         isAccountNumberValidated = false;
     }
-    else if (!/^[0-9]*$/.test(value)) {
-        accountNumberError = "Only numbers are allowed";
+    else if (!(value.length >= 8 && value.length <= 17)) {
+        accountNumberError = "Must be at least 8 numbers or at most 17 numbers";
+        isAccountNumberValidated = false;
+    }
+    else if (!/^[0-9a-zA-Z]*$/.test(value)) {
+        accountNumberError = "Only numbers and letters are allowed";
         isAccountNumberValidated = false;
     }
     else {
@@ -121,7 +125,11 @@ iban.addEventListener("change", function () {
         ibanError = "Iban number is required";
         isIbanValidated = false;
     }
-    else if (!/^[0-9]*$/.test(value)) {
+    else if (value.length !== 23) {
+        ibanError = "Iban number must be 23 characters only";
+        isIbanValidated = false;
+    }
+    else if (!/^[a-zA-Z0-9]*$/.test(value)) {
         ibanError = "Only numbers are allowed";
         isIbanValidated = false;
     }
@@ -131,6 +139,30 @@ iban.addEventListener("change", function () {
     }
 
     checkInput(this, isIbanValidated, ibanError);
+});
+
+
+const rib = document.querySelector("#rib");
+let isRibValidated = false;
+let ribError = "Rib number is required";
+
+rib.addEventListener("change", function () {
+    const value = this.value;
+
+    if (value === "") {
+        ribError = "Rib number is required";
+        isRibValidated = false;
+    }
+    else if (!/^[0-9]*$/.test(value) || ![2,3].includes(value.length)) {
+        ribError = "Must contain only 2 or 3 numbers only";
+        isRibValidated = false;
+    }
+    else {
+        ribError = "";
+        isRibValidated = true;
+    }
+
+    checkInput(this, isRibValidated, ribError);
 });
 
 
@@ -145,8 +177,12 @@ swift.addEventListener("change", function () {
         swiftNumberError = "Swift number is required";
         isSwiftNumberValidated = false;
     }
-    else if (!/^[0-9]*$/.test(value)) {
-        swiftNumberError = "Only numbers are allowed";
+    else if (value.length !== 8) {
+        swiftNumberError = "Swift number should be exaclty 8 characters";
+        isSwiftNumberValidated = false;
+    }
+    else if (!/^[a-zA-Z0-9]*$/.test(value)) {
+        swiftNumberError = "Only numbers and or characters are allowed";
         isSwiftNumberValidated = false;
     }
     else {
@@ -186,7 +222,7 @@ const bankDetailsForm = document.querySelector("#bank-details-form");
 bankDetailsForm.addEventListener("submit", function(event) {
     if (!isFullNameValidated || !isBankNameValidated || !isBankBranchValidated
         || !isBeneficiaryValidated || !isAccountNumberValidated || !isIbanValidated
-        || !isSwiftNumberValidated || !isPhoneNumberValidated
+        || !isSwiftNumberValidated || !isPhoneNumberValidated || !isRibValidated
     ) {
         event.preventDefault();
 
@@ -198,5 +234,6 @@ bankDetailsForm.addEventListener("submit", function(event) {
         checkInput(iban, isIbanValidated, ibanError);
         checkInput(swift, isSwiftNumberValidated, swiftNumberError);
         checkInput(phoneNumber, isPhoneNumberValidated, phoneNumberError);
+        checkInput(rib, isRibValidated, ribError);
     }
 });

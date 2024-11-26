@@ -12,7 +12,7 @@
     </div>
 
     <div class="container-fluid p-0 mb-3">
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
                 @php $firstHeading = __("total_withdrawals"); @endphp
                 <x-model-summary :title="$firstHeading" icon="list-ol" :number="$total" class="bg-main"/>
@@ -24,6 +24,22 @@
             <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
                 @php $thirdHeading = __("approved"); @endphp
                 <x-model-summary :title="$thirdHeading" icon="check2-circle" :number="$approved" class="bg-other" />
+            </div>
+        </div> --}}
+
+        {{-- Testing purposes --}}
+        <div class="row">
+            <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
+                @php $firstHeading = __("withdrawal_amount"); @endphp
+                <x-model-summary :title="$firstHeading" icon="cash-stack" :number="$totalWithdrawalAmount" class="bg-main"/>
+            </div>
+            <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
+                @php $secondHeading = __("deduction"); @endphp
+                <x-model-summary :title="$secondHeading" icon="cash" :number="$totalDeduction" class="bg-tertiary" />
+            </div>
+            <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
+                @php $thirdHeading = __("amount_paid"); @endphp
+                <x-model-summary :title="$thirdHeading" icon="wallet2" :number="$totalAmountToPay" class="bg-other" />
             </div>
         </div>
     </div>

@@ -18,7 +18,7 @@ final class LeadershipBonus
             return;
         }
 
-        $currentPackage = $distributor->registrationPackage;
+        $currentPackage = $distributor->getCurrentMembershipPackage();
         $isEligibleForBonus = self::isQualified($currentPackage);
 
         if (!$isEligibleForBonus) {

@@ -33,7 +33,9 @@ use App\Models\User;
 use App\Models\UserType;
 use App\Utility\PasswordGenerator;
 use App\Utility\PinGenerator;
+use App\View\Components\Layout\Auth;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -153,7 +155,7 @@ class DistributorController extends Controller
             "user_id" => $storedUser->id,
             "phone_number" => $data["phone_number"],
             "wave" => $data["wave"],
-            "next_maintenance_date" => (new Carbon())->addMonths(2)
+            "next_maintenance_date" => (new Carbon())->addMonths(3)
         ]);
 
         Portfolio::create([
@@ -252,13 +254,60 @@ class DistributorController extends Controller
     }
 
     public function bonus_withdrawals() {
+        $totalWithdrawalAmount = $totalDeduction = $totalAmountToPay = 0;
+
+        $currentDay = Carbon::now()->dayOfWeek;
+        $tuesdayDate = "";
+        $thursdayDate = "";
+        $rangeResults = null;
+
+        if ($currentDay >= Carbon::TUESDAY) {
+            $dayDifference = $currentDay - 2;
+
+            if ($dayDifference === 0) {
+                $tuesdayDate = Carbon::now()->format("Y-m-d");
+                $thursdayDate = Carbon::now()->copy()->addDays(2)->format("Y-m-d");
+            }
+            else {
+                $startDate = Carbon::now()->subDays($dayDifference);
+                $tuesdayDate = $startDate->format("Y-m-d");
+                $thursdayDate = $startDate->copy()->addDays(2)->format("Y-m-d");
+            }
+
+            $rangeResults = BonusWithdrawal::whereBetween("created_at", [$tuesdayDate, $thursdayDate])->get();
+            $calculatedValues = $this->getWithdrawalSummary($rangeResults);
+            $totalAmountToPay = $calculatedValues["totalAmountToPay"];
+            $totalWithdrawalAmount = $calculatedValues["totalWithdrawalAmount"];
+            $totalDeduction = $calculatedValues["totalDeduction"];
+        }
+
         return view("admin.bonus-withdrawals", [
             "withdrawals" => BonusWithdrawal::all(),
             "total" => BonusWithdrawal::count(),
             "pending" => BonusWithdrawal::where("status", BonusWithdrawalStatus::PENDING->name)->count(),
             "approved" => BonusWithdrawal::where("status", BonusWithdrawalStatus::APPROVED->name)->count(),
+            "totalWithdrawalAmount" => "$" . number_format($totalWithdrawalAmount, 2),
+            "totalDeduction" => "$" . number_format($totalDeduction, 2),
+            "totalAmountToPay" => "$" . number_format($totalAmountToPay, 2)
         ]);
     }
+
+    private function getWithdrawalSummary($rangeResults) {
+        $totalWithdrawalAmount = $totalDeduction = $totalAmountToPay = 0;
+
+        foreach($rangeResults as $result) {
+            $totalWithdrawalAmount += $result->amount;
+            $totalDeduction += $result->deduction;
+            $totalAmountToPay += ($result->amount - $result->deduction);
+        }
+
+        return [
+            "totalWithdrawalAmount" => $totalWithdrawalAmount,
+            "totalDeduction" => $totalDeduction,
+            "totalAmountToPay" => $totalAmountToPay
+        ];
+    }
+
 
     public function approve_withdrawal($locale, $id) {
         try {

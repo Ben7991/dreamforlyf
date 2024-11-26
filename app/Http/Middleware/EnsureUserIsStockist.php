@@ -26,8 +26,11 @@ class EnsureUserIsStockist
             return redirect()->back();
         }
 
-        $orderCount = Order::where("status", OrderStatus::PENDING->name)->count();
-        $request->session()->put("order_count", $orderCount);
+        $stockistId = Auth::user()->stockist->id;
+        $pendingorderCount = Order::where("status", OrderStatus::PENDING->name)
+            ->where("stockist_id", $stockistId)
+            ->count();
+        $request->session()->put("order_count", $pendingorderCount);
 
         $isWithdrawalDays = Carbon::TUESDAY === Carbon::now()->dayOfWeek || Carbon::WEDNESDAY === Carbon::now()->dayOfWeek;
         $request->session()->put("isWithdrawalDay", $isWithdrawalDays);

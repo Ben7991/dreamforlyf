@@ -207,7 +207,7 @@ class HomeController extends Controller
             "user_id" => $storedUser->id,
             "phone_number" => $data["phone_number"],
             "wave" => $data["wave"],
-            "next_maintenance_date" => (new Carbon())->addMonths(2)
+            "next_maintenance_date" => (new Carbon())->addMonths(3)
         ]);
 
         Portfolio::create([

@@ -214,7 +214,7 @@ class MyTreeController extends Controller
             "user_id" => $storedUser->id,
             "phone_number" => $data["phone_number"],
             "wave" => $data["wave"],
-            "next_maintenance_date" => (new Carbon())->addMonths(2)
+            "next_maintenance_date" => (new Carbon())->addMonths(3)
         ]);
 
         Portfolio::create([
@@ -271,7 +271,7 @@ class MyTreeController extends Controller
                 "totalRightDist" => $totalRightDistributors,
                 "rank" => $rank,
                 "link" => "/$locale/distributor/my-tree/$user->id",
-                "membershipPackage" => $distributor->registrationPackage->name,
+                "membershipPackage" => $distributor->getCurrentMembershipPackage()->name,
                 "id" => $user->id,
             ]);
         }
@@ -294,7 +294,7 @@ class MyTreeController extends Controller
 
             return view("distributor.my-tree.downline-tree", [
                 "user" => $existingUser,
-                "membershipPackage" => $existingUser->distributor->registrationPackage->name,
+                "membershipPackage" => $existingUser->distributor->getCurrentMembershipPackage()->name,
                 "totalLeftLeg" => $totalLeftLeg,
                 "totalRightLeg" => $totalRightLeg,
                 "token" => GlobalValues::getRegistrationToken(),

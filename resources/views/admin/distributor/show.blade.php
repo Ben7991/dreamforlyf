@@ -59,7 +59,7 @@
                     </div>
                     <div class="col-12 col-md-6 col-xl-4 col-xxl-3 mb-3 mb-xxl-4">
                         <label class="text-secondary" for="package">{{ __("membership_package") }}</label>
-                        <input type="text" id="package" class="form-control" value="{{ $user->distributor->registrationPackage->name }}" readonly>
+                        <input type="text" id="package" class="form-control" value="{{ $user->distributor->getCurrentMembershipPackage()->name }}" readonly>
                     </div>
                     <div class="col-12 col-md-6 col-xl-4 col-xxl-3 mb-3 mb-xxl-4">
                         <label class="text-secondary" for="leg">{{ __("leg") }}</label>

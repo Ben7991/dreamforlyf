@@ -48,9 +48,11 @@
                         </select>
                     </div>
                 </div>
-                <button class="btn btn-success" type="submit">
-                    <i class="bi bi-save"></i> {{ __('save') }}
-                </button>
+                @if($order->status === "PENDING")
+                    <button class="btn btn-success" type="submit">
+                        <i class="bi bi-save"></i> {{ __('save') }}
+                    </button>
+                @endif
             </form>
         </div>
     </div>

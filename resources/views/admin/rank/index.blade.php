@@ -36,7 +36,6 @@
                 <table class="table table-hover display" id="product-table">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>{{ __("name") }}</th>
                             <th>BV Points</th>
                             <th>{{ __("award") }}</th>
@@ -46,7 +45,6 @@
                     <tbody>
                         @foreach($ranks as $rank)
                             <tr>
-                                <td>{{ $rank->id }}</td>
                                 <td>{{ $rank->name }}</td>
                                 <td>{{ number_format($rank->bv_point) }}</td>
                                 <td>{{ $rank->award }}</td>
@@ -68,7 +66,9 @@
     @push("scripts")
         <script>
             $(document).ready(function() {
-                $("#product-table").DataTable();
+                $("#product-table").DataTable({
+                    ordering: false
+                });
             });
         </script>
     @endpush

@@ -10,6 +10,7 @@ use App\Models\BonusWithdrawal;
 use App\Models\BonusWithdrawalStatus;
 use App\Models\Transaction;
 use App\Models\TransactionPortfolio;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -24,15 +25,20 @@ class PortfolioController extends Controller
         $distributor = $currentUser->distributor;
         $portfolio = $distributor->portfolio;
 
-        $personalWallet = Transaction::where("portfolio", TransactionPortfolio::PERSONAL_WALLET->name)
-                ->where("distributor_id", $distributor->id)->sum("amount");
+        $date = date("Y-m-d");
+        $personalWallet = Transaction::where('portfolio', TransactionPortfolio::PERSONAL_WALLET->name)
+            ->where('distributor_id', $distributor->id)
+            ->where('created_at', 'LIKE', "$date%")
+            ->sum('amount');
 
         $upline = $currentUser->upline;
         $leadershipWallet = 0;
         $leadershipWeeklyPoint = 0;
 
-        if ($upline !== null && self::isQualified($distributor->registrationPackage)) {
-            $rate = self::determineRate($distributor->registrationPackage);
+        $currentPackage = $distributor->getCurrentMembershipPackage();
+
+        if ($upline !== null && self::isQualified($currentPackage)) {
+            $rate = self::determineRate($currentPackage);
             $leadershipWallet = $upline->weekly_point * $rate;
             $leadershipWeeklyPoint = $upline->weekly_point;
         }

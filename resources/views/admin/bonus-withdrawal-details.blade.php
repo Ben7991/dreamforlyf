@@ -112,6 +112,10 @@
                         <input type="text" id="iban_number" class="form-control" value="{{ $withdrawalDetails->distributor->bankDetails->iban_number }}" readonly>
                     </div>
                     <div class="col-12 col-md-4 col-xl-3 mb-3 mb-xxl-4">
+                        <label for="rib_number">Rib Number</label>
+                        <input type="text" id="rib_number" class="form-control" value="{{ $withdrawalDetails->distributor->bankDetails->rib_number }}" readonly>
+                    </div>
+                    <div class="col-12 col-md-4 col-xl-3 mb-3 mb-xxl-4">
                         <label for="swift_number">Swift Number</label>
                         <input type="text" id="swift_number" class="form-control" value="{{ $withdrawalDetails->distributor->bankDetails->swift_number }}" readonly>
                     </div>

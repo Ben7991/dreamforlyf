@@ -13,10 +13,6 @@
         </nav>
     </div>
 
-    @php
-        $currentPackage = Auth::user()->distributor->registrationPackage
-    @endphp
-
     <div class="container-fluid p-0 mb-3">
         <div class="row">
             <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">

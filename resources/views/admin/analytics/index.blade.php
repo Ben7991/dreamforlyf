@@ -19,11 +19,12 @@
                 <input type="text" id="datePicker" class="form-select">
                 <input type="hidden" id="token" value="{{ csrf_token() }}">
             </div>
-            <div class="spinner-border d-none" role="status" id="spinner">
-                <span class="visually-hidden">Loading...</span>
-            </div>
         </div>
     </div>
+
+    @php
+        $totalCounts = $totalPrice = $totalBv = $totalBCommission = $totalProductCEO = $totalQuantity = $totalCEOAndOther = $totalOrderingMoney = 0;
+    @endphp
 
     <div class="card border shadow-sm">
         <div class="card-header bg-white p-3">
@@ -31,7 +32,7 @@
         </div>
         <div class="card-body p-3">
             <div class="table-responsive">
-                <table class="table table-hover display" id="product-table">
+                <table class="table table-hover" id="product-table">
                     <thead>
                         <tr>
                             <th>Registration No.</th>
@@ -48,17 +49,186 @@
                     <tbody>
                         @foreach($result as $data)
                             <tr>
-                                <td>{{ $data->total_number }}</td>
+                                <td>
+                                    {{ $data->total_number }}
+                                    @php $totalCounts += $data->total_number; @endphp
+                                </td>
                                 <td>{{ $data->name }}</td>
-                                <td>${{ number_format($data->price, 2) }}</td>
-                                <td>{{ number_format($data->bv_point) }}</td>
-                                <td>${{ number_format($data->bv_point * 0.585, 2) }}</td>
-                                <td>${{ number_format($data->price - ($data->bv_point * 0.585), 2) }}</td>
-                                <td>{{ $data->quantity }}</td>
-                                <td>${{ $data->quantity * 12 }}</td>
-                                <td>${{ number_format(($data->price - ($data->bv_point * 0.585)) - ($data->quantity * 12), 2) }}</td>
+                                <td>
+                                    ${{ number_format($data->price * $data->total_number, 2) }}
+                                    @php $totalPrice += ($data->price * $data->total_number); @endphp
+                                </td>
+                                <td>
+                                    {{ number_format($data->bv_point * $data->total_number) }}
+                                    @php $totalBv += ($data->bv_point * $data->total_number); @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $bonusCommission = ($data->bv_point * $data->total_number) * 0.585;
+                                        $totalBCommission += $bonusCommission;
+                                    @endphp
+                                    ${{ number_format($bonusCommission, 2) }}
+                                </td>
+                                <td>
+                                    @php
+                                        $ceoandProductMoney = (($data->price * $data->total_number) - $bonusCommission);
+                                        $totalProductCEO += $ceoandProductMoney;
+                                    @endphp
+                                    ${{ number_format($ceoandProductMoney, 2) }}
+                                </td>
+                                <td>
+                                    {{ $data->quantity * $data->total_number }}
+                                    @php
+                                        $totalQuantity += $data->quantity * $data->total_number;
+                                    @endphp
+                                </td>
+                                <td>
+                                    @php
+                                        $ceoAndOtherCharge = ($data->quantity * $data->total_number * 12);
+                                        $totalCEOAndOther += $ceoAndOtherCharge;
+                                    @endphp
+                                    ${{ number_format($ceoAndOtherCharge, 2) }}
+                                </td>
+                                <td>
+                                    @php
+                                        $orderingProductMoney = (($data->price * $data->total_number) - $bonusCommission)  - $ceoAndOtherCharge;
+                                        $totalOrderingMoney += $orderingProductMoney;
+                                    @endphp
+                                    ${{ number_format($orderingProductMoney, 2) }}
+                                </td>
                             </tr>
                         @endforeach
+                        <tr>
+                            <td>{{ $totalCounts }}</td>
+                            <td></td>
+                            <td>${{ number_format($totalPrice, 2) }}</td>
+                            <td>{{ $totalBv }}</td>
+                            <td>${{ number_format($totalBCommission, 2) }}</td>
+                            <td>${{ number_format($totalProductCEO, 2) }}</td>
+                            <td>{{ $totalQuantity }}</td>
+                            <td>${{ number_format($totalCEOAndOther, 2) }}</td>
+                            <td>${{ number_format($totalOrderingMoney, 2) }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @php
+        $finalTotalGeneralProduct = 0;
+    @endphp
+
+    <div class="card border shadow-sm mt-4">
+        <div class="card-header bg-white p-3">
+            <h5 class="m-0">General Assessment For Registrations</h5>
+        </div>
+        <div class="card-body p-3">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Designation</th>
+                            <th>General Total Products Quantity</th>
+                            <th>Product Price Co-Efficient</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Company</td>
+                            <td>{{ $totalGeneralProductQuantity }}</td>
+                            <td>2</td>
+                            <td>
+                                @php
+                                    $finalTotalGeneralProduct += ($totalGeneralProductQuantity * 2)
+                                @endphp
+                                {{ $totalGeneralProductQuantity * 2 }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>CEO</td>
+                            <td>{{ $totalGeneralProductQuantity }}</td>
+                            <td>2</td>
+                            <td>
+                                @php
+                                    $finalTotalGeneralProduct += ($totalGeneralProductQuantity * 2)
+                                @endphp
+                                {{ $totalGeneralProductQuantity * 2 }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Awards</td>
+                            <td>{{ $totalGeneralProductQuantity }}</td>
+                            <td>2</td>
+                            <td>
+                                @php
+                                    $finalTotalGeneralProduct += ($totalGeneralProductQuantity * 2)
+                                @endphp
+                                {{ $totalGeneralProductQuantity * 2 }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Reserve</td>
+                            <td>{{ $totalGeneralProductQuantity }}</td>
+                            <td>2</td>
+                            <td>
+                                @php
+                                    $finalTotalGeneralProduct += ($totalGeneralProductQuantity * 2)
+                                @endphp
+                                {{ $totalGeneralProductQuantity * 2 }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Leadership bonus</td>
+                            <td>{{ $totalGeneralProductQuantity }}</td>
+                            <td>1</td>
+                            <td>
+                                @php
+                                    $finalTotalGeneralProduct += ($totalGeneralProductQuantity)
+                                @endphp
+                                {{ $totalGeneralProductQuantity }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Pool bonus</td>
+                            <td>{{ $totalGeneralProductQuantity }}</td>
+                            <td>1</td>
+                            <td>
+                                @php
+                                    $finalTotalGeneralProduct += $totalGeneralProductQuantity
+                                @endphp
+                                {{ $totalGeneralProductQuantity }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Head office stockist</td>
+                            <td>{{ $totalGeneralProductQuantity }}</td>
+                            <td>1</td>
+                            <td>
+                                @php
+                                    $finalTotalGeneralProduct += $totalGeneralProductQuantity
+                                @endphp
+                                {{ $totalGeneralProductQuantity }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>NGO</td>
+                            <td>{{ $totalGeneralProductQuantity }}</td>
+                            <td>1</td>
+                            <td>
+                                @php
+                                    $finalTotalGeneralProduct += $totalGeneralProductQuantity
+                                @endphp
+                                {{ $totalGeneralProductQuantity }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Total: {{ $finalTotalGeneralProduct }}</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -80,80 +250,20 @@
                 datePicker.daterangepicker(
                     null,
                     function(start, end, label) {
-                        startDate = start.format("YYYY-MM-DD") + " 00:00:00";
-                        endDate = end.format("YYYY-MM-DD") + " 00:00:00";
+                        startDate = start.format("YYYY-MM-DD");
+                        endDate = end.format("YYYY-MM-DD");
                     }
                 );
                 datePicker.on("apply.daterangepicker", function(ev, picker){
-                    spinner.removeClass("d-none");
+                    const searchParams = new URLSearchParams();
+                    searchParams.set("startDate", startDate);
+                    searchParams.set("endDate", endDate);
 
-                    $.ajax({
-                        url: `/admin/analytics-data?q=registration&start=${startDate}&end=${endDate}`,
-                        method: "GET",
-                        headers: {
-                            "X-CSRF-TOKEN": token.value
-                        },
-                        success: function(data, status, xhr) {
-                            for(let row of table.children[1].children) {
-                                row.remove();
-                            }
+                    let location = window.location.origin + window.location.pathname;
 
-                            createRow(table.children[1], data.data);
-                        },
-                        error: function(xhr, status, error) {
-                            alert("Something went wrong, please contact developer");
-                        },
-                        complete: function(xhr, status) {
-                            spinner.addClass("d-none");
-                        }
-                    });
+                    let newLocation = location + "?" +searchParams.toString();
+                    window.location.href = newLocation;
                 });
-
-                function createRow(parent, data) {
-                    for (let row of data) {
-                        let tableRow = document.createElement("tr");
-
-                        let firstColumn = document.createElement("td");
-                        firstColumn.textContent = row.total_number;
-
-                        let secondColumn = document.createElement("td");
-                        secondColumn.textContent = row.name;
-
-                        let thirdColumn = document.createElement("td");
-                        let price = (+row.price).toFixed(2);
-                        thirdColumn.textContent = "$" + (+row.price).toFixed(2);
-
-                        let fourthColumn = document.createElement("td");
-                        fourthColumn.textContent = row.bv_point;
-
-                        let fifthColumn = document.createElement("td");
-                        let bonusesCommission = +row.bv_point * 0.585;
-                        fifthColumn.textContent = "$" + (+row.bv_point * 0.58).toFixed(2);
-
-                        let sixthColumn = document.createElement("td");
-                        sixthColumn.textContent = "$" + (price - bonusesCommission).toFixed(2);
-
-                        let seventhColumn = document.createElement("td");
-                        seventhColumn.textContent = row.quantity;
-
-                        let eigthColumn = document.createElement("td");
-                        eigthColumn.textContent = "$" + (+row.quantity * 12);
-
-                        let nightColumn = document.createElement("td");
-                        nightColumn.textContent = "$" + (price - bonusesCommission - (+row.quantity * 12)).toFixed(2);
-
-                        tableRow.appendChild(firstColumn);
-                        tableRow.appendChild(secondColumn);
-                        tableRow.appendChild(thirdColumn);
-                        tableRow.appendChild(fourthColumn);
-                        tableRow.appendChild(fifthColumn);
-                        tableRow.appendChild(sixthColumn);
-                        tableRow.appendChild(seventhColumn);
-                        tableRow.appendChild(eigthColumn);
-                        tableRow.appendChild(nightColumn);
-                        parent.appendChild(tableRow);
-                    }
-                }
             });
         </script>
     @endpush

@@ -14,6 +14,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,300;6..12,400;6..12,600;6..12,700&display=swap" rel="stylesheet">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <style>
+        .social-links {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        .social-links:nth-child(1):hover {
+            color: red;
+        }
+
+        .social-links:nth-child(2):hover {
+            color: blue;
+        }
+
+        .social-links:nth-child(3):hover {
+            color: black;
+        }
+    </style>
 </head>
 <body>
     <div class="backdrop"></div>
@@ -89,7 +113,29 @@
     <footer>
         <div class="footer">
             <div class="container">
-                <p class="m-0 text-center">&copy; {{ __("footer_copyright") }}</p>
+                <div class="row flex-wrap justify-content-center">
+                    <div class="col-12 col-md-6 col-xl-4 text-center">
+                        <p class="m-0 text-center">&copy; {{ __("footer_copyright") }}</p>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4">
+                        <div class="d-flex gap-2 align-items-center justify-content-center">
+                            <a href="https://www.youtube.com/channel/UCJ-klU3Nlajqlvhte24DZ2g" class="social-links" target="_blank">
+                                <i class="bi bi-youtube"></i>
+                            </a>
+                            <a href="https://www.facebook.com/profile.php?id=61567150461547&mibextid=ZbWKwL" target="_blank" class="social-links">
+                                <i class="bi bi-facebook"></i>
+                            </a>
+                            <a href="https://www.tiktok.com/@user2040204462944" class="social-links" target="_blank">
+                                <i class="bi bi-tiktok"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-4 text-center">
+                        <a class="text-primary d-flex align-items-center justify-content-center text-decoration-none gap-2" href="mailto: info@dreamforlyfintl.com">
+                            <i class="bi bi-envelope"></i> info@dreamforlyfintl.com
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>

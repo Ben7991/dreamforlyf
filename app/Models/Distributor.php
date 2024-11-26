@@ -50,6 +50,17 @@ class Distributor extends Model
         $this->save();
     }
 
+    public function getCurrentMembershipPackage() {
+        $upgradeHistory = UpgradeHistory::where('distributor_id', $this->id)->orderBy('id', 'desc')->first();
+
+        if ($upgradeHistory === null) {
+            return $this->registrationPackage;
+        }
+
+        $registrationPackage = RegistrationPackage::find($upgradeHistory->registration_package_id);
+        return $registrationPackage;
+    }
+
     public function findDistributorLeg(Upline $upline) {
         $leg = "";
         $nextUpline = $this->upline;

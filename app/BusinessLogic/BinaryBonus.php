@@ -39,7 +39,7 @@ final class BinaryBonus
         }
 
         $portfolio = $distributor->portfolio;
-        $registrationPackage = $distributor->registrationPackage;
+        $registrationPackage = $distributor->getCurrentMembershipPackage();
 
         if ($upline->last_amount_paid < $registrationPackage->cutoff) {
             $portfolio->commission_wallet += $amount;

@@ -17,7 +17,7 @@
             <div class="col-12 col-xxl-9 mb-4 mb-xxl-0">
                 <div class="row mb-3 mb-xxl-4">
                     <div class="col-12 col-md-4 col-xl-4 mb-3 mb-xl-0">
-                        @php $package = Auth::user()->distributor->registrationPackage->name; @endphp
+                        @php $package = $currentPackage->name; @endphp
                         @php $firstHeading = __("current_package"); @endphp
                         <x-model-summary :title="$firstHeading" icon="award" :number="$package" class="bg-main" />
                     </div>

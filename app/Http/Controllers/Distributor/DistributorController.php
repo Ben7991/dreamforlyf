@@ -39,14 +39,17 @@ class DistributorController extends Controller
         $referredDistributors = $this->getReferredDistributors();
 
         $currentDate = new Carbon();
-        $expiringDate = Carbon::parse($distributor->next_maintenanc);
+        $expiringDate = Carbon::parse($distributor->next_maintenance_date);
         $status = $expiringDate->greaterThanOrEqualTo($currentDate);
+
+        $currentPackage = $distributor->getCurrentMembershipPackage();
 
         return view("distributor.index", [
             "referredDistibutors" => $referredDistributors,
             "token" => GlobalValues::getRegistrationToken(),
             "totalOrders" => Order::where("distributor_id", $currentUser->distributor->id)->count(),
             "remainingDays" => $status ? $expiringDate->diffInDays($currentDate) : "-" . $expiringDate->diffInDays($currentDate),
+            "currentPackage" => $currentPackage
         ]);
     }
 
@@ -55,9 +58,24 @@ class DistributorController extends Controller
     }
 
     public function ranks() {
+        $upline = Auth::user()->upline;
+        $currentRank = "None";
+
+        if ($upline !== null) {
+            $rank = DB::table('upline_ranks')
+                ->join('ranks', 'upline_ranks.rank_id', '=', 'ranks.id')
+                ->where('upline_id', $upline->id)
+                ->first();
+
+            if ($rank !== null) {
+                $currentRank = $rank->name;
+            }
+        }
+
         return view("distributor.ranks", [
             "total" => Rank::count(),
-            "ranks" => Rank::all()
+            "ranks" => Rank::orderBy("bv_point", "asc")->get(),
+            "currentRank" => $currentRank
         ]);
     }
 
@@ -193,12 +211,13 @@ class DistributorController extends Controller
     }
 
     public function membership_packages() {
-        $currentPackage = Auth::user()->distributor->registrationPackage;
+        $currentPackage = Auth::user()->distributor->getCurrentMembershipPackage();
         $upgradePackages = RegistrationPackage::where("id", ">", $currentPackage->id)->get();
 
         return view("distributor.membership-packages", [
             "packages" => RegistrationPackage::all(),
-            "upgradePackages" => $upgradePackages
+            "upgradePackages" => $upgradePackages,
+            "currentPackage" => $currentPackage
         ]);
     }
 
@@ -232,7 +251,7 @@ class DistributorController extends Controller
 
         try {
             $nextPackage = RegistrationPackage::find($nextPackageId);
-            $currentPackage = Auth::user()->distributor->registrationPackage;
+            $currentPackage = Auth::user()->distributor->getCurrentMembershipPackage();
             $portfolio = Auth::user()->distributor->portfolio;
             $priceDifference = $nextPackage->price - $currentPackage->price;
 
@@ -275,11 +294,11 @@ class DistributorController extends Controller
 
             $upgradeType = UpgradePackage::findOrFail($upgradeTypeId);
             $nextPackage = RegistrationPackage::find($nextPackageId);
-            $currentPackage = $distributor->registrationPackage;
+            $currentPackage = $distributor->getCurrentMembershipPackage();
             $bvPoint = $nextPackage->bv_point - $currentPackage->bv_point;
 
             // 1. substract from current portfolio the difference between next package price and current package price
-            $amountToSubtract = $nextPackage->price - $distributor->registrationPackage->price;
+            $amountToSubtract = $nextPackage->price - $currentPackage->price;
             $portfolio->subtractPurchaseAmount($amountToSubtract);
 
             // 2. store upgrade history
@@ -290,7 +309,7 @@ class DistributorController extends Controller
             ]);
 
             // 3. change current package to new package
-            $distributor->changePackage($nextPackage);
+            // $distributor->changePackage($nextPackage);
 
             // 4. store order history and products attached to upgrade type
             $products = DB::table("upgrade_package_product")->where("upgrade_package_id", $upgradeType->id)->get();
@@ -503,7 +522,7 @@ class DistributorController extends Controller
                 $referredDistributors[] = [
                     "id" => $fetchDistributor->distributor->user->id,
                     "name" => $fetchDistributor->distributor->user->name,
-                    "currentPackage" => $fetchDistributor->distributor->registrationPackage->name,
+                    "currentPackage" => $fetchDistributor->distributor->getCurrentMembershipPackage()->name,
                     "leg" => $fetchDistributor->leg,
                     "rank" => $rank
                 ];
@@ -553,7 +572,7 @@ class DistributorController extends Controller
 
             $upline = $existingUser->upline;
 
-            if ($upline === null) {
+            if ($upline === null || ($upline !== null && count($upline->distributors) === 0)) {
                 return response()->json([
                     "message" => "$existingUser->name has space on both legs"
                 ]);
@@ -592,10 +611,11 @@ class DistributorController extends Controller
             "bank_name" => "required",
             "bank_branch" => "required",
             "beneficiary_name" => "required",
-            "account_number" => "required|regex:/^[0-9]*$/",
-            "iban" => "required|regex:/^[0-9]*$/",
-            "swift_number" => "required||regex:/^[0-9]*$/",
-            "phone_number" => "required|regex:/^\+[0-9]*$/",
+            "account_number" => "required|min:8|max:17|regex:/^[0-9a-zA-Z]*$/",
+            "iban" => "required|regex:/^[a-zA-Z0-9]{23}$/|",
+            "swift_number" => "bail|required|regex:/^[a-zA-Z0-9]{8}$/",
+            "phone_number" => "bail|required|regex:/^\+[0-9]*$/",
+            "rib" => "bail|required|min:2|max:3|regex:/^[0-9]*$/"
         ]);
 
         try {
@@ -614,7 +634,8 @@ class DistributorController extends Controller
                     "iban_number" => $validated["iban"],
                     "swift_number" => $validated["swift_number"],
                     "phone_number" => $validated["phone_number"],
-                    "distributor_id" => $distributor->id
+                    "distributor_id" => $distributor->id,
+                    "rib" => $validated["rib"]
                 ]);
                 $message = "Successfully added bank details successfully";
             }
@@ -624,9 +645,10 @@ class DistributorController extends Controller
                 $existingBankDetails->bank_branch = $validated["bank_branch"];
                 $existingBankDetails->beneficiary_name = $validated["beneficiary_name"];
                 $existingBankDetails->account_number = $validated["account_number"];
-                $existingBankDetails->iban_number = $validated["iban_number"];
+                $existingBankDetails->iban_number = $validated["iban"];
                 $existingBankDetails->swift_number = $validated["swift_number"];
                 $existingBankDetails->phone_number = $validated["phone_number"];
+                $existingBankDetails->rib_number = $validated["rib"];
                 $existingBankDetails->save();
                 $message = "Successfully updated bank details successfully";
             }

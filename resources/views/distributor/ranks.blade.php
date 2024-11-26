@@ -20,7 +20,7 @@
         <div class="row">
             <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
                 @php $firstHeading = __("current_rank"); @endphp
-                <x-model-summary :title="$firstHeading" icon="award" number="None" class="bg-main" />
+                <x-model-summary :title="$firstHeading" icon="award" :number="$currentRank" class="bg-main" />
             </div>
             <div class="col-12 col-md-4 col-xl-3 mb-2 mb-md-0">
                 @php $secondHeading = __("left") . " Bv Point"; @endphp
@@ -42,7 +42,6 @@
                 <table class="table table-hover display" id="product-table">
                     <thead>
                         <tr>
-                            <th>#</th>
                             <th>{{ __("name") }}</th>
                             <th>Points</th>
                             <th>{{ __("award") }}</th>
@@ -51,7 +50,6 @@
                     <tbody>
                         @foreach($ranks as $rank)
                             <tr>
-                                <td>{{ $rank->id }}</td>
                                 <td>{{ $rank->name }}</td>
                                 <td>{{ number_format($rank->bv_point) }}</td>
                                 <td>{{ $rank->award }}</td>
@@ -66,7 +64,9 @@
     @push("scripts")
         <script>
             $(document).ready(function() {
-                $("#product-table").DataTable();
+                $("#product-table").DataTable({
+                    ordering: false
+                });
             });
         </script>
         <script src="{{ asset("assets/js/distributor/reset-maintenance-store.js") }}"></script>

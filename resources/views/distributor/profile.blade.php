@@ -184,21 +184,26 @@
                                     <input type="text" name="beneficiary_name" id="beneficiary_name" class="form-control">
                                     <small class="text-danger d-none"></small>
                                 </div>
+                                <div class="form-group mb-3">
+                                    <label for="account_number">Account number</label>
+                                    <input type="text" name="account_number" id="account_number" class="form-control" minlength="8" maxlength="17">
+                                    <small class="text-danger d-none"></small>
+                                </div>
                             </div>
                             <div class="col-12 col-md-6 col-xl-4 mb-3 mb-md-0">
                                 <div class="form-group mb-3">
-                                    <label for="account_number">Account number</label>
-                                    <input type="text" name="account_number" id="account_number" class="form-control">
+                                    <label for="rib">RIB number</label>
+                                    <input type="text" name="rib" id="rib" class="form-control" minlength="2" maxlength="3">
                                     <small class="text-danger d-none"></small>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <label for="iban">IBAN / RIB number</label>
-                                    <input type="text" name="iban" id="iban" class="form-control">
+                                    <label for="iban">IBAN number</label>
+                                    <input type="text" name="iban" id="iban" class="form-control" maxlength="23">
                                     <small class="text-danger d-none"></small>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <label for="swift_number">Swift number</label>
-                                    <input type="text" name="swift_number" id="swift_number" class="form-control">
+                                    <label for="swift_number">Swift / BIC number</label>
+                                    <input type="text" name="swift_number" id="swift_number" class="form-control" maxlength="8">
                                     <small class="text-danger d-none"></small>
                                 </div>
                                 <div class="form-group mb-3">

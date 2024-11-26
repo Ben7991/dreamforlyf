@@ -11,7 +11,7 @@ class RankController extends Controller
 {
     public function index() {
         return view("admin.rank.index", [
-            "ranks" => Rank::all(),
+            "ranks" => Rank::orderBy("bv_point", "asc")->get(),
             "total" => Rank::count()
         ]);
     }
@@ -29,13 +29,13 @@ class RankController extends Controller
                 "award" => $validated["award"]
             ]);
 
-            return redirect("/$this->activeLocale/admin/ranks")->with([
+            return redirect()->back()->with([
                 "message" => "Added new rank successfully",
                 "class" => "success"
             ]);
         }
         catch(\Exception $e) {
-            return redirect("/$this->activeLocale/admin/ranks")->with([
+            return redirect()->back()->with([
                 "message" => "Something wrong happened",
                 "class" => "danger"
             ]);
@@ -50,7 +50,7 @@ class RankController extends Controller
             ]);
         }
         catch(\Exception $e) {
-            return redirect("/$this->activeLocale/admin/ranks")->with([
+            return redirect()->back()->with([
                 "message" => "Resource doesn't exist",
                 "class" => "danger"
             ]);
@@ -72,13 +72,13 @@ class RankController extends Controller
             ]);
         }
         catch(UniqueConstraintViolationException $e) {
-            return redirect("/$this->activeLocale/admin/ranks")->with([
+            return redirect()->back()->with([
                 "message" => "No duplicate ranks allowed",
                 "class" => "danger"
             ]);
         }
         catch(\Exception $e) {
-            return redirect("/$this->activeLocale/admin/ranks")->with([
+            return redirect()->back()->with([
                 "message" => "Resource doesn't exist",
                 "class" => "danger"
             ]);

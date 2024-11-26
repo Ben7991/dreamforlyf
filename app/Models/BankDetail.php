@@ -19,7 +19,8 @@ class BankDetail extends Model
         "iban_number",
         "swift_number",
         "phone_number",
-        "distributor_id"
+        "distributor_id",
+        "rib"
     ];
 
     public function distributor() {

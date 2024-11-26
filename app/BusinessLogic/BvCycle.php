@@ -62,7 +62,7 @@ final class BvCycle
     private static function rankAward($upline) {
         $minimumLegPoint = self::minimumBvPoints($upline);
 
-        $ranks = Rank::orderBy("id", "desc")->get();
+        $ranks = Rank::orderBy("bv_point", "desc")->get();
         $attainedRank = null;
 
         foreach($ranks as $rank) {
@@ -76,17 +76,12 @@ final class BvCycle
             return;
         }
 
-        $uplineRanks = $upline->ranks;
-        $isAlreadyAttained = false;
+        $uplineRanks = DB::table('upline_ranks')->where('upline_id', $upline->id)->get();
 
         foreach($uplineRanks as $alreadyAttainedRank) {
-            if ($alreadyAttainedRank->pivot->rank_id === $attainedRank->id) {
-                $isAlreadyAttained = true;
+            if ($alreadyAttainedRank->rank_id === $attainedRank->id) {
+                return;
             }
-        }
-
-        if ($isAlreadyAttained) {
-            return;
         }
 
         DB::table("upline_ranks")->insert([
