@@ -43,7 +43,8 @@ use Illuminate\Support\Facades\Mail;
 
 class DistributorController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $distributors = User::where("role", UserType::DISTRIBUTOR->name)->where("id", "<>", "DFL1000002")->get();
         $totalDistributors = count($distributors);
         $suspendedDistributors = User::where("role", UserType::DISTRIBUTOR->name)->where("status", "suspended")->count();
@@ -55,14 +56,16 @@ class DistributorController extends Controller
         ]);
     }
 
-    public function create() {
+    public function create()
+    {
         return view("admin.distributor.create", [
             "packages" => RegistrationPackage::all(),
-            "stockists" => Stockist::all()
+            "stockists" => Stockist::getActiveStockist()
         ]);
     }
 
-    public function show($locale, $id) {
+    public function show($locale, $id)
+    {
         try {
             $user = User::findOrFail($id);
             $distributor = $user->distributor;
@@ -81,13 +84,13 @@ class DistributorController extends Controller
                 "leadershipWallet" => $leadershipWallet,
                 "totalWithdrawals" => $totalWithdrawals
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back();
         }
     }
 
-    public function store(DistributorRequest $request, $locale) {
+    public function store(DistributorRequest $request, $locale)
+    {
         $validated = $request->validated();
         $generatedPassword = PasswordGenerator::generate();
 
@@ -126,8 +129,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Added new distributor successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => $e->getMessage()
@@ -135,7 +137,8 @@ class DistributorController extends Controller
         }
     }
 
-    private function storeUser($data, $password, $upline, $package, $referralUpline) {
+    private function storeUser($data, $password, $upline, $package, $referralUpline)
+    {
         $storedUser = User::create([
             "id" => User::nextId(),
             "name" => $data["name"],
@@ -171,7 +174,8 @@ class DistributorController extends Controller
         return $storedDistributor;
     }
 
-    private function storeOrder($products, $distributor, $registrationPackage, $stockistId) {
+    private function storeOrder($products, $distributor, $registrationPackage, $stockistId)
+    {
         $storedOrder = Order::create([
             "amount" => $registrationPackage->price,
             "distributor_id" => $distributor->id,
@@ -179,7 +183,7 @@ class DistributorController extends Controller
             "stockist_id" => $stockistId
         ]);
 
-        foreach($products as $product) {
+        foreach ($products as $product) {
             DB::table("order_items")->insert([
                 "order_id" => $storedOrder->id,
                 "product_id" => $product->product_id,
@@ -192,7 +196,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function update(EditDistributorRequest $request, $locale, $id) {
+    public function update(EditDistributorRequest $request, $locale, $id)
+    {
         $validated = $request->validated();
 
         try {
@@ -213,8 +218,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Successfully updated distributor details"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -222,7 +226,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function wallet(Request $request, $locale, $id) {
+    public function wallet(Request $request, $locale, $id)
+    {
         $validated = $request->validate([
             "wallet" => "bail|required|numeric"
         ]);
@@ -244,8 +249,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Successfully transferred wallet to distributor"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -253,7 +257,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function bonus_withdrawals() {
+    public function bonus_withdrawals()
+    {
         $totalWithdrawalAmount = $totalDeduction = $totalAmountToPay = 0;
 
         $currentDay = Carbon::now()->dayOfWeek;
@@ -267,8 +272,7 @@ class DistributorController extends Controller
             if ($dayDifference === 0) {
                 $tuesdayDate = Carbon::now()->format("Y-m-d");
                 $thursdayDate = Carbon::now()->copy()->addDays(2)->format("Y-m-d");
-            }
-            else {
+            } else {
                 $startDate = Carbon::now()->subDays($dayDifference);
                 $tuesdayDate = $startDate->format("Y-m-d");
                 $thursdayDate = $startDate->copy()->addDays(2)->format("Y-m-d");
@@ -292,10 +296,11 @@ class DistributorController extends Controller
         ]);
     }
 
-    private function getWithdrawalSummary($rangeResults) {
+    private function getWithdrawalSummary($rangeResults)
+    {
         $totalWithdrawalAmount = $totalDeduction = $totalAmountToPay = 0;
 
-        foreach($rangeResults as $result) {
+        foreach ($rangeResults as $result) {
             $totalWithdrawalAmount += $result->amount;
             $totalDeduction += $result->deduction;
             $totalAmountToPay += ($result->amount - $result->deduction);
@@ -309,7 +314,8 @@ class DistributorController extends Controller
     }
 
 
-    public function approve_withdrawal($locale, $id) {
+    public function approve_withdrawal($locale, $id)
+    {
         try {
             $bonusWithdrawal = BonusWithdrawal::findOrFail($id);
 
@@ -324,8 +330,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Successfully approved withdrawal request"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -333,7 +338,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function filter_withdrawals(Request $request, $locale) {
+    public function filter_withdrawals(Request $request, $locale)
+    {
         $status = $request->status;
         $acceptableValues = ["PENDING", "APPROVED"];
 
@@ -350,13 +356,13 @@ class DistributorController extends Controller
                 "pending" => BonusWithdrawal::where("status", BonusWithdrawalStatus::PENDING->name)->count(),
                 "approved" => BonusWithdrawal::where("status", BonusWithdrawalStatus::APPROVED->name)->count(),
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back();
         }
     }
 
-    public function leadership_bonus() {
+    public function leadership_bonus()
+    {
         $qualifiedUplines = Upline::qualifiedForLeadershipBonus();
 
 
@@ -365,7 +371,8 @@ class DistributorController extends Controller
         ]);
     }
 
-    public function pay_leadership_bonus($locale, $id) {
+    public function pay_leadership_bonus($locale, $id)
+    {
         try {
             $upline = Upline::findOrFail($id);
             LeadershipBonus::giveBonus($upline);
@@ -374,8 +381,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Successfully paid leadership bonus"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -383,11 +389,12 @@ class DistributorController extends Controller
         }
     }
 
-    public function pay_all_leadership_bonus($locale) {
+    public function pay_all_leadership_bonus($locale)
+    {
         try {
             $qualifiedUplines = Upline::qualifiedForLeadershipBonus();
 
-            foreach($qualifiedUplines as $upline) {
+            foreach ($qualifiedUplines as $upline) {
                 LeadershipBonus::giveBonus($upline);
             }
 
@@ -395,8 +402,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Successfully paid leadership bonus"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -404,11 +410,12 @@ class DistributorController extends Controller
         }
     }
 
-    public function bv_reset() {
+    public function bv_reset()
+    {
         try {
             $distributors = Distributor::all();
 
-            foreach($distributors as $distributor) {
+            foreach ($distributors as $distributor) {
                 $portfolio = $distributor->portfolio;
                 $portfolio->commission_wallet = 0;
                 $portfolio->current_balance = 0;
@@ -435,8 +442,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Successfully reset dollar and bv"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -444,7 +450,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function reset_withdrawal_pin($locale, $id) {
+    public function reset_withdrawal_pin($locale, $id)
+    {
         try {
             $user = User::findOrFail($id);
             $distributor = $user->distributor;
@@ -461,8 +468,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Successfully reset pin"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => $e->getMessage()
@@ -471,12 +477,13 @@ class DistributorController extends Controller
         }
     }
 
-    public function wallet_transfer() {
+    public function wallet_transfer()
+    {
         $transfers = Transaction::where("transaction_type", TransactionType::DEPOSIT->name)
-                        ->orderBy("id", "desc")->get();
+            ->orderBy("id", "desc")->get();
         $totalAmount = 0;
 
-        foreach($transfers as $transfer) {
+        foreach ($transfers as $transfer) {
             if ($transfer->status === TransactionStatus::COMPLETE->name) {
                 $totalAmount += $transfer->amount;
             }
@@ -484,12 +491,13 @@ class DistributorController extends Controller
 
         return view("admin.distributor.wallet-transfer", [
             "transfers" => $transfers,
-            "totalAmountTransfered" => '$ '. number_format($totalAmount, 2),
+            "totalAmountTransfered" => '$ ' . number_format($totalAmount, 2),
             "totalTransfer" => count($transfers)
         ]);
     }
 
-    public function reverse_transfer($locale, $id) {
+    public function reverse_transfer($locale, $id)
+    {
         try {
             $transaction = Transaction::findOrFail($id);
             $transaction->status = TransactionStatus::REVERSED->name;
@@ -503,8 +511,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Successfully reversed wallet transfer"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -513,14 +520,14 @@ class DistributorController extends Controller
     }
 
 
-    public function withdrawal_details($locale, $id) {
+    public function withdrawal_details($locale, $id)
+    {
         try {
             $bonusWithdrawal = BonusWithdrawal::findOrFail($id);
             return view("admin.bonus-withdrawal-details", [
                 "withdrawalDetails" => $bonusWithdrawal
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Withdrawal doesn't exist"

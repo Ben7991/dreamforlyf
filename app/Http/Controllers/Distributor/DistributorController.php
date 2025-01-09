@@ -33,7 +33,8 @@ use Illuminate\Support\Facades\Hash;
 
 class DistributorController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $currentUser = Auth::user();
         $distributor = $currentUser->distributor;
         $referredDistributors = $this->getReferredDistributors();
@@ -68,11 +69,13 @@ class DistributorController extends Controller
         ]);
     }
 
-    public function code_ethics() {
+    public function code_ethics()
+    {
         return view("distributor.code-ethics");
     }
 
-    public function ranks() {
+    public function ranks()
+    {
         $upline = Auth::user()->upline;
         $currentRank = "None";
 
@@ -94,22 +97,23 @@ class DistributorController extends Controller
         ]);
     }
 
-    public function products() {
+    public function products()
+    {
         return view("distributor.product.index", [
             "products" => Product::orderBy("price", "asc")->where("quantity", ">", 5)->paginate(8),
         ]);
     }
 
-    public function product_details($locale, $id) {
+    public function product_details($locale, $id)
+    {
         try {
             $existingProduct = Product::findOrFail($id);
 
-            return view("distributor.product.details",[
+            return view("distributor.product.details", [
                 "product" => $existingProduct,
-                "stockists" => Stockist::all()
+                "stockists" => Stockist::getActiveStockist()
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Product doesn't exist"
@@ -117,7 +121,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function product_purchase(Request $request, $locale, $id) {
+    public function product_purchase(Request $request, $locale, $id)
+    {
         $validated = [];
 
         if ($request->input("purchase") === "direct") {
@@ -126,8 +131,7 @@ class DistributorController extends Controller
                 "stockist" => "required",
                 "purchase" => "required"
             ]);
-        }
-        else {
+        } else {
             $validated = $request->validate([
                 "stockist" => "required",
                 "purchase" => "required"
@@ -146,8 +150,7 @@ class DistributorController extends Controller
             if (strcmp($validated["purchase"], "direct") === 0) {
                 $point = $product->bv_point * $validated["quantity"];
                 $amount = $product->price * (int)$validated["quantity"];
-            }
-            else if (strcmp($validated["purchase"], "maintenance") === 0) {
+            } else if (strcmp($validated["purchase"], "maintenance") === 0) {
                 $point = $product->bv_point;
                 $amount = $product->price;
             }
@@ -163,14 +166,12 @@ class DistributorController extends Controller
                 $portfolio->subtractPurchaseAmount($amount);
                 $this->storeOrder($product, $validated["quantity"], $distributor, $stockist, OrderType::NORMAL->name);
                 PersonalBonus::giveBonus($distributor, $product, $validated["quantity"]);
-            }
-            else if (strcmp($validated["purchase"], "maintenance") === 0) {
+            } else if (strcmp($validated["purchase"], "maintenance") === 0) {
                 $this->setNextMaintenanceDate($distributor);
                 $portfolio->subtractPurchaseAmount($amount);
                 $quantity = 1;
                 $this->storeOrder($product, $quantity, $distributor, $stockist, OrderType::MAINTENANCE->name);
-            }
-            else {
+            } else {
                 return redirect()->back()->with([
                     "class" => "danger",
                     "message" => "Please select from the provided purchase"
@@ -183,8 +184,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Purchased was made successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -192,7 +192,8 @@ class DistributorController extends Controller
         }
     }
 
-    private function setNextMaintenanceDate($distributor) {
+    private function setNextMaintenanceDate($distributor)
+    {
         $currentDate = new Carbon();
         $expiringDate = Carbon::parse($distributor->next_maintenance_date);
         $nextDate = null;
@@ -208,7 +209,8 @@ class DistributorController extends Controller
         $distributor->save();
     }
 
-    private function storeOrder($product, $purchasedQuantity, $distributor, $stockist, $orderType) {
+    private function storeOrder($product, $purchasedQuantity, $distributor, $stockist, $orderType)
+    {
         $amount = $product->price * $purchasedQuantity;
 
         $storedOrder = Order::create([
@@ -225,7 +227,8 @@ class DistributorController extends Controller
         ]);
     }
 
-    public function membership_packages() {
+    public function membership_packages()
+    {
         $currentPackage = Auth::user()->distributor->getCurrentMembershipPackage();
         $upgradePackages = RegistrationPackage::where("id", ">", $currentPackage->id)->get();
 
@@ -236,13 +239,15 @@ class DistributorController extends Controller
         ]);
     }
 
-    public function package_types() {
+    public function package_types()
+    {
         return view("distributor.package-types", [
             "packages" => PackageType::paginate(8),
         ]);
     }
 
-    public function upgrade_package(Request $request, $locale) {
+    public function upgrade_package(Request $request, $locale)
+    {
         $validated = $request->validate([
             "package" => "bail|required|regex:/^[0-9]+$/"
         ]);
@@ -251,8 +256,7 @@ class DistributorController extends Controller
             $nextPackage = RegistrationPackage::findOrFail($validated["package"]);
             $token = GlobalValues::getRegistrationToken();
             return redirect("/$locale/distributor/membership-packages/upgrade/products?next=$nextPackage->id&token=$token");
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Package doesn't exist"
@@ -260,7 +264,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function upgrade_product_selection(Request $request) {
+    public function upgrade_product_selection(Request $request)
+    {
         $nextPackageId = $request->next;
         $token = $request->token;
 
@@ -287,10 +292,9 @@ class DistributorController extends Controller
                 "currentPackage" => $currentPackage,
                 "upgradeTypes" => $upgradeTypes,
                 "token" => $token,
-                "stockists" => Stockist::all()
+                "stockists" => Stockist::getActiveStockist()
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -298,7 +302,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function complete_upgrade(Request $request, $locale, $id) {
+    public function complete_upgrade(Request $request, $locale, $id)
+    {
         $stockist = Stockist::find($request->stockist_id);
         $nextPackageId = $request->next;
         $upgradeTypeId = $id;
@@ -335,7 +340,7 @@ class DistributorController extends Controller
                 "stockist_id" => $stockist->id
             ]);
 
-            foreach($products as $product) {
+            foreach ($products as $product) {
                 DB::table("order_items")->insert([
                     "order_id" => $storedOrder->id,
                     "product_id" => $product->product_id,
@@ -353,8 +358,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Current package upgraded successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => $e->getMessage()
@@ -363,7 +367,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function qualified_ranks() {
+    public function qualified_ranks()
+    {
         $upline = Auth::user()->upline;
         $qualifiedRanks = [];
         $total = 0;
@@ -373,11 +378,10 @@ class DistributorController extends Controller
         if ($upline !== null) {
             $total = count($upline->ranks);
 
-            foreach($upline->ranks as $rank) {
+            foreach ($upline->ranks as $rank) {
                 if ($rank->pivot->status === "PENDING") {
                     $pending++;
-                }
-                else {
+                } else {
                     $awarded++;
                 }
                 $qualifiedRanks[] = [
@@ -396,7 +400,8 @@ class DistributorController extends Controller
         ]);
     }
 
-    public function qualified_pool() {
+    public function qualified_pool()
+    {
         $upline = Auth::user()->upline;
         $qualifiedPools = [];
         $total = $pending = $approved = 0;
@@ -405,13 +410,13 @@ class DistributorController extends Controller
             $fetchedBonuses = PoolBonus::where("upline_id", $upline->id)->get();
             $total = count($fetchedBonuses);
 
-            foreach($fetchedBonuses as $bonus) {
+            foreach ($fetchedBonuses as $bonus) {
                 $qualifiedPools[] = [
                     "status" => $bonus->status,
                     "date_time" => $bonus->created_at,
                 ];
 
-                switch($bonus->status) {
+                switch ($bonus->status) {
                     case PoolBonusStatus::PENDING->name:
                         $pending++;
                         break;
@@ -430,7 +435,8 @@ class DistributorController extends Controller
         ]);
     }
 
-    public function upgrade_history() {
+    public function upgrade_history()
+    {
         $distributor = Auth::user()->distributor;
         $upgrades = UpgradeHistory::where("distributor_id", $distributor->id)->get();
 
@@ -440,17 +446,20 @@ class DistributorController extends Controller
         ]);
     }
 
-    public function complan() {
+    public function complan()
+    {
         return view("distributor.complan", [
             "packages" => RegistrationPackage::all()
         ]);
     }
 
-    public function profile() {
+    public function profile()
+    {
         return view("distributor.profile");
     }
 
-    public function set_pin(Request $request) {
+    public function set_pin(Request $request)
+    {
         $validated = $request->validate([
             "code" => "bail|required|numeric|min:4"
         ]);
@@ -464,8 +473,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Pin created successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -473,7 +481,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function change_pin(Request $request) {
+    public function change_pin(Request $request)
+    {
         $validated = $request->validate([
             "current_pin" => "bail|required|numeric|min:4",
             "new_pin" => "bail|required|numeric|min:4",
@@ -497,8 +506,7 @@ class DistributorController extends Controller
                 "class" => "success",
                 "message" => "Pin changed successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -506,7 +514,8 @@ class DistributorController extends Controller
         }
     }
 
-    public function referred_distributors() {
+    public function referred_distributors()
+    {
         $referredDistributors = $this->getReferredDistributors();
 
         return view("distributor.referred-distributors", [
@@ -515,14 +524,15 @@ class DistributorController extends Controller
         ]);
     }
 
-    private function getReferredDistributors(): array {
+    private function getReferredDistributors(): array
+    {
         $upline = Auth::user()->upline;
         $referredDistributors = [];
 
         if ($upline !== null) {
             $fetchedDistributors = Referral::where("upline_id", $upline->id)->get();
 
-            foreach($fetchedDistributors as $fetchDistributor) {
+            foreach ($fetchedDistributors as $fetchDistributor) {
                 $rank = "None";
                 $upline = $fetchDistributor->distributor->user->upline;
 
@@ -548,15 +558,15 @@ class DistributorController extends Controller
     }
 
 
-    public function read_code_ethics(Request $request, $locale) {
+    public function read_code_ethics(Request $request, $locale)
+    {
         try {
             $distributor = Auth::user()->distributor;
             $distributor->code_ethics = CodeEthics::READ->name;
             $distributor->save();
 
             return redirect("/$locale/distributor");
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -564,17 +574,19 @@ class DistributorController extends Controller
         }
     }
 
-    public function ethics() {
+    public function ethics()
+    {
         return view("distributor.ethics");
     }
 
-    public function check_credential(Request $request, $value) {
+    public function check_credential(Request $request, $value)
+    {
         $existingUser = null;
         try {
             $existingUser = User::where("role", UserType::DISTRIBUTOR->name)
-                                ->where("id", $value)
-                                ->orWhere("email", $value)
-                                ->firstOrFail();
+                ->where("id", $value)
+                ->orWhere("email", $value)
+                ->firstOrFail();
 
             $formattedLoggedInUserId = (int)substr(Auth::id(), 3);
             $formattedExistingUserId = (int)substr($existingUser->id, 3);
@@ -610,8 +622,7 @@ class DistributorController extends Controller
             return response()->json([
                 "message" => "$existingUser->name has space available on $availableSpace"
             ]);
-        }
-        catch(Exception $e) {
+        } catch (Exception $e) {
             return response()->json([
                 "message" => "User doesn't exist",
                 "data" => $e->getMessage()
@@ -620,7 +631,8 @@ class DistributorController extends Controller
     }
 
 
-    public function store_bank_details(Request $request) {
+    public function store_bank_details(Request $request)
+    {
         $validated = $request->validate([
             "full_name" => "required|regex:/^[a-zA-Z ]*$/",
             "bank_name" => "required",
@@ -653,8 +665,7 @@ class DistributorController extends Controller
                     "rib" => $validated["rib"]
                 ]);
                 $message = "Successfully added bank details successfully";
-            }
-            else {
+            } else {
                 $existingBankDetails->full_name = $validated["full_name"];
                 $existingBankDetails->bank_name = $validated["bank_name"];
                 $existingBankDetails->bank_branch = $validated["bank_branch"];
@@ -672,8 +683,7 @@ class DistributorController extends Controller
                 "message" => $message,
                 "class" => "success"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "message" => "Something went wrong, please check and try again",
                 "class" => "danger"

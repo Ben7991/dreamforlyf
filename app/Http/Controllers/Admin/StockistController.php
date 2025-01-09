@@ -17,19 +17,22 @@ use Illuminate\Support\Facades\Mail;
 
 class StockistController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view("admin.stockist.index", [
             "totalStockist" => Stockist::count(),
             "suspendedStockists" => User::where("role", UserType::STOCKIST->name)->where("status", "suspended")->count(),
-            "stockists" => Stockist::all()
+            "stockists" => Stockist::getActiveStockist()
         ]);
     }
 
-    public function create() {
+    public function create()
+    {
         return view("admin.stockist.create");
     }
 
-    public function store(StockistRequest $request, $locale) {
+    public function store(StockistRequest $request, $locale)
+    {
         $validated = $request->validated();
 
         try {
@@ -58,8 +61,7 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Added new stockist successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -67,19 +69,19 @@ class StockistController extends Controller
         }
     }
 
-    public function show($locale, $id) {
+    public function show($locale, $id)
+    {
         try {
             $user = User::findOrFail($id);
             $transfers = DB::table("stockist_transfer_history")
-                            ->where("stockist_id", $user->stockist->id)
-                            ->get();
+                ->where("stockist_id", $user->stockist->id)
+                ->get();
 
             return view("admin.stockist.show", [
                 "user" => $user,
                 "transfers" => $transfers
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Resource not found"
@@ -87,7 +89,8 @@ class StockistController extends Controller
         }
     }
 
-    public function update(StockistRequest $request, $locale, $id) {
+    public function update(StockistRequest $request, $locale, $id)
+    {
         $validated = $request->validated();
 
         try {
@@ -107,8 +110,7 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Stockist details updated successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -116,7 +118,8 @@ class StockistController extends Controller
         }
     }
 
-    public function transfer_wallet(Request $request, $locale, $id) {
+    public function transfer_wallet(Request $request, $locale, $id)
+    {
         $validated = $request->validate([
             "amount" => "required|regex:/^[0-9]+(\.[0-9]{2})?$/"
         ]);
@@ -139,8 +142,7 @@ class StockistController extends Controller
                 "message" => "Successfully transferred wallet to stockists",
                 "class" => "success"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "message" => "Something went wrong",
                 "class" => "danger"
@@ -148,13 +150,19 @@ class StockistController extends Controller
         }
     }
 
-    public function transfer() {
+    public function transfer()
+    {
         $amountTransfered = DB::table("stockist_transfer_history")->where("status", "COMPLETE")->sum("amount");
         $transfers = DB::table("stockist_transfer_history")
-                ->join("stockists", "stockist_transfer_history.stockist_id", "stockists.id")
-                ->select("stockist_transfer_history.id as id", "stockist_transfer_history.date_added as date_added",
-                "stockist_transfer_history.amount as amount", "stockists.code as code", "stockist_transfer_history.status as status")
-                ->get();
+            ->join("stockists", "stockist_transfer_history.stockist_id", "stockists.id")
+            ->select(
+                "stockist_transfer_history.id as id",
+                "stockist_transfer_history.date_added as date_added",
+                "stockist_transfer_history.amount as amount",
+                "stockists.code as code",
+                "stockist_transfer_history.status as status"
+            )
+            ->get();
 
         return view("admin.stockist.wallet-transfer", [
             "transfers" => $transfers,
@@ -163,7 +171,8 @@ class StockistController extends Controller
         ]);
     }
 
-    public function reverse_transfer($locale, $id) {
+    public function reverse_transfer($locale, $id)
+    {
         try {
             $result = DB::table("stockist_transfer_history")->find($id);
 
@@ -180,8 +189,7 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Reversed transfer successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             dd($e->getMessage());
             return redirect()->back()->with([
                 "class" => "danger",
@@ -191,7 +199,8 @@ class StockistController extends Controller
     }
 
 
-    public function stockist_withdrawals() {
+    public function stockist_withdrawals()
+    {
         $total = DB::table("stockist_withdrawal")->count();
         $pending = DB::table("stockist_withdrawal")->where("status", "PENDING")->count();
         $approved = DB::table("stockist_withdrawal")->where("status", "APPROVED")->count();
@@ -208,7 +217,8 @@ class StockistController extends Controller
         ]);
     }
 
-    public function stockist_withdrawal_requests() {
+    public function stockist_withdrawal_requests()
+    {
         $total = DB::table("stockist_withdrawal_request")
             ->where("stockist_request", "REQUESTED")
             ->count();
@@ -224,7 +234,8 @@ class StockistController extends Controller
     }
 
 
-    public function approve_request($locale, $id) {
+    public function approve_request($locale, $id)
+    {
         try {
             $request = DB::table("stockist_withdrawal_request")->find($id);
 
@@ -243,8 +254,7 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Request approved"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => $e->getMessage()
@@ -253,7 +263,8 @@ class StockistController extends Controller
     }
 
 
-    public function withdrawal_details($locale, $id) {
+    public function withdrawal_details($locale, $id)
+    {
         try {
             $withdrawal = DB::table("stockist_withdrawal")
                 ->join("stockists", "stockist_withdrawal.stockist_id", "=", "stockists.id")
@@ -273,8 +284,7 @@ class StockistController extends Controller
                 "withdrawalDetails" => $withdrawal,
                 "bankDetails" => $bankDetails
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => $e->getMessage()
@@ -283,7 +293,8 @@ class StockistController extends Controller
     }
 
 
-    public function withdrawal_approve($locale, $id) {
+    public function withdrawal_approve($locale, $id)
+    {
         try {
             $withdrawalDetails = DB::table("stockist_withdrawal")->find($id);
 
@@ -305,11 +316,29 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Successfully approved withdrawal"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function suspend_account(Request $request, $locale, $id)
+    {
+        try {
+            $stockistUserDetail = User::findOrFail($id);
+            $stockistUserDetail->status = 'suspend';
+            $stockistUserDetail->save();
+
+            return redirect()->back()->with([
+                'class' => 'success',
+                'message' => 'Stockist account has sucessfully been suspended'
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                'class' => 'success',
+                'message' => $e->getMessage()
             ]);
         }
     }

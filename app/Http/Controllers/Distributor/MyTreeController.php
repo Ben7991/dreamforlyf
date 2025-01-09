@@ -31,7 +31,8 @@ use Illuminate\Support\Facades\Mail;
 
 class MyTreeController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $totalReferrals = $totalLeftBv = $totalRightBv = $downlineCount = $paidBv = $leftDistributors = $rightDistirbutors = 0;
 
         $upline = Auth::user()->upline;
@@ -59,7 +60,8 @@ class MyTreeController extends Controller
         ]);
     }
 
-    public function create() {
+    public function create()
+    {
         $packages = RegistrationPackage::all();
         $email = "";
         $loggedInUpline = Auth::user()->upline;
@@ -70,12 +72,13 @@ class MyTreeController extends Controller
 
         return view("distributor.my-tree.create", [
             "packages" => $packages,
-            "stockists" => Stockist::all(),
+            "stockists" => Stockist::getActiveStockist(),
             "email" => $email
         ]);
     }
 
-    public function register(RegisterDistributor $request, $locale) {
+    public function register(RegisterDistributor $request, $locale)
+    {
         $validated = $request->validated();
         $generatedPassword = PasswordGenerator::generate();
         $upline = $referer = $portfolio = null;
@@ -84,9 +87,9 @@ class MyTreeController extends Controller
 
         try {
             $user = User::where("role", UserType::DISTRIBUTOR->name)
-                                ->where("id", $validated["upline_id_email"])
-                                ->orWhere("email", $validated["upline_id_email"])
-                                ->first();
+                ->where("id", $validated["upline_id_email"])
+                ->orWhere("email", $validated["upline_id_email"])
+                ->first();
 
             if ($user === null) {
                 return redirect()->back()->with([
@@ -187,8 +190,7 @@ class MyTreeController extends Controller
                 "class" => "success",
                 "message" => "Added new distributor successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong, ensure upline id/email detail is accurate"
@@ -196,7 +198,8 @@ class MyTreeController extends Controller
         }
     }
 
-    private function storeUser($data, $password, $upline, $package, $referer, $leg, $uplineSelectedLeg) {
+    private function storeUser($data, $password, $upline, $package, $referer, $leg, $uplineSelectedLeg)
+    {
         $storedUser = User::create([
             "id" => User::nextId(),
             "name" => $data["name"],
@@ -230,7 +233,8 @@ class MyTreeController extends Controller
         return $storedDistributor;
     }
 
-    private function storeOrder($products, $distributor, $registrationPackage, $stockistId) {
+    private function storeOrder($products, $distributor, $registrationPackage, $stockistId)
+    {
         $storedOrder = Order::create([
             "amount" => $registrationPackage->price,
             "distributor_id" => $distributor->id,
@@ -238,7 +242,7 @@ class MyTreeController extends Controller
             "stockist_id" => $stockistId
         ]);
 
-        foreach($products as $product) {
+        foreach ($products as $product) {
             DB::table("order_items")->insert([
                 "order_id" => $storedOrder->id,
                 "product_id" => $product->product_id,
@@ -251,7 +255,8 @@ class MyTreeController extends Controller
         }
     }
 
-    public function downline_detail($locale, $id) {
+    public function downline_detail($locale, $id)
+    {
         try {
             $distributor = Distributor::findOrFail($id);
             $user = $distributor->user;
@@ -274,15 +279,15 @@ class MyTreeController extends Controller
                 "membershipPackage" => $distributor->getCurrentMembershipPackage()->name,
                 "id" => $user->id,
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "message" => "Distributor doesn't exist"
             ], 500);
         }
     }
 
-    public function downline_tree($locale, $id) {
+    public function downline_tree($locale, $id)
+    {
         try {
             $existingUser = User::findOrFail($id);
             $totalLeftLeg = $totalRightLeg = 0;
@@ -299,8 +304,7 @@ class MyTreeController extends Controller
                 "totalRightLeg" => $totalRightLeg,
                 "token" => GlobalValues::getRegistrationToken(),
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "User doesn't exist"
@@ -308,15 +312,15 @@ class MyTreeController extends Controller
         }
     }
 
-    public function user_detail($locale, $id) {
+    public function user_detail($locale, $id)
+    {
         try {
             $user = User::findOrFail($id);
 
             return response()->json([
                 "link" => "/$locale/distributor/my-tree/$user->id",
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "message" => "User doesn't exist"
             ], 500);

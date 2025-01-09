@@ -38,8 +38,8 @@ Route::get("/users/{email}/check", [AuthController::class, "check"]);
 Route::get("/products/{id}", [DistributorMainPackController::class, "product_details"])->middleware(["auth", "user.distributor"]);
 Route::post("/maint-packages", [DistributorMainPackController::class, "store"])->middleware(["auth", "user.distributor"]);
 
-Route::prefix("{locale}")->group(function() {
-    Route::middleware("internationalize")->group(function() {
+Route::prefix("{locale}")->group(function () {
+    Route::middleware("internationalize")->group(function () {
         // logout feature
         Route::post("logout", [AuthController::class, "logout"])->middleware("auth");
 
@@ -50,8 +50,8 @@ Route::prefix("{locale}")->group(function() {
 
 Route::get("admin/analytics-data", [AnalyticsController::class, "fetch_data"]);
 
-Route::prefix("{locale}")->group(function() {
-    Route::middleware(['internationalize'])->group(function() {
+Route::prefix("{locale}")->group(function () {
+    Route::middleware(['internationalize'])->group(function () {
         Route::get("", [HomeController::class, "index"]);
         Route::get("about-us", [HomeController::class, "about_us"]);
         Route::get("opportunity", [HomeController::class, "opportunity"]);
@@ -82,15 +82,15 @@ Route::prefix("{locale}")->group(function() {
  */
 Route::post("/profile/image-change", [AuthController::class, "image_change"])->middleware("auth");
 Route::post("/admin/analytics-data", [AnalyticsController::class, "fetch_data"])->middleware("auth", "user.admin");
-Route::prefix("{locale}/admin")->group(function() {
-    Route::middleware(["internationalize", "auth", "user.admin"])->group(function() {
+Route::prefix("{locale}/admin")->group(function () {
+    Route::middleware(["internationalize", "auth", "user.admin"])->group(function () {
         Route::get("", [AdminController::class, "index"]);
         Route::get("announce", [AdminController::class, "announcement"]);
         Route::post("announce", [AdminController::class, "store_announcement"]);
         Route::delete("announce/{id}", [AdminController::class, "remove_announcement"]);
 
 
-        Route::prefix("analytics")->group(function() {
+        Route::prefix("analytics")->group(function () {
             Route::get("", [AnalyticsController::class, "index"]);
             Route::get("personal-purchase", [AnalyticsController::class, "personal_purchase"]);
             Route::get("upgrade-bonus", [AnalyticsController::class, "upgrade_bonus"]);
@@ -116,15 +116,18 @@ Route::prefix("{locale}/admin")->group(function() {
 
         Route::put("products/{id}/stock-status", [ProductController::class, "stock_status"]);
         Route::resource("products", ProductController::class)->except([
-            "destroy", "show"
+            "destroy",
+            "show"
         ]);
 
         Route::resource("ranks", RankController::class)->except([
-            "destroy", "show"
+            "destroy",
+            "show"
         ]);
 
         Route::resource("registration-packages", RegistrationPackageController::class)->except([
-            "destroy", "show"
+            "destroy",
+            "show"
         ]);
 
         Route::post("upgrade-packages/{id}/product", [UpgradePackageController::class, "store_product"]);
@@ -138,7 +141,9 @@ Route::prefix("{locale}/admin")->group(function() {
         Route::resource("package-types", PackageTypeController::class)->except(["show"]);
 
         Route::resource('order-history', OrderController::class)->only([
-            "index", "show", "update"
+            "index",
+            "show",
+            "update"
         ]);
 
         Route::put("distributors/{id}/reset-withdrawal-pin", [AdminDistributorController::class, "reset_withdrawal_pin"]);
@@ -146,7 +151,7 @@ Route::prefix("{locale}/admin")->group(function() {
         Route::post("distributors/{id}/wallet", [AdminDistributorController::class, "wallet"]);
         Route::put("distributors/{id}/reverse-transfer", [AdminDistributorController::class, "reverse_transfer"]);
         Route::get("distributors/wallet-transfer", [AdminDistributorController::class, "wallet_transfer"]);
-        Route::resource("distributors", AdminDistributorController::class)->except([ "destroy" ]);
+        Route::resource("distributors", AdminDistributorController::class)->except(["destroy"]);
 
         Route::get("bonus-withdrawals", [AdminDistributorController::class, "bonus_withdrawals"]);
         Route::put("bonus-withdrawals/{id}/approve", [AdminDistributorController::class, "approve_withdrawal"]);
@@ -164,6 +169,7 @@ Route::prefix("{locale}/admin")->group(function() {
         Route::post("stockists/{id}/transfer-wallet", [AdminStockistController::class, "transfer_wallet"]);
         Route::get("stockists/transfer", [AdminStockistController::class, "transfer"]);
         Route::put("stockists/{id}/reverse-transfer", [AdminStockistController::class, "reverse_transfer"]);
+        Route::put('stockists/{id}/suspend', [AdminStockistController::class, 'suspend_account']);
         Route::resource('stockists', AdminStockistController::class)->except([
             "delete",
         ]);
@@ -175,10 +181,10 @@ Route::prefix("{locale}/admin")->group(function() {
  * all distributors routes
  */
 Route::get("/distributor/{value}/credential", [DistributorController::class, "check_credential"])->middleware(["auth", "user.distributor"]);
-Route::prefix("{locale}/distributor")->group(function() {
-    Route::middleware(["internationalize", "auth", "user.distributor", "code.ethics"])->group(function() {
+Route::prefix("{locale}/distributor")->group(function () {
+    Route::middleware(["internationalize", "auth", "user.distributor", "code.ethics"])->group(function () {
         Route::get("", [DistributorController::class, "index"]);
-        Route::withoutMiddleware("code.ethics")->group(function() {
+        Route::withoutMiddleware("code.ethics")->group(function () {
             Route::get("code-ethics", [DistributorController::class, "code_ethics"]);
             Route::post("code-ethics", [DistributorController::class, "read_code_ethics"]);
         });
@@ -186,7 +192,7 @@ Route::prefix("{locale}/distributor")->group(function() {
         Route::get("ethics", [DistributorController::class, "ethics"]);
         Route::get("referred-distributors", [DistributorController::class, "referred_distributors"]);
 
-        Route::prefix("profile")->group(function() {
+        Route::prefix("profile")->group(function () {
             Route::get("", [DistributorController::class, "profile"]);
             Route::post("personal-information", [AuthController::class, "personal_information"]);
             Route::post("password-change", [AuthController::class, "password_change"]);
@@ -233,11 +239,11 @@ Route::prefix("{locale}/distributor")->group(function() {
 /**
  * all stockist routes
  */
-Route::prefix("{locale}/stockist")->group(function() {
-    Route::middleware(["auth", "user.stockist", "internationalize"])->group(function() {
+Route::prefix("{locale}/stockist")->group(function () {
+    Route::middleware(["auth", "user.stockist", "internationalize"])->group(function () {
         Route::get("", [StockistController::class, "index"]);
 
-        Route::prefix("profile")->group(function() {
+        Route::prefix("profile")->group(function () {
             Route::get("", [StockistController::class, "profile"]);
             Route::post("personal-information", [StockistController::class, "personal_information"]);
             Route::post("password-change", [AuthController::class, "password_change"]);
