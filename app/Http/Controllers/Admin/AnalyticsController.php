@@ -416,20 +416,20 @@ class AnalyticsController extends Controller
 
         return view("admin.analytics.general-assessment", [
             'registration' => [
-                'first' => $totalRegistration * 2 * 4,
-                'second' => $totalRegistration * 1 * 4
+                'first' => $totalRegistration * 2,
+                'second' => $totalRegistration * 1
             ],
             'upgrade' => [
-                'first' => $totalUpgrade * 2 * 4,
-                'second' => $totalUpgrade * 1 * 4,
+                'first' => $totalUpgrade * 2,
+                'second' => $totalUpgrade * 1,
             ],
             'personal' => [
-                'first' => $totalPersonal * 2 * 4,
-                'second' => $totalPersonal * 1 * 4,
+                'first' => $totalPersonal * 2,
+                'second' => $totalPersonal * 1,
             ],
             'maintenance' => [
-                'first' => $totalMaintenance * 2 * 4,
-                'second' => $totalMaintenance * 1 * 4,
+                'first' => $totalMaintenance * 2,
+                'second' => $totalMaintenance * 1,
             ],
             'totalQuantity' => $maintenance + $registration + $upgrade + $personal,
         ]);

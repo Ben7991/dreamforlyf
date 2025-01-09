@@ -23,15 +23,18 @@ use Illuminate\Support\Facades\DB;
 
 class StockistController extends Controller
 {
-    public function index() {
-        $result = DB::table("transactions")
-                    ->join("stockist_transfer", "transactions.id", "stockist_transfer.transaction_id")
-                    ->join("distributors", "distributors.id", "transactions.distributor_id")
-                    ->join("users", "users.id", "distributors.user_id")
-                    ->select("transactions.amount", "users.name", "users.id", "stockist_transfer.date_added")
-                    ->get();
-
+    public function index()
+    {
         $stockistId = Auth::user()->stockist->id;
+
+        $result = DB::table("transactions")
+            ->join("stockist_transfer", "transactions.id", "stockist_transfer.transaction_id")
+            ->join("distributors", "distributors.id", "transactions.distributor_id")
+            ->join("users", "users.id", "distributors.user_id")
+            ->select("transactions.amount", "users.name", "users.id", "stockist_transfer.date_added")
+            ->where('stockist_transfer.stockist_id', $stockistId)
+            ->get();
+
         $pendingorderCount = Order::where("status", OrderStatus::PENDING->name)
             ->where("stockist_id", $stockistId)
             ->count();
@@ -43,7 +46,8 @@ class StockistController extends Controller
         ]);
     }
 
-    public function orderHistory() {
+    public function orderHistory()
+    {
         $stockistId = Auth::user()->stockist->id;
 
         $orders = Order::orderBy("id", "desc")
@@ -66,14 +70,14 @@ class StockistController extends Controller
         ]);
     }
 
-    public function orderDetails($locale, $id) {
+    public function orderDetails($locale, $id)
+    {
         try {
             $order = Order::findOrFail($id);
             return view("stockist.order-details", [
                 "order" => $order
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Order doesn't exist"
@@ -81,7 +85,8 @@ class StockistController extends Controller
         }
     }
 
-    public function changeOrderStatus(Request $request, $locale, $id) {
+    public function changeOrderStatus(Request $request, $locale, $id)
+    {
         $validated = $request->validate([
             "status" => "required"
         ]);
@@ -105,8 +110,7 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Order approved successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Order doesn't exist"
@@ -114,7 +118,8 @@ class StockistController extends Controller
         }
     }
 
-    private function calculateBonus(Order $order) {
+    private function calculateBonus(Order $order)
+    {
         $bonusRate = 0.05;
         $stockist = Auth::user()->stockist;
 
@@ -123,13 +128,11 @@ class StockistController extends Controller
             $product = Product::find($orderItem->product_id);
             $bonus = $product->bv_point * $bonusRate;
             $stockist->bonus += $bonus;
-        }
-        else if ($order->order_type === OrderType::REGISTRATION->name) {
+        } else if ($order->order_type === OrderType::REGISTRATION->name) {
             $registrationPackage = $order->distributor->getCurrentMembershipPackage();
             $bonus = $registrationPackage->bv_point * $bonusRate;
             $stockist->bonus += $bonus;
-        }
-        else {
+        } else {
             // get distributor using the distributor_id from the order instance
             // find upgrade history from the upgrade_histories tables (this table contains upgrade_type_id column)
             $upgradeHistory = UpgradeHistory::where("distributor_id", $order->distributor_id)->orderBy("id", "desc")->first();
@@ -147,20 +150,25 @@ class StockistController extends Controller
         $stockist->save();
     }
 
-    public function transferWallet() {
+    public function transferWallet()
+    {
+        $stockistId = Auth::user()->stockist->id;
+
         $result = DB::table("transactions")
-                    ->join("stockist_transfer", "transactions.id", "stockist_transfer.transaction_id")
-                    ->join("distributors", "distributors.id", "transactions.distributor_id")
-                    ->join("users", "users.id", "distributors.user_id")
-                    ->select("transactions.amount", "users.name", "users.id", "stockist_transfer.date_added")
-                    ->get();
+            ->join("stockist_transfer", "transactions.id", "stockist_transfer.transaction_id")
+            ->join("distributors", "distributors.id", "transactions.distributor_id")
+            ->join("users", "users.id", "distributors.user_id")
+            ->select("transactions.amount", "users.name", "users.id", "stockist_transfer.date_added")
+            ->where('stockist_transfer.stockist_id', $stockistId)
+            ->get();
 
         return view("stockist.transfer-wallet", [
             "transfers" => $result
         ]);
     }
 
-    public function sendDistributorWallet(Request $request, $locale, $id) {
+    public function sendDistributorWallet(Request $request, $locale, $id)
+    {
         $validated = $request->validate([
             "amount" => "required|numeric"
         ]);
@@ -191,7 +199,8 @@ class StockistController extends Controller
             ]);
 
             DB::table("stockist_transfer")->insert([
-                "transaction_id" => $transaction->id
+                "transaction_id" => $transaction->id,
+                "stockist_id" => $currentStockist->id
             ]);
 
             $currentStockist->wallet -= $amount;
@@ -201,8 +210,7 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Transfer completed successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong"
@@ -210,12 +218,14 @@ class StockistController extends Controller
         }
     }
 
-    public function profile() {
+    public function profile()
+    {
         return view("stockist.profile");
     }
 
 
-    public function bonus_withdrawal() {
+    public function bonus_withdrawal()
+    {
         $stockist = Auth::user()->stockist;
         $withdrawals = DB::table("stockist_withdrawal")->where("stockist_id", $stockist->id)->get();
         $pending = DB::table("stockist_withdrawal")->where("stockist_id", $stockist->id)->where("status", "PENDING")->count();
@@ -232,7 +242,8 @@ class StockistController extends Controller
     }
 
 
-    public function request_withdrawal() {
+    public function request_withdrawal()
+    {
         $stockist = Auth::user()->stockist;
 
         try {
@@ -244,8 +255,7 @@ class StockistController extends Controller
                     "approval_status" => "PENDING",
                     "stockist_id" => $stockist->id
                 ]);
-            }
-            else {
+            } else {
                 DB::table("stockist_withdrawal_request")->where("stockist_id", $stockist->id)->update([
                     "stockist_request" => "REQUESTED",
                     "approval_status" => "PENDING",
@@ -256,8 +266,7 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Ask admin to open the withdrawal portal"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => $e->getMessage()
@@ -266,7 +275,8 @@ class StockistController extends Controller
     }
 
 
-    public function make_withdrawal(Request $request, $locale) {
+    public function make_withdrawal(Request $request, $locale)
+    {
         $validated = $request->validate([
             "amount" => "bail|required|regex:/^[0-9]*(\.[0-9]{2})*$/",
             "mode" => "required"
@@ -307,8 +317,7 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Successfully request, awaiting admin approval and payout"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => $e->getMessage()
@@ -317,7 +326,8 @@ class StockistController extends Controller
     }
 
 
-    public function personal_information(Request $request) {
+    public function personal_information(Request $request)
+    {
         $id = Auth::id();
         $currentUser = User::find($id);
         $validated = $request->validate([
@@ -339,8 +349,7 @@ class StockistController extends Controller
                 "class" => "success",
                 "message" => "Updated personal information successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong, please contact developer for assistance"
@@ -349,7 +358,8 @@ class StockistController extends Controller
     }
 
 
-    public function set_bank_details(Request $request) {
+    public function set_bank_details(Request $request)
+    {
         $validated = $request->validate([
             "full_name" => "required|regex:/^[a-zA-Z ]*$/",
             "bank_name" => "required",
@@ -380,8 +390,7 @@ class StockistController extends Controller
                     "stockist_id" => $stockist->id
                 ]);
                 $message = "Successfully added bank details successfully";
-            }
-            else {
+            } else {
                 $existingBankDetails->full_name = $validated["full_name"];
                 $existingBankDetails->bank_name = $validated["bank_name"];
                 $existingBankDetails->bank_branch = $validated["bank_branch"];
@@ -398,8 +407,7 @@ class StockistController extends Controller
                 "message" => $message,
                 "class" => "success"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "message" => "Something went wrong, please check and try again",
                 "class" => "danger"

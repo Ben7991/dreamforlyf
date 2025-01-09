@@ -52,7 +52,7 @@
                         </select>
                     </div>
                 </div>
-                @if($order->order_type === "PENDING")
+                @if($order->status === "PENDING")
                     <button class="btn btn-success" type="submit">
                         <i class="bi bi-save"></i> {{ __('save') }}
                     </button>
