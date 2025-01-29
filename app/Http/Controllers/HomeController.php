@@ -25,59 +25,69 @@ use App\Utility\PasswordGenerator;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 
 class HomeController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view("home.index");
     }
 
-    public function login() {
+    public function login()
+    {
         return view("home.login");
     }
 
-    public function forgot_password() {
+    public function forgot_password()
+    {
         return view("home.forgot-password");
     }
 
-    public function about_us() {
+    public function about_us()
+    {
         return view("home.about-us");
     }
 
-    public function products() {
+    public function products()
+    {
         return view('home.product', [
             "products" => Product::orderBy("price", "asc")->paginate(8)
         ]);
     }
 
-    public function product_details($locale, $id) {
+    public function product_details($locale, $id)
+    {
         try {
             $product = Product::findOrFail($id);
             return view("home.product-details", [
                 "product" => $product
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back();
         }
     }
 
-    public function opportunity() {
+    public function opportunity()
+    {
         return view("home.opportunity", [
             "packages" => RegistrationPackage::all()
         ]);
     }
 
-    public function faqs() {
+    public function faqs()
+    {
         return view("home.faqs");
     }
 
-    public function contact_us() {
+    public function contact_us()
+    {
         return view("home.contact-us");
     }
 
-    public function send_mail(Request $request) {
+    public function send_mail(Request $request)
+    {
         $validated = $request->validate([
             "name" => "bail|required|regex:/^[a-zA-Z ]+$/",
             "subject" => "bail|required|regex:/^[a-zA-Z ]+$/",
@@ -94,8 +104,7 @@ class HomeController extends Controller
                 "message" => "Successfully submitted your message",
                 "class" => "success"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "message" => "Something went wrong",
                 // "message" => $e->getMessage(),
@@ -104,7 +113,8 @@ class HomeController extends Controller
         }
     }
 
-    public function sponsor(Request $request, $locale) {
+    public function sponsor(Request $request, $locale)
+    {
         $id = $request->id;
         $token = $request->token;
         $side = $request->side;
@@ -117,11 +127,13 @@ class HomeController extends Controller
             "sponsor" => $sponsor,
             "side" => $side,
             "registrationPackages" => $registrationPackages,
-            "stockists" => Stockist::all()
+            "stockists" => Stockist::all(),
+            "countries" => DB::table('countries')->get()
         ]);
     }
 
-    public function sponsor_register(SponsorRegistrationRequest $request, $locale) {
+    public function sponsor_register(SponsorRegistrationRequest $request, $locale)
+    {
         $validated = $request->validated();
         $generatedPassword = PasswordGenerator::generate();
         $currentUser = User::find($request->id);
@@ -180,8 +192,7 @@ class HomeController extends Controller
                 "class" => "success",
                 "message" => "Please check your email for your login credentials"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong, please contact admin for assistance"
@@ -189,7 +200,8 @@ class HomeController extends Controller
         }
     }
 
-    private function storeUser($data, $password, $upline, $package, $leg, $referer, $uplineSelectedLeg) {
+    private function storeUser($data, $password, $upline, $package, $leg, $referer, $uplineSelectedLeg)
+    {
         $storedUser = User::create([
             "id" => User::nextId(),
             "name" => $data["name"],
@@ -223,7 +235,8 @@ class HomeController extends Controller
         return $storedDistributor;
     }
 
-    private function storeOrder($products, $distributor, $registrationPackage, $stockist_id) {
+    private function storeOrder($products, $distributor, $registrationPackage, $stockist_id)
+    {
         $storedOrder = Order::create([
             "amount" => $registrationPackage->price,
             "distributor_id" => $distributor->id,
@@ -231,7 +244,7 @@ class HomeController extends Controller
             "stockist_id" => $stockist_id
         ]);
 
-        foreach($products as $product) {
+        foreach ($products as $product) {
             DB::table("order_items")->insert([
                 "order_id" => $storedOrder->id,
                 "product_id" => $product->product_id,
@@ -242,5 +255,21 @@ class HomeController extends Controller
             $updatedProduct->quantity -= $product->quantity;
             $updatedProduct->save();
         }
+    }
+
+    public function storeCountries(Request $request)
+    {
+        $countries = $request->countries;
+
+        foreach ($countries as $country) {
+            DB::table('countries')
+                ->insert([
+                    'name' => $country
+                ]);
+        }
+
+        return response()->json([
+            "message" => "Done"
+        ]);
     }
 }

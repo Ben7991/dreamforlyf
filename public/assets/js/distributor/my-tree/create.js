@@ -53,88 +53,50 @@ email.addEventListener("change", function () {
 });
 
 const uplineIdEmail = document.querySelector("#upline_id_email");
-let isUplineIdEmailValidated = false, uplineIdEmailError = "Upline ID / Email is required";
-uplineIdEmail.addEventListener("change", function() {
+let isUplineIdEmailValidated = false,
+    uplineIdEmailError = "Upline ID / Email is required";
+uplineIdEmail.addEventListener("change", function () {
     const value = this.value;
 
     if (value === "") {
         isUplineIdEmailValidated = false;
         uplineIdEmailError = "Upline ID / Email is required";
         checkInput(this, isUplineIdEmailValidated, uplineIdEmailError);
-    }
-    else if (value !== "") {
+    } else if (value !== "") {
         $.ajax({
             url: `/distributor/${value}/credential`,
             method: "GET",
             headers: {
-                "X-CSRF-TOKEN": document.querySelector("#token").value
+                "X-CSRF-TOKEN": document.querySelector("#token").value,
             },
-            success: function(data, status, xhr) {
+            success: function (data, status, xhr) {
                 isUplineIdEmailValidated = true;
                 uplineIdEmailError = "";
 
                 uplineIdEmail.nextElementSibling.textContent = data.message;
                 uplineIdEmail.nextElementSibling.classList.add("text-success");
-                uplineIdEmail.nextElementSibling.classList.remove("text-danger");
+                uplineIdEmail.nextElementSibling.classList.remove(
+                    "text-danger"
+                );
                 uplineIdEmail.classList.remove("border-danger");
             },
-            error: function(xhr, status, error) {
+            error: function (xhr, status, error) {
                 isUplineIdEmailValidated = false;
                 uplineIdEmailError = xhr.responseJSON.message;
 
-                uplineIdEmail.nextElementSibling.textContent = xhr.responseJSON.message;
-                uplineIdEmail.nextElementSibling.classList.remove("text-success");
+                uplineIdEmail.nextElementSibling.textContent =
+                    xhr.responseJSON.message;
+                uplineIdEmail.nextElementSibling.classList.remove(
+                    "text-success"
+                );
                 uplineIdEmail.nextElementSibling.classList.add("text-danger");
                 uplineIdEmail.classList.add("border-danger");
             },
         });
     }
-
-
 });
 
 const country = document.querySelector("#country");
-
-window.onload = function () {
-    if (uplineIdEmail.value === "") {
-        isUplineIdEmailValidated = false;
-    }
-    else {
-        isUplineIdEmailValidated = true;
-    }
-
-    const options = {
-        method: "GET",
-    };
-    $.ajax({
-        url: "https://restcountries.com/v3.1/independent?status=true",
-        // url: "https://restcountries.com/v3.1/all",
-        method: "GET",
-        success: function (data, status, xhr) {
-            let countries = data.sort((a, b) => {
-                if (a.name.common > b.name.common) {
-                    return 1;
-                } else if (a.name.common < b.name.common) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            });
-            createDropDownList(countries);
-        },
-    });
-};
-
-function createDropDownList(countries) {
-    for (let each of countries) {
-        const option = document.createElement("option");
-        option.textContent = each.name.common;
-        option.value = each.name.common;
-
-        country.appendChild(option);
-    }
-}
-
 let isCountryValidated = false;
 let countryError = "Country field is required";
 country.addEventListener("change", function () {
@@ -307,7 +269,6 @@ function createPackageTypes(packages) {
         packageHolder.appendChild(column);
     }
 }
-
 
 const btnToggleImageModal = document.querySelector(".img-modal-btn");
 btnToggleImageModal.addEventListener("click", function () {

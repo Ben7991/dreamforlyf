@@ -98,37 +98,37 @@ email.addEventListener("change", function () {
 
 const country = document.querySelector("#country");
 
-window.onload = function () {
-    const options = {
-        method: "GET",
-    };
-    $.ajax({
-        url: "https://restcountries.com/v3.1/independent?status=true",
-        method: "GET",
-        success: function (data, status, xhr) {
-            let countries = data.sort((a, b) => {
-                if (a.name.common > b.name.common) {
-                    return 1;
-                } else if (a.name.common < b.name.common) {
-                    return -1;
-                } else {
-                    return 0;
-                }
-            });
-            createDropDownList(countries);
-        },
-    });
-};
+// window.onload = function () {
+//     const options = {
+//         method: "GET",
+//     };
+//     $.ajax({
+//         url: "https://restcountries.com/v3.1/independent?status=true",
+//         method: "GET",
+//         success: function (data, status, xhr) {
+//             let countries = data.sort((a, b) => {
+//                 if (a.name.common > b.name.common) {
+//                     return 1;
+//                 } else if (a.name.common < b.name.common) {
+//                     return -1;
+//                 } else {
+//                     return 0;
+//                 }
+//             });
+//             createDropDownList(countries);
+//         },
+//     });
+// };
 
-function createDropDownList(countries) {
-    for (let each of countries) {
-        const option = document.createElement("option");
-        option.textContent = each.name.common;
-        option.value = each.name.common;
+// function createDropDownList(countries) {
+//     for (let each of countries) {
+//         const option = document.createElement("option");
+//         option.textContent = each.name.common;
+//         option.value = each.name.common;
 
-        country.appendChild(option);
-    }
-}
+//         country.appendChild(option);
+//     }
+// }
 
 let isCountryValidated = false;
 let countryError = "Country field is required";

@@ -73,7 +73,8 @@ class MyTreeController extends Controller
         return view("distributor.my-tree.create", [
             "packages" => $packages,
             "stockists" => Stockist::getActiveStockist(),
-            "email" => $email
+            "email" => $email,
+            "countries" => DB::table('countries')->get()
         ]);
     }
 
