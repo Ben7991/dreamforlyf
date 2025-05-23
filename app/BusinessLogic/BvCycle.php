@@ -28,7 +28,7 @@ final class BvCycle
                 }
 
                 self::rankAward($upline);
-                BinaryBonus::distributeBonus($upline);
+                BinaryBonus::distributeBonus($upline, $distributor);
             }
 
             $upline->save();

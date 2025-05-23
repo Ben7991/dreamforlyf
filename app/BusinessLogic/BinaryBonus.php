@@ -2,6 +2,7 @@
 
 namespace App\BusinessLogic;
 
+use App\Models\Distributor;
 use App\Models\Transaction;
 use App\Models\TransactionPortfolio;
 use App\Models\TransactionType;
@@ -12,7 +13,8 @@ final class BinaryBonus
 {
     use FindMinimumBvPoint, CheckForLeadershipBonus;
 
-    public static function distributeBonus(Upline $upline) {
+    public static function distributeBonus(Upline $upline, Distributor $distributor)
+    {
         $minimumBvPoint = self::minimumBvPoints($upline);
         $lastAwardedPoint = $upline->last_awarded_point;
 
@@ -32,11 +34,6 @@ final class BinaryBonus
         }
 
         $amount = $pointDifference * 0.125;
-        $distributor = $upline->user->distributor;
-
-        if ($distributor === null) {
-            return;
-        }
 
         $portfolio = $distributor->portfolio;
         $registrationPackage = $distributor->getCurrentMembershipPackage();
@@ -65,8 +62,7 @@ final class BinaryBonus
                     "portfolio" => TransactionPortfolio::COMMISSION_WALLET->name,
                     "transaction_type" => TransactionType::BINARY->name
                 ]);
-            }
-            else {
+            } else {
                 Transaction::create([
                     "distributor_id" => $distributor->id,
                     "amount" => $amount,
@@ -76,8 +72,7 @@ final class BinaryBonus
             }
 
             $portfolio->save();
-        }
-        else if ($upline->last_amount_paid === $registrationPackage->cutoff) {
+        } else if ($upline->last_amount_paid === $registrationPackage->cutoff) {
             $upline->last_awarded_point += $pointDifference;
         }
     }
