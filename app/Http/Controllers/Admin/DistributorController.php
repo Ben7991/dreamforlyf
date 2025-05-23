@@ -365,7 +365,6 @@ class DistributorController extends Controller
     {
         $qualifiedUplines = Upline::qualifiedForLeadershipBonus();
 
-
         return view("admin.leadership-bonus", [
             "qualifiedUplines" => $qualifiedUplines,
         ]);

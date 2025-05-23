@@ -51,7 +51,7 @@ class EnsureUserIsAdmin
 
         $qualifiedRanks = DB::table("upline_ranks")->get();
         $pending = 0;
-        foreach($qualifiedRanks as $rank) {
+        foreach ($qualifiedRanks as $rank) {
             if ($rank->status === "PENDING") {
                 $pending++;
             }
