@@ -14,25 +14,35 @@ final class BvCycle
 
     public static function initialCycle(Upline $upline, int $point, string $leg)
     {
+        $ranks = Rank::orderBy("bv_point", "desc")->get();
+
         $user = $upline->user;
         $distributor = $user->distributor;
 
         while ($upline !== null && $distributor !== null) {
             if (self::isAccountMaintained($distributor)) {
                 if ($leg === "1st") {
-                    $upline->first_leg_point += $point;
-                    $upline->left_leg_count++;
+                    $upline->first_leg_point = $upline->first_leg_point + $point;
+                    $upline->left_leg_count = $upline->left_leg_count + 1;
                 } else {
-                    $upline->second_leg_point += $point;
-                    $upline->right_leg_count++;
+                    $upline->second_leg_point = $upline->second_leg_point + $point;
+                    $upline->right_leg_count = $upline->right_leg_count + 1;
                 }
 
-                self::rankAward($upline);
+                self::rankAward($upline, $ranks);
                 BinaryBonus::distributeBonus($upline, $distributor);
+            } else {
+                if ($leg === '1st') {
+                    $upline->left_leg_count = $upline->left_leg_count + 1;
+                } else {
+                    $upline->right_leg_count = $upline->right_leg_count + 1;
+                }
             }
+
 
             $upline->save();
 
+            $leg = $distributor->leg;
 
             $upline = $distributor->upline;
             $user = $upline->user;
@@ -41,8 +51,6 @@ final class BvCycle
             if ($distributor === null) {
                 break;
             }
-
-            $leg = $distributor->leg;
         }
     }
 
@@ -53,11 +61,9 @@ final class BvCycle
         return $expiringDate->greaterThanOrEqualTo($currentDate);
     }
 
-    private static function rankAward($upline)
+    private static function rankAward($upline, $ranks)
     {
         $minimumLegPoint = self::minimumBvPoints($upline);
-
-        $ranks = Rank::orderBy("bv_point", "desc")->get();
         $attainedRank = null;
 
         foreach ($ranks as $rank) {
@@ -71,17 +77,16 @@ final class BvCycle
             return;
         }
 
-        $uplineRanks = DB::table('upline_ranks')->where('upline_id', $upline->id)->get();
+        $uplineRank = DB::table('upline_ranks')
+            ->where('upline_id', $upline->id)
+            ->where('rank_id', $attainedRank->id)
+            ->first();
 
-        foreach ($uplineRanks as $alreadyAttainedRank) {
-            if ($alreadyAttainedRank->rank_id === $attainedRank->id) {
-                return;
-            }
+        if ($uplineRank === null) {
+            DB::table("upline_ranks")->insert([
+                "upline_id" => $upline->id,
+                "rank_id" => $attainedRank->id
+            ]);
         }
-
-        DB::table("upline_ranks")->insert([
-            "upline_id" => $upline->id,
-            "rank_id" => $attainedRank->id
-        ]);
     }
 }

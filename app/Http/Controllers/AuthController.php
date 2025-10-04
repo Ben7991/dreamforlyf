@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
 use App\Mail\ResetPassword;
 use App\Models\CodeEthics;
 use App\Models\User;
@@ -17,7 +16,8 @@ use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
-    public function login(Request $request, $locale) {
+    public function login(Request $request, $locale)
+    {
         $validated = $request->validate([
             "email" => "bail|required|email",
             "password" => "bail|required"
@@ -41,8 +41,7 @@ class AuthController extends Controller
                         'class' => 'success',
                         'message' => 'You have logged-in successfully'
                     ]);
-                }
-                else if (Auth::user()->role === 'DISTRIBUTOR') {
+                } else if (Auth::user()->role === 'DISTRIBUTOR') {
                     $path = "/$locale/distributor";
 
                     if (Auth::user()->distributor->code_ethics === CodeEthics::PENDING->name) {
@@ -53,8 +52,7 @@ class AuthController extends Controller
                         'class' => 'success',
                         'message' => 'You have logged-in successfully'
                     ]);
-                }
-                else if (Auth::user()->role === 'STOCKIST') {
+                } else if (Auth::user()->role === 'STOCKIST') {
                     return redirect()->intended("/$locale/stockist")->with([
                         'class' => 'success',
                         'message' => 'You have logged-in successfully'
@@ -66,8 +64,7 @@ class AuthController extends Controller
                     "class" => "danger"
                 ]);
             }
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "message" => "Something wrong happened",
                 "class" => "danger"
@@ -75,7 +72,8 @@ class AuthController extends Controller
         }
     }
 
-    public function forgot_password(Request $request, $locale) {
+    public function forgot_password(Request $request, $locale)
+    {
         $validated = $request->validate([
             "email" => "bail|required|email"
         ]);
@@ -106,8 +104,7 @@ class AuthController extends Controller
                 "class" => "success",
                 "message" => "Please check your email for reset credentials"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something wrong happened, please ensure your email address is valid"
@@ -115,7 +112,8 @@ class AuthController extends Controller
         }
     }
 
-    public function reset_password(Request $request) {
+    public function reset_password(Request $request)
+    {
         $email = $request->email;
         $token = $request->token;
 
@@ -125,7 +123,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function change_password(Request $request, $locale) {
+    public function change_password(Request $request, $locale)
+    {
         $validated = $request->validate([
             "new_password" => "bail|required|regex:/^[A-Z]{1}[a-zA-Z0-9]+[0-9]{1}[a-zA-Z0-9]+$/",
             "confirm_password" => "bail|required|same:new_password"
@@ -151,8 +150,7 @@ class AuthController extends Controller
                 "class" => "success",
                 "message" => "Successful password reset"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong, please try again or contact admin for assistance"
@@ -173,21 +171,22 @@ class AuthController extends Controller
         ]);
     }
 
-    public function user($id) {
+    public function user($id)
+    {
         try {
             $existingUser = User::where("id", $id)->where("role", "DISTRIBUTOR")->firstOrFail();
             return response()->json([
                 "data" => $existingUser
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "message" => "Distributor doesn't exist"
             ], 400);
         }
     }
 
-    public function image_change(Request $request) {
+    public function image_change(Request $request)
+    {
         $id = Auth::id();
         $currentUser = User::find($id);
         $request->validate([
@@ -207,15 +206,15 @@ class AuthController extends Controller
                 "code" => "success",
                 "data" => $path
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code" => "error"
             ], 500);
         }
     }
 
-    public function personal_information(Request $request) {
+    public function personal_information(Request $request)
+    {
         $id = Auth::id();
         $currentUser = User::find($id);
         $validated = $request->validate([
@@ -236,8 +235,7 @@ class AuthController extends Controller
                 "class" => "success",
                 "message" => "Updated personal information successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 //"message" => $e->getMessage()
@@ -246,7 +244,8 @@ class AuthController extends Controller
         }
     }
 
-    public function password_change(Request $request) {
+    public function password_change(Request $request)
+    {
         $id = Auth::id();
         $currentUser = User::find($id);
         $validated = $request->validate([
@@ -277,8 +276,7 @@ class AuthController extends Controller
                 "class" => "success",
                 "message" => "Password changed successfully"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Something went wrong, please contact developer for assistance"
@@ -286,7 +284,8 @@ class AuthController extends Controller
         }
     }
 
-    public function check($email) {
+    public function check($email)
+    {
         try {
             $existingUser = User::where("email", $email)->first();
 
@@ -297,8 +296,7 @@ class AuthController extends Controller
             return response()->json([
                 "code" => "success"
             ]);
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 "code" => "error",
                 "message" => $e->getMessage(),

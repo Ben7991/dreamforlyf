@@ -3,7 +3,6 @@
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AnalyticsController;
-use App\Http\Controllers\Admin\MaintenancePackageController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\RankController;
@@ -17,6 +16,8 @@ use App\Http\Controllers\Distributor\DistributorController;
 use App\Http\Controllers\Distributor\MyTreeController;
 use App\Http\Controllers\Distributor\OrderHistoryController;
 use App\Http\Controllers\Distributor\PortfolioController;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Distributor\MaintenancePackageController as DistributorMainPackController;
@@ -25,12 +26,10 @@ use App\Http\Controllers\Stockist\StockistController;
 /**
  * general user routes
  */
-Route::get('/', function () {
+Route::get('/', function (): Redirector|RedirectResponse {
     $currentLocale = App::currentLocale();
     return redirect("$currentLocale");
 });
-
-// Route::get("/ad-create-us-dats", [AdminController::class, "set_admin"]);
 
 Route::get("/users/{id}", [AuthController::class, "user"]);
 Route::get("/registration-packages/{id}/detail", [RegistrationPackageController::class, "detail"]);

@@ -7,8 +7,8 @@
     "example_placeholder": "exemple@gmail.com",
     "sign_in": "Se connecter",
     "password": "Mot de passe",
-    "email": "E-mail",
     "loading": "Chargement...",
+    "email": "E-mail",
     "see_more": "Voir plus",
     "submit": "Soumettre",
     "bonus": "Prime",
@@ -297,10 +297,9 @@
     "footer_copyright": "Dream For Lyf 2024 International | Tous droits réservés",
     "title_copyright": "Dream For Lyf Internationale",
 
-    "product_info": "Jetez un oeil à nos produits disponibles actuellement disponibles à la vente",
-
     "our_core_values": "Nos Valeurs Fondamentales",
 
+    "product_info": "Jetez un oeil à nos produits disponibles actuellement disponibles à la vente",
     "subject": "Sujet",
     "message": "Message",
     "contact_form_heading": "Envoie-nous un message",

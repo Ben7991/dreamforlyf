@@ -28,7 +28,9 @@ class StockistController extends Controller
 
     public function create()
     {
-        return view("admin.stockist.create");
+        return view("admin.stockist.create", [
+            "countries" => DB::table('countries')->get()
+        ]);
     }
 
     public function store(StockistRequest $request, $locale)
@@ -124,7 +126,7 @@ class StockistController extends Controller
             "amount" => "required|regex:/^[0-9]+(\.[0-9]{2})?$/"
         ]);
 
-        $amount = (float)$validated["amount"];
+        $amount = (float) $validated["amount"];
 
         try {
             $user = User::findOrFail($id);
@@ -181,7 +183,7 @@ class StockistController extends Controller
             }
 
             $stockist = Stockist::find($result->stockist_id);
-            $stockist->wallet -= (float)$result->amount;
+            $stockist->wallet -= (float) $result->amount;
             $stockist->save();
             DB::table("stockist_transfer_history")->where("id", $id)->update(["status" => "REVERSE"]);
 
