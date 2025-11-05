@@ -76,6 +76,17 @@
                                 <input type="email" id="email" class="form-control" value="{{ Auth::user()->email }}" readonly>
                             </div>
                         </div>
+                        <div class="row mb-3">
+                            <div class="col-12 col-md-4 col-xxl-3 mb-3 mb-md-0">
+                                <label for="phone">{{ __("phone_number") }}</label>
+                                <input type="text" readonly id="phone" class="form-control" value="{{ Auth::user()->distributor->phone_number }}">
+                                <small class="text-danger d-none"></small>
+                            </div>
+                            <div class="col-12 col-md-4 col-xxl-3">
+                                <label for="wave">{{ __("wave_number") }}</label>
+                                <input type="number" id="wave" class="form-control" value="{{ Auth::user()->distributor->wave }}" readonly>
+                            </div>
+                        </div>
                         <button class="btn btn-success">
                             <i class="bi bi-save"></i> {{ __("save") }}
                         </button>

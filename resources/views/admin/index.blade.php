@@ -19,11 +19,17 @@
                         <x-model-summary :title="$firstSummaryHeading" icon="clock-history" :number="$pendingOrderCount" class="bg-main" />
                     </div>
                     <div class="col-12 col-md-4 col-xl-4 mb-3 mb-xl-0">
-                        @php $secondSummaryHeading = __("qualified_ranks"); @endphp
-                        <x-model-summary :title="$secondSummaryHeading" icon="check2-circle" :number="$qualifiedRankCount" class="bg-tertiary" />
+                        @php 
+                            $secondSummaryHeading = __("qualified_ranks"); 
+                            $qualifiedRanks = session()->get("qualified_rank_count");
+                        @endphp
+                        <x-model-summary :title="$secondSummaryHeading" icon="check2-circle" :number="$qualifiedRanks" class="bg-tertiary" />
                     </div>
                     <div class="col-12 col-md-4 col-xl-4 mb-3 mb-xl-0">
-                        @php $thirdSummaryHeading = __("qualified_pool"); @endphp
+                        @php 
+                            $thirdSummaryHeading = __("qualified_pool");
+                            $qualifiedPoolCount = session()->get("qualified_pool_count");
+                        @endphp
                         <x-model-summary :title="$thirdSummaryHeading" icon="database-check" :number="$qualifiedPoolCount" class="bg-other" />
                     </div>
                 </div>

@@ -52,6 +52,7 @@ class DistributorController extends Controller
             $rank = DB::table('upline_ranks')
                 ->join('ranks', 'upline_ranks.rank_id', '=', 'ranks.id')
                 ->where('upline_id', $upline->id)
+                ->orderBy('date_added', 'desc')
                 ->first();
 
             if ($rank !== null) {
@@ -361,8 +362,8 @@ class DistributorController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with([
                 "class" => "danger",
-                "message" => $e->getMessage()
-                // "message" => "Something went wrong"
+                // "message" => $e->getMessage()
+                "message" => "Something went wrong"
             ]);
         }
     }

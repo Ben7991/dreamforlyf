@@ -300,7 +300,7 @@ class AnalyticsController extends Controller
                 'package' => $current->name . " to " . $next->name,
                 'price' => $next->price - $current->price,
                 'bv' => $next->bv_point - $current->bv_point,
-                'quantity' => $mainResult[$i]['quantity'],
+                'quantity' => $this->getQuantity($mainResult, $packages[$i]),
                 'total' => $mainResult[$i]['total'],
             ];
         }
@@ -308,6 +308,18 @@ class AnalyticsController extends Controller
         return view("admin.analytics.upgrade-bonus", [
             'packages' => $packageData
         ]);
+    }
+
+    private function getQuantity($mainResult, $upgradePackage) {
+        $totalQuantity = 0;
+
+        foreach ($mainResult as $item) {
+            if ($item['upgrade_type_id'] === $upgradePackage->id) {
+                $totalQuantity += $item['quantity'];
+            }
+        }
+
+        return $totalQuantity;
     }
 
 
