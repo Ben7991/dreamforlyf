@@ -470,5 +470,6 @@
     "analytics": "Analytique",
     "wallet_transfer": "Transfert de portefeuille",
     "amount_transfered": "Montant transféré",
-    "reverse_transfer": "Transfert inversé"
+    "reverse_transfer": "Transfert inversé",
+    "reverse_transfer_desc": "Êtes-vous sûr de vouloir annuler ce transfert?"
 }

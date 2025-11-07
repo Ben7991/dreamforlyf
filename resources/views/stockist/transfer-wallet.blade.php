@@ -37,15 +37,38 @@
                             <th>{{ __("distributor_id") }}</th>
                             <th>{{ __("distributor") }}</th>
                             <th>{{ __("amount") }}</th>
+                            @if($isHeadStockist)
+                                <th>{{ __("status") }}</th>
+                                <th>Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($transfers as $transfer)
                             <tr>
                                 <td>{{ $transfer->date_added }}</td>
-                                <td>{{ $transfer->id }}</td>
+                                <td>{{ $transfer->stockist_id }}</td>
                                 <td>{{ $transfer->name }}</td>
                                 <td>${{ number_format($transfer->amount, 2) }}</td>
+                                @if($isHeadStockist)
+                                    <td>
+                                        @if($transfer->status === "REVERSED")
+                                            <span class="badge text-bg-secondary">{{ $transfer->status }}</span>
+                                        @else
+                                            <span class="badge text-bg-success">{{ $transfer->status }}</span>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if ($transfer->status === "COMPLETE")
+                                            <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ __("reverse_transfer") }}">
+                                                <button class="action-btn text-primary rounded" type="button" data-bs-toggle="modal" data-bs-target="#transferReversal"
+                                                onclick="setFormAction('/{{App::getLocale()}}/stockist/transfer-wallet/{{ $transfer->id }}/reverse')">
+                                                    <i class="bi bi-arrow-90deg-left"></i>
+                                                </button>
+                                            </span>
+                                        @endif
+                                    </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
@@ -53,6 +76,31 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="transferReversal" tabindex="-1" aria-labelledby="transferReversalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="transferReversalLabel">{{ __("reverse_transfer") }}</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <input type="hidden" id="locale" value="{{ App::currentLocale() }}">
+                <form method="POST" id="form">
+                    @csrf
+
+                    <div class="modal-body">
+                        <p class="mb-3">{{ __("reverse_transfer_desc") }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __("close") }}</button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check2"></i> {{ __("reverse_transfer") }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+      </div>
 
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -62,7 +110,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <input type="hidden" id="locale" value="{{ App::currentLocale() }}">
-                <form method="POST" id="form">
+                <form method="POST" id="transfer-form">
                     @csrf
                     @method("PUT")
 
@@ -112,6 +160,74 @@
       </div>
 
     @push("scripts")
-        <script src="{{ asset("assets/js/stockist/transfer-wallet.js") }}"></script>
+        <script>
+            $(document).ready(function () {
+                $("#product-table").DataTable();
+            });
+
+            const amount = document.querySelector("#amount");
+            let isAmountValidated = false;
+            let amountError = "Amount field is required";
+            amount.addEventListener("change", function () {
+                const value = this.value;
+
+                if (value === "") {
+                    isAmountValidated = false;
+                    amountError = "Amount field is required";
+                } else if (!/^[0-9]+(\.[0-9]{2})*$/.test(value)) {
+                    isAmountValidated = false;
+                    amountError = "Only digits are allowed";
+                } else {
+                    isAmountValidated = true;
+                    amountError = "";
+                }
+
+                checkInput(amount, isAmountValidated, amountError);
+            });
+
+            const transferForm = document.querySelector("#transfer-form");
+            transferForm.addEventListener("submit", function (event) {
+                if (!isAmountValidated) {
+                    event.preventDefault();
+
+                    checkInput(amount, isAmountValidated, amountError);
+                }
+            });
+
+            const nameInput = document.querySelector("#name");
+            const searchInput = document.querySelector("#search");
+            const locale = document.querySelector("#locale");
+            const loader = document.querySelector(".loader");
+            const searchError = document.querySelector("#search-error");
+
+            const btnSearch = document.querySelector("#search-btn");
+            btnSearch.addEventListener("click", function () {
+                const searchTerm = searchInput.value;
+
+                if (searchTerm === "") {
+                    return;
+                }
+
+                loader.classList.remove("d-none");
+                searchInput.value = "";
+                !searchError.classList.contains("d-none")
+                    ? searchError.classList.add("d-none")
+                    : null;
+
+                $.ajax({
+                    url: `/users/${searchTerm}`,
+                    method: "GET",
+                    success: function (data, xhr, status) {
+                        nameInput.value = data.data.name;
+                        transferForm.action = `/${locale.value}/stockist/transfer-wallet/${data.data.id}`;
+                        loader.classList.add("d-none");
+                    },
+                    error: function (xhr, status, error) {
+                        loader.classList.add("d-none");
+                        searchError.classList.remove("d-none");
+                    },
+                });
+            });
+        </script>
     @endpush
 </x-layout.stockist>

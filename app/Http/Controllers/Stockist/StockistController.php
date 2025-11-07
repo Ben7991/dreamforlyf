@@ -11,6 +11,7 @@ use App\Models\RegistrationPackage;
 use App\Models\StockistBankDetails;
 use App\Models\Transaction;
 use App\Models\TransactionPortfolio;
+use App\Models\TransactionStatus;
 use App\Models\TransactionType;
 use App\Models\UpgradeHistory;
 use App\Models\UpgradePackage;
@@ -158,12 +159,15 @@ class StockistController extends Controller
             ->join("stockist_transfer", "transactions.id", "stockist_transfer.transaction_id")
             ->join("distributors", "distributors.id", "transactions.distributor_id")
             ->join("users", "users.id", "distributors.user_id")
-            ->select("transactions.amount", "users.name", "users.id", "stockist_transfer.date_added")
+            ->select("transactions.amount", "users.name", "users.id as stockist_id", "stockist_transfer.date_added", "stockist_transfer.id as id", "transactions.status")
             ->where('stockist_transfer.stockist_id', $stockistId)
             ->get();
 
+        $headStockistId = $stockistId === 1;
+
         return view("stockist.transfer-wallet", [
-            "transfers" => $result
+            "transfers" => $result,
+            "isHeadStockist" => $headStockistId,
         ]);
     }
 
@@ -218,6 +222,43 @@ class StockistController extends Controller
         }
     }
 
+    public function reverse_transfer($locale, $id) {
+        $stockist = Auth::user()->stockist;
+
+        if ($stockist->id !== 1) {
+            return redirect()->back();
+        }
+
+        try {
+            $stockistTranser = DB::table('stockist_transfer')->where('id', $id)->first();
+
+            if ($stockistTranser === null) {
+                throw new \Exception("Selected transfer to reverse does not exist");
+            }
+
+            $transaction = Transaction::find($stockistTranser->transaction_id);
+            $transaction->status = TransactionStatus::REVERSED->name;
+            $transaction->save();
+
+            $portfolio = $transaction->distributor->portfolio;
+            $portfolio->current_balance -= $transaction->amount;
+            $portfolio->save();
+
+            $stockist->wallet += $transaction->amount;
+            $stockist->save();
+
+            return redirect()->back()->with([
+                "class" => "success",
+                "message" => "Wallet transfer successfully reversed"
+            ]);
+        } catch (\Exception $e) {
+            return redirect()->back()->with([
+                "class" => "danger",
+                "message" => $e->getMessage()
+            ]);
+        }
+    }
+
     public function profile()
     {
         return view("stockist.profile");
@@ -237,7 +278,7 @@ class StockistController extends Controller
             "totalRequest" => count($withdrawals),
             "pending" => $pending,
             "approved" => $approved,
-            "request" => $request
+            "request" => $request,
         ]);
     }
 

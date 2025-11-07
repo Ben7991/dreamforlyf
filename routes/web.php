@@ -255,6 +255,7 @@ Route::prefix("{locale}/stockist")->group(function () {
 
         Route::get("transfer-wallet", [StockistController::class, "transferWallet"]);
         Route::put("transfer-wallet/{id}", [StockistController::class, "sendDistributorWallet"]);
+        Route::post("transfer-wallet/{id}/reverse", [StockistController::class, 'reverse_transfer']);
 
         Route::get("bonus-withdrawal", [StockistController::class, "bonus_withdrawal"]);
         Route::post("bonus-withdrawal/request", [StockistController::class, "request_withdrawal"]);

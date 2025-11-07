@@ -469,5 +469,6 @@
     "analytics": "Analytics",
     "wallet_transfer": "Wallet Transfer",
     "amount_transfered": "Amount Transfered",
-    "reverse_transfer": "Reverse Transfer"
+    "reverse_transfer": "Reverse Transfer",
+    "reverse_transfer_desc": "Are you sure, you want to reverse this transfer"
 }
