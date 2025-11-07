@@ -40,13 +40,32 @@
                         <label for="order_type">{{ __("order_type") }}</label>
                         <input type="text" id="order_type" class="form-control" value="{{ $order->order_type }}" readonly>
                     </div>
-                    <div class="col-12 col-md-4 col-xl-3 mb-3 mb-xxl-4">
-                        <label for="status">{{ __("status") }}</label>
-                        <select name="status" id="status" class="form-select">
-                            <option value="PENDING" {{ $order->status === "PENDING" ? 'selected' : "" }}>{{ strtoupper(__("pending")) }}</option>
-                            <option value="APPROVED" {{ $order->status === "APPROVED" ? 'selected' : "" }}>{{ strtoupper(__("approved")) }}</option>
-                        </select>
-                    </div>
+                    @if($order->stockist->id !== 1)
+                        <div class="col-12 col-md-4 col-xl-3 mb-3 mb-xxl-4">
+                            <label for="status">{{ __("status") }}</label>
+                            <input type="text"  class="form-control" value="{{ $order->status }}" readonly>
+                        </div>
+
+                        <div class="col-12 col-md-4 col-xl-3 mb-3 mb-xxl-4">
+                            <label for="transfer_products">Transfer products to stockist</label>
+                            @if ($order->is_transferred)
+                                <input type="text"  class="form-control" value="YES" readonly>
+                            @else
+                                <select name="transfer_products" id="transfer_products" class="form-select">
+                                    <option value="NO">No</option>
+                                    <option value="YES">Yes</option>
+                                </select>
+                            @endif
+                        </div>
+                    @else
+                        <div class="col-12 col-md-4 col-xl-3 mb-3 mb-xxl-4">
+                            <label for="status">{{ __("status") }}</label>
+                            <select name="status" id="status" class="form-select">
+                                <option value="PENDING" {{ $order->status === "PENDING" ? 'selected' : "" }}>{{ strtoupper(__("pending")) }}</option>
+                                <option value="APPROVED" {{ $order->status === "APPROVED" ? 'selected' : "" }}>{{ strtoupper(__("approved")) }}</option>
+                            </select>
+                        </div>
+                    @endif
                 </div>
                 @if($order->status === "PENDING")
                     <button class="btn btn-success" type="submit">

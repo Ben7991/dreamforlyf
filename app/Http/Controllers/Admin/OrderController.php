@@ -41,13 +41,12 @@ class OrderController extends Controller
     }
 
     public function update(Request $request, $locale, $id) {
-        $validated = $request->validate([
-            "status" => "required"
-        ]);
+        $status = $request->status;
+        $transfer_products = $request->transfer_products;
 
         $acceptableValues = ["PENDING", "APPROVED"];
 
-        if (!in_array($validated["status"], $acceptableValues)) {
+        if (!in_array($status, $acceptableValues)) {
             return redirect()->back()->with([
                 "class" => "danger",
                 "message" => "Status isn't recognized"
@@ -56,7 +55,15 @@ class OrderController extends Controller
 
         try {
             $order = Order::findOrFail($id);
-            $order->status = $validated["status"];
+
+            if ($status) {
+                $order->status = $status;
+            }
+
+            if ($order->stockist->id !== 1) {
+                $order->is_transferred = $transfer_products === 'YES' ? true : false;
+            }
+
             $order->save();
 
             return redirect()->back()->with([

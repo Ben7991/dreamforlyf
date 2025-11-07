@@ -42,6 +42,7 @@
                             <th>{{ __("date_time") }}</th>
                             <th>{{ __("distributor") }}</th>
                             <th>{{ __("amount") }}</th>
+                            <th>Stockist</th>
                             <th>{{ __("order_type") }}</th>
                             <th>{{ __("status") }}</th>
                             <th>Actions</th>
@@ -54,9 +55,14 @@
                                 <td>{{ $order->date_added }}</td>
                                 <td>{{ $order->distributor->user->name }}</td>
                                 <td>${{ $order->amount }}</td>
+                                <td>{{ $order->stockist->code }}</td>
                                 <td>{{ $order->order_type !== "NORMAL" ? $order->order_type : "PERSONAL" }}</td>
                                 <td>
-                                    @if($order->status === "PENDING")
+                                    @if($order->is_transferred && $order->status === "PENDING")
+                                        <span class="badge text-bg-success">Transferred to stockist</span>
+                                    @elseif($order->is_transferred && $order->status === "APPROVED")
+                                        <span class="badge text-bg-success">TRANSFERRED & APPROVED</span>
+                                    @elseif($order->status === "PENDING")
                                         <span class="badge text-bg-danger">{{ $order->status }}</span>
                                     @else
                                         <span class="badge text-bg-success">{{ $order->status }}</span>
