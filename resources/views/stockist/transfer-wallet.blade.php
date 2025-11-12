@@ -59,7 +59,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if ($transfer->status === "COMPLETE")
+                                        @if ($transfer->status === "COMPLETE" && $transfer->current_balance >= $transfer->amount)
                                             <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ __("reverse_transfer") }}">
                                                 <button class="action-btn text-primary rounded" type="button" data-bs-toggle="modal" data-bs-target="#transferReversal"
                                                 onclick="setFormAction('/{{App::getLocale()}}/stockist/transfer-wallet/{{ $transfer->id }}/reverse')">
@@ -162,7 +162,9 @@
     @push("scripts")
         <script>
             $(document).ready(function () {
-                $("#product-table").DataTable();
+                $("#product-table").DataTable({
+                    ordering: false
+                });
             });
 
             const amount = document.querySelector("#amount");

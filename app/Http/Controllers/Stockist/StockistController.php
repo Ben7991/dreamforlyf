@@ -158,9 +158,11 @@ class StockistController extends Controller
         $result = DB::table("transactions")
             ->join("stockist_transfer", "transactions.id", "stockist_transfer.transaction_id")
             ->join("distributors", "distributors.id", "transactions.distributor_id")
+            ->join('portfolios', 'distributors.id', 'portfolios.distributor_id')
             ->join("users", "users.id", "distributors.user_id")
-            ->select("transactions.amount", "users.name", "users.id as stockist_id", "stockist_transfer.date_added", "stockist_transfer.id as id", "transactions.status")
+            ->select("transactions.amount", "users.name", "users.id as stockist_id", "stockist_transfer.date_added", "stockist_transfer.id as id", "transactions.status", "portfolios.current_balance")
             ->where('stockist_transfer.stockist_id', $stockistId)
+            ->orderBy('transactions.id', 'desc')
             ->get();
 
         $headStockistId = $stockistId === 1;
