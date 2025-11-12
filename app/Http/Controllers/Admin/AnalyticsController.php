@@ -82,13 +82,23 @@ class AnalyticsController extends Controller
                 ->groupBy("distributors.registration_package_id")
                 ->get();
         }
+        else if (strcmp($startDate, $endDate) === 0) {
+            $result = DB::table("orders")
+                ->leftJoin("distributors", "orders.distributor_id", "=", "distributors.id")
+                ->leftJoin("registration_packages", "distributors.registration_package_id", "=", "registration_packages.id")
+                ->select(DB::raw("count(distributors.id) as total_number, registration_packages.name, registration_packages.price, registration_packages.bv_point, registration_packages.id"))
+                ->where("orders.order_type", "=", OrderType::REGISTRATION->name)
+                ->where("date_added", "LIKE", "$startDate%")
+                ->groupBy("distributors.registration_package_id")
+                ->get();
+        }
         else {
             $result = DB::table("orders")
                 ->leftJoin("distributors", "orders.distributor_id", "=", "distributors.id")
                 ->leftJoin("registration_packages", "distributors.registration_package_id", "=", "registration_packages.id")
                 ->select(DB::raw("count(distributors.id) as total_number, registration_packages.name, registration_packages.price, registration_packages.bv_point, registration_packages.id"))
                 ->where("orders.order_type", "=", OrderType::REGISTRATION->name)
-                ->whereBetween("date_added", [$startDate, $endDate])
+                ->whereBetween("orders.date_added", [$startDate, $endDate])
                 ->groupBy("distributors.registration_package_id")
                 ->get();
         }
