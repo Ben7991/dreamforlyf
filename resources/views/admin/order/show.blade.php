@@ -43,7 +43,7 @@
                     @if($order->stockist->id !== 1)
                         <div class="col-12 col-md-4 col-xl-3 mb-3 mb-xxl-4">
                             <label for="status">{{ __("status") }}</label>
-                            <input type="text"  class="form-control" value="{{ $order->status }}" readonly>
+                            <input type="text"  class="form-control" value="{{ $order->status }}" readonly name="status">
                         </div>
 
                         <div class="col-12 col-md-4 col-xl-3 mb-3 mb-xxl-4">
